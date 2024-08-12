@@ -1,7 +1,5 @@
 volumes:
   postgres_data:
-  rabbitmq:
-  celerybeat-schedule:
   static-data:
   media-data:
   backups-data:
@@ -41,8 +39,6 @@ services:
       - VIRTUAL_PORT=${VIRTUAL_PORT:-8080}
       - DEBUG=${DEBUG:-False}
       - ENABLE_LDAP=${ENABLE_LDAP:-False}
-      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
-      - BROKER_URL=amqp://rabbitmq:5672
       - METABASE_DOWNLOAD_STATS_URL=${METABASE_DOWNLOAD_STATS_URL:-/metabase}
       - EMAIL_BACKEND=${EMAIL_BACKEND}
       - EMAIL_HOST=${EMAIL_HOST}
@@ -58,11 +54,9 @@ services:
       - ./docker/uwsgi.conf:/uwsgi.conf
       - ${QGISHUB_STATIC_VOLUME}:/home/web/static:rw
       - ${QGISHUB_MEDIA_VOLUME}:/home/web/media:rw
-      - celerybeat-schedule:/home/web/celerybeat-schedule:rw
     command: uwsgi --ini /uwsgi.conf
     depends_on:
       - db
-      - rabbitmq
     restart: unless-stopped
     user: root
     networks:
@@ -87,46 +81,6 @@ services:
       - "62202:8081"
       # for ssh
       - "62203:22"
-    networks:
-      internal:
-
-  rabbitmq:
-    image: rabbitmq:3.7-alpine
-    hostname: rabbitmq
-    volumes:
-      - rabbitmq:/var/lib/rabbitmq
-    restart: unless-stopped
-    networks:
-      internal:
-    healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  beat:
-    <<: *uwsgi-common
-    container_name: qgis-hub-beat
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    working_dir: /home/web/django_project
-    entrypoint: [ ]
-    command: celery --app=hub.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
-    networks:
-      internal:
-
-  worker:
-    <<: *uwsgi-common
-    container_name: qgis-hub-worker
-    depends_on:
-      db:
-        condition: service_started
-      beat:
-        condition: service_started
-    working_dir: /home/web/django_project
-    entrypoint: []
-    command: celery -A hub worker -l INFO
     networks:
       internal:
 

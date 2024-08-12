@@ -1,5 +1,3 @@
-from celery.schedules import crontab
-
 from settings import *
 import ast
 import os
@@ -136,9 +134,7 @@ METABASE_DOWNLOAD_STATS_URL = os.environ.get(
     "METABASE_DOWNLOAD_STATS_URL", 
     "/metabase"
 )
-CELERY_RESULT_BACKEND = 'rpc://'
-CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
-CELERY_BEAT_SCHEDULE = {}
+
 # Set plugin token access and refresh validity to a very long duration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),

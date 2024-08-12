@@ -35,7 +35,7 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up -d --scale uwsgi=2 web worker beat dbbackups
+	@docker compose -p $(PROJECT_ID) up -d --scale uwsgi=2 web dbbackups
 
 certbot: web
 	@echo
@@ -216,7 +216,7 @@ devweb: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
+	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb
 
 devweb-runserver: devweb
 	@echo

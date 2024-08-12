@@ -164,7 +164,7 @@ make build-dev
 make devweb-test
 ```
 
-- **devweb:** Starts the `devweb` container for development, along with RabbitMQ, worker, and beat containers.
+- **devweb:** Starts the `devweb` container for development.
 ```sh
 make devweb
 ```
