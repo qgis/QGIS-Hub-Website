@@ -1,6 +1,0 @@
-{{ object.name }}
-{{ object.description }}
-{{ object.package_name }}
-{{ object.created_by.username }}
-{{ object.author }}
-{% for tag in object.tags.all %}{{ tag }} {% endfor %}

@@ -1,4 +1,4 @@
-PROJECT_ID := qgis-plugins
+PROJECT_ID := qgis-hub
 
 SHELL := /bin/bash
 
@@ -35,7 +35,7 @@ web: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in production mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up -d --scale uwsgi=2 web worker beat dbbackups
+	@docker compose -p $(PROJECT_ID) up -d --scale uwsgi=2 web dbbackups
 
 certbot: web
 	@echo
@@ -129,12 +129,6 @@ create-test-db:
 	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -c 'create database test_db;'"
 	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
 
-rebuild_index:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Rebuild search index in PRODUCTION mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) exec uwsgi bash -c 'python manage.py rebuild_index'
 
 uwsgi-shell:
 	@echo
@@ -222,7 +216,7 @@ devweb: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb rabbitmq worker beat
+	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb
 
 devweb-runserver: devweb
 	@echo

@@ -14,4 +14,4 @@
 #25 11 * * * /bin/bash /home/web/QGIS-Django/dockerize/scripts/renew_ssl.sh > /tmp/ssl-renewal-logs.txt
 
 
-docker compose -f /home/web/QGIS-Django/dockerize/docker-compose.yml -p qgis-plugins run certbot renew
+docker compose -f /home/web/QGIS-Django/dockerize/docker-compose.yml -p qgis-hub run certbot renew

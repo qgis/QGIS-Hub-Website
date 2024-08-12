@@ -80,7 +80,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     # Needed by rpc4django
-    "plugins.middleware.HttpAuthMiddleware",
+    "base.middleware.HttpAuthMiddleware",
     "django.contrib.auth.middleware.RemoteUserMiddleware",
     "django.contrib.flatpages.middleware.FlatpageFallbackMiddleware",
     # Added by Tim for advanced loggin options
@@ -115,8 +115,6 @@ INSTALLED_APPS = [
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     "django.contrib.staticfiles",
-    # ABP:
-    "plugins",
     #'pagination',
     "django.contrib.humanize",
     #'django.contrib.markup',
@@ -148,7 +146,6 @@ INSTALLED_APPS = [
     "djangoratings",
     "lib",
     "endless_pagination",
-    "userexport",
     "bootstrap_pagination",
     "sortable_listview",
     "user_map",
@@ -335,11 +332,6 @@ if DEBUG:
         "debug_toolbar.panels.logging.LoggingPanel",
         "debug_toolbar.panels.redirects.RedirectsPanel",
     ]
-
-BROKER_URL = "amqp://guest:guest@%s:5672//" % os.environ["RABBITMQ_HOST"]
-RESULT_BACKEND = BROKER_URL
-CELERY_BROKER_URL = BROKER_URL
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 GEOIP_PATH='/var/opt/maxmind/'
 # Token access and refresh validity

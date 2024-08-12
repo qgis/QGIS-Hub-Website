@@ -1,7 +1,7 @@
 # Docker compose commands Documentation
 
 ## Overview
-This doc is designed for managing a Docker-based project with the ID `qgis-plugins`. It includes various commands for building, running, and maintaining both production and development environments. Below is a detailed description of each command available in the Makefile.
+This doc is designed for managing a Docker-based project with the ID `qgis-hub`. It includes various commands for building, running, and maintaining both production and development environments. Below is a detailed description of each command available in the Makefile.
 
 ## Commands
 
@@ -164,7 +164,7 @@ make build-dev
 make devweb-test
 ```
 
-- **devweb:** Starts the `devweb` container for development, along with RabbitMQ, worker, and beat containers.
+- **devweb:** Starts the `devweb` container for development.
 ```sh
 make devweb
 ```
