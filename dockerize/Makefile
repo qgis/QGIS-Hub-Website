@@ -129,12 +129,6 @@ create-test-db:
 	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -c 'create database test_db;'"
 	@docker compose -p $(PROJECT_ID) exec db su - postgres -c "psql -d test_db -c 'create extension postgis;'"
 
-rebuild_index:
-	@echo
-	@echo "------------------------------------------------------------------"
-	@echo "Rebuild search index in PRODUCTION mode"
-	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) exec uwsgi bash -c 'python manage.py rebuild_index'
 
 uwsgi-shell:
 	@echo
