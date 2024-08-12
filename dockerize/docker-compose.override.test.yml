@@ -2,8 +2,8 @@ version: '3'
 services:
   devweb:
     # Note you cannot scale if you use container_name
-    image: kartoza/qgis-plugins-uwsgi:dev-latest
-    container_name: qgis-plugins-devweb
+    image: kartoza/qgis-hub-uwsgi:dev-latest
+    container_name: qgis-hub-devweb
     volumes:
       -  ../qgis-app:/home/web/django_project
       - ./static:/home/web/static:rw

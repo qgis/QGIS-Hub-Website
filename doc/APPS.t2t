@@ -36,7 +36,6 @@ Tim Sutton 2010
 
 = Planned applications=
 
- + plugins - a django app for managing the QGIS python plugin repository
  + users - a django app for creating a community map and some demographics
  + snippets - a django app for users to share python and c++ snippets showing how to program QGIS
  + styles - a django app for users to publish the QGIS styles they have created

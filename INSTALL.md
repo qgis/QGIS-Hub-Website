@@ -165,31 +165,31 @@ backups
 ├── 2019
 ├── 2020
 │   ├── April
-│   │   └── PG_QGIS_PLUGINS_gis.07-April-2020.dmp
+│   │   └── PG_QGIS_HUB_gis.07-April-2020.dmp
 │   ├── August
 │   ├── December
-│   │   ├── PG_QGIS_PLUGINS_gis.01-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.02-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.03-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.04-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.05-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.06-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.07-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.08-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.09-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.10-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.11-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.12-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.13-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.14-December-2020.dmp
-│   │   ├── PG_QGIS_PLUGINS_gis.15-December-2020.dmp
-│   │   └── PG_QGIS_PLUGINS_gis.16-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.01-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.02-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.03-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.04-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.05-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.06-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.07-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.08-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.09-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.10-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.11-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.12-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.13-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.14-December-2020.dmp
+│   │   ├── PG_QGIS_HUB_gis.15-December-2020.dmp
+│   │   └── PG_QGIS_HUB_gis.16-December-2020.dmp
 │`
 ```
 
 - Copy the dump file you wish to restore to dockerize/backups/latest.dmp file
 ```bash
-$ cp backups/2020/December/PG_QGIS_PLUGINS_gis.16-December-2020.dmp dockerize/backups/latest.dmp
+$ cp backups/2020/December/PG_QGIS_HUB_gis.16-December-2020.dmp dockerize/backups/latest.dmp
 ```
 
 - Restore the dump file

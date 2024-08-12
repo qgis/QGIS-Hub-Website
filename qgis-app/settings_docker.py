@@ -106,7 +106,7 @@ PAGINATION_DEFAULT_PAGINATION = 20
 PAGINATION_DEFAULT_PAGINATION_HUB = 30
 LOGIN_REDIRECT_URL = "/"
 SERVE_STATIC_MEDIA = DEBUG
-DEFAULT_PLUGINS_SITE = os.environ.get("DEFAULT_PLUGINS_SITE", "https://plugins.qgis.org/")
+DEFAULT_HUB_SITE = os.environ.get("DEFAULT_HUB_SITE", "https://hub.qgis.org/")
 
 # See fig.yml file for postfix container definition
 #
@@ -122,7 +122,7 @@ EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "25"))
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "automation")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "docker")
 EMAIL_USE_TLS = ast.literal_eval(os.environ.get("EMAIL_USE_TLS", "False"))
-EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[QGIS Plugins]")
+EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[QGIS Hub]")
 
 # django uploaded file permission
 FILE_UPLOAD_PERMISSIONS = 0o644

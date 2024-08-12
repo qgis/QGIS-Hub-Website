@@ -30,7 +30,7 @@ echo 'Source :' $SOURCE
 echo 'Destination :' $DEST
 echo 'Objective :' $OBJECTIVE
 
-lftp -u kartoza, sftp://plugins.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"
+lftp -u kartoza, sftp://hub.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"
 
 #Next the plugin backups on the remote server
 SOURCE=/mnt/HC_Volume_4113256/packages
@@ -62,7 +62,7 @@ echo 'Source :' $SOURCE
 echo 'Destination :' $DEST
 echo 'Objective :' $OBJECTIVE
 
-lftp -u kartoza, sftp://plugins.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"
+lftp -u kartoza, sftp://hub.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"
 
 
 #Next the style backups on the remote server
@@ -95,4 +95,4 @@ echo 'Source :' $SOURCE
 echo 'Destination :' $DEST
 echo 'Objective :' $OBJECTIVE
 
-lftp -u kartoza, sftp://plugins.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"
+lftp -u kartoza, sftp://hub.qgis.org -e "mirror $REMOVE_FILE $SOURCE $DEST; bye"

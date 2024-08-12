@@ -5,7 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-STYLES_STORAGE_PATH = getattr(settings, "PLUGINS_STORAGE_PATH", "styles/%Y")
+STYLES_STORAGE_PATH = getattr(settings, "HUB_STORAGE_PATH", "styles/%Y")
 
 
 class StyleType(models.Model):

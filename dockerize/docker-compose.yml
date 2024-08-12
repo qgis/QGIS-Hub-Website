@@ -8,7 +8,7 @@ volumes:
 services:
 
   db:
-    container_name: qgis-plugins-db
+    container_name: qgis-hub-db
     image: kartoza/postgis:16-3.4
     environment:
       - ALLOW_IP_RANGE=0.0.0.0/0
@@ -21,7 +21,7 @@ services:
       - DEFAULT_CTYPE=en_GB.utf8
     volumes:
       - postgres_data:/opt/postgres/data
-      - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
+      - ${QGISHUB_BACKUP_VOLUME}:/backups
     restart: unless-stopped
     networks:
       internal:
@@ -37,7 +37,7 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD:-docker}
       - DATABASE_HOST=${DATABASE_HOST:-db}
       - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-settings_docker}
-      - VIRTUAL_HOST=${VIRTUAL_HOST:-plugins.kartoza.com}
+      - VIRTUAL_HOST=${VIRTUAL_HOST:-hub.kartoza.com}
       - VIRTUAL_PORT=${VIRTUAL_PORT:-8080}
       - DEBUG=${DEBUG:-False}
       - ENABLE_LDAP=${ENABLE_LDAP:-False}
@@ -50,14 +50,14 @@ services:
       - EMAIL_USE_TLS=${EMAIL_USE_TLS}
       - EMAIL_HOST_USER=${EMAIL_HOST_USER:-automation}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - DEFAULT_PLUGINS_SITE=${DEFAULT_PLUGINS_SITE:-https://plugins.qgis.org/}
+      - DEFAULT_HUB_SITE=${DEFAULT_HUB_SITE:-https://hub.qgis.org/}
       - SENTRY_DSN=${SENTRY_DSN}
       - SENTRY_RATE=${SENTRY_RATE}
     volumes:
       - ../qgis-app:/home/web/django_project
       - ./docker/uwsgi.conf:/uwsgi.conf
-      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
-      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
+      - ${QGISHUB_STATIC_VOLUME}:/home/web/static:rw
+      - ${QGISHUB_MEDIA_VOLUME}:/home/web/media:rw
       - celerybeat-schedule:/home/web/celerybeat-schedule:rw
     command: uwsgi --ini /uwsgi.conf
     depends_on:
@@ -73,15 +73,15 @@ services:
   # from prod environment if wanted
   devweb:
     <<: *uwsgi-common
-    container_name: qgis-plugins-devweb
+    container_name: qgis-hub-devweb
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile
       target: dev
     volumes:
       - ../qgis-app:/home/web/django_project
-      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:rw
-      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:rw
+      - ${QGISHUB_STATIC_VOLUME}:/home/web/static:rw
+      - ${QGISHUB_MEDIA_VOLUME}:/home/web/media:rw
     ports:
       # for django test server
       - "62202:8081"
@@ -106,19 +106,19 @@ services:
 
   beat:
     <<: *uwsgi-common
-    container_name: qgis-plugins-beat
+    container_name: qgis-hub-beat
     depends_on:
       rabbitmq:
         condition: service_healthy
     working_dir: /home/web/django_project
     entrypoint: [ ]
-    command: celery --app=plugins.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
+    command: celery --app=hub.celery:app beat -s /home/web/celerybeat-schedule/schedule -l INFO
     networks:
       internal:
 
   worker:
     <<: *uwsgi-common
-    container_name: qgis-plugins-worker
+    container_name: qgis-hub-worker
     depends_on:
       db:
         condition: service_started
@@ -126,13 +126,13 @@ services:
         condition: service_started
     working_dir: /home/web/django_project
     entrypoint: []
-    command: celery -A plugins worker -l INFO
+    command: celery -A hub worker -l INFO
     networks:
       internal:
 
   web:
     # Note you cannot scale if you use container_name
-    container_name: qgis-plugins-web
+    container_name: qgis-hub-web
     image: nginx
     hostname: web
     entrypoint:
@@ -142,8 +142,8 @@ services:
     - "443:443"
     volumes:
       - ./sites-enabled:/etc/nginx/sites-available/:ro
-      - ${QGISPLUGINS_STATIC_VOLUME}:/home/web/static:ro
-      - ${QGISPLUGINS_MEDIA_VOLUME}:/home/web/media:ro
+      - ${QGISHUB_STATIC_VOLUME}:/home/web/static:ro
+      - ${QGISHUB_MEDIA_VOLUME}:/home/web/media:ro
       - ./webroot:/var/www/webroot
       - ./certbot-etc:/etc/letsencrypt
     depends_on:
@@ -156,7 +156,7 @@ services:
         max-file: "10"
     restart: unless-stopped
     command:
-    - ${QGISPLUGINS_ENV}
+    - ${QGISHUB_ENV}
     networks:
       internal:
 
@@ -164,13 +164,13 @@ services:
     image: kartoza/pg-backup:16-3.4
     hostname: pg-backups
     volumes:
-      - ${QGISPLUGINS_BACKUP_VOLUME}:/backups
+      - ${QGISHUB_BACKUP_VOLUME}:/backups
     depends_on:
       - db
     environment:
       # take care to let the project name below match that
       # declared in the top of the makefile
-      - DUMPPREFIX=${DUMPPREFIX:-QGIS_PLUGINS}
+      - DUMPPREFIX=${DUMPPREFIX:-QGIS_HUB}
       - POSTGRES_USER=${DATABASE_USERNAME:-docker}
       - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
@@ -200,7 +200,7 @@ services:
       - ./certbot-etc:/etc/letsencrypt
     depends_on:
       - web
-    command: certonly --webroot --webroot-path=/var/www/webroot --email admin@qgis.org --agree-tos --no-eff-email --force-renewal -d plugins.qgis.org
+    command: certonly --webroot --webroot-path=/var/www/webroot --email admin@qgis.org --agree-tos --no-eff-email --force-renewal -d hub.qgis.org
     networks:
       internal:
 
