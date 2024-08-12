@@ -1,6 +1,6 @@
 # Introduction
 
-![image](https://user-images.githubusercontent.com/178003/91536115-2356ec80-e90c-11ea-971b-f23ac72d3aea.png)
+![image](./img/Hub_Website.png)
 
 This directory contains the source code for the hub repository server used by
 the QGIS project.
