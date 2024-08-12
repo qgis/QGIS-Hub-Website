@@ -53,8 +53,6 @@ INSTALLED_APPS = [
     "django.contrib.flatpages",
     # full text search postgres
     "django.contrib.postgres",
-    # ABP:
-    "plugins",
     "django.contrib.humanize",
     "django.contrib.syndication",
     "bootstrap_pagination",
@@ -69,7 +67,6 @@ INSTALLED_APPS = [
     "simplemenu",
     "tinymce",
     "rpc4django",
-    "feedjack",
     "preferences",
     "rest_framework",
     'rest_framework.authtoken',
@@ -141,30 +138,7 @@ METABASE_DOWNLOAD_STATS_URL = os.environ.get(
 )
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_BROKER_URL = os.environ.get('BROKER_URL', 'amqp://rabbitmq:5672')
-CELERY_BEAT_SCHEDULE = {
-    'generate_plugins_xml': {
-        'task': 'plugins.tasks.generate_plugins_xml.generate_plugins_xml',
-        'schedule': crontab(minute='*/10'),  # Execute every 10 minutes.
-        'kwargs': {
-            'site': DEFAULT_PLUGINS_SITE
-        }
-    },
-    'update_feedjack': {
-        'task': 'plugins.tasks.update_feedjack.update_feedjack',
-        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
-    },
-    'update_qgis_versions': {
-        'task': 'plugins.tasks.update_qgis_versions.update_qgis_versions',
-        'schedule': crontab(minute='*/30'),  # Execute every 30 minutes.
-    },
-    # Index synchronization sometimes fails when deleting
-    # a plugin and None is listed in the search list. So I think
-    # it would be better if we rebuild the index frequently
-    'rebuild_search_index': {
-        'task': 'plugins.tasks.rebuild_search_index.rebuild_search_index',
-        'schedule': crontab(minute=0, hour=3),  # Execute every day at 3 AM.
-    }
-}
+CELERY_BEAT_SCHEDULE = {}
 # Set plugin token access and refresh validity to a very long duration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),

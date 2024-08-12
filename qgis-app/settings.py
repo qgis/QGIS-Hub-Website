@@ -80,7 +80,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     # Needed by rpc4django
-    "plugins.middleware.HttpAuthMiddleware",
+    "base.middleware.HttpAuthMiddleware",
     "django.contrib.auth.middleware.RemoteUserMiddleware",
     "django.contrib.flatpages.middleware.FlatpageFallbackMiddleware",
     # Added by Tim for advanced loggin options
@@ -148,7 +148,6 @@ INSTALLED_APPS = [
     "djangoratings",
     "lib",
     "endless_pagination",
-    "userexport",
     "bootstrap_pagination",
     "sortable_listview",
     "user_map",
