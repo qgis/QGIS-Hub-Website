@@ -10,7 +10,7 @@ import logging
 import sentry_sdk
 
 """
-    QGIS-DJANGO - MIDDLEWARE
+    QGIS-Hub-Website - MIDDLEWARE
 
     Middlewares to fix behind proxy IP problems
 
