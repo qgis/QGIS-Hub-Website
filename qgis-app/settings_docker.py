@@ -83,7 +83,9 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
-    "matomo"
+    "matomo",
+    # Webpack
+    "webpack_loader"
 ]
 
 DATABASES = {
