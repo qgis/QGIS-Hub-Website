@@ -1,0 +1,72 @@
+{% load i18n resources_tagcloud %}
+
+<div id="tagcloudModal" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card" style="max-height: 50vh; overflow-y: auto">
+    <header class="modal-card-head">
+      <p class="modal-card-title">{{ tags_title }}</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      {% for tag in tags %}{% if tag.slug %}
+      <a
+        style="font-size:{{tag.weight|floatformat:0}}px"
+        href="{% url tags_list_url tag.slug|iriencode %}"
+        >{{tag}}</a
+      >
+      {% endif %}{% endfor %}
+    </section>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log('##################');
+    // Functions to open and close a modal
+    function openModal($el) {
+      $el.classList.add("is-active");
+    }
+
+    function closeModal($el) {
+      $el.classList.remove("is-active");
+    }
+
+    function closeAllModals() {
+      (document.querySelectorAll(".modal") || []).forEach(($modal) => {
+        closeModal($modal);
+      });
+    }
+
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll(".tagcloudModalButton") || []).forEach(
+      ($trigger) => {
+        const modal = $trigger.dataset.target;
+        const $target = document.getElementById(modal);
+        console.log('##################');
+        $trigger.addEventListener("click", () => {
+          openModal($target);
+        });
+      }
+    );
+
+    // Add a click event on various child elements to close the parent modal
+    (
+      document.querySelectorAll(
+        ".modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button"
+      ) || []
+    ).forEach(($close) => {
+      const $target = $close.closest(".modal");
+
+      $close.addEventListener("click", () => {
+        closeModal($target);
+      });
+    });
+
+    // Add a keyboard event to close all modals
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeAllModals();
+      }
+    });
+  });
+</script>

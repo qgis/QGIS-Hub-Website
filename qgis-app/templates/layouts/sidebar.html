@@ -1,0 +1,124 @@
+{% load i18n resources_custom_tags resources_tagcloud simplemenu_tags static %}
+
+<nav id="sidebar" class="sidebar">
+    <ul class="content-wrapper">
+        <li>
+          <div class="has-child">
+            <a class="has-text-weight-bold">
+              <span class="icon">
+                <i class="fas fa-folder"></i>
+              </span>
+              {{ resource_name }}
+            </a>
+          </div>
+          <ul class="unfolded"  id="{{ resource_name }}">
+              {% url url_list as url_list %}
+              <li class="has-child {% if request.path == url_list %}is-active{% endif %}">
+                <a href="{{ url_list }}">
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  {% trans "Approved" %}
+                </a>
+              </li>
+              {% if user.is_authenticated %}
+              {% url url_unapproved as url_unapproved %}
+              <li class="has-child {% if request.path == url_unapproved %}is-active{% endif %}">
+                  <a href="{{ url_unapproved }}">
+                      <span class="icon">
+                        <i class="fas fa-hourglass-half"></i>
+                      </span>
+                      {% trans "Waiting Review" %}
+                  </a>
+              </li>
+              {% url url_require_action as url_require_action %}
+              <li class="has-child {% if request.path == url_require_action %}is-active{% endif %}">
+                  <a href="{{ url_require_action }}">
+                      <span class="icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                      </span>
+                      {% trans "Requiring Update" %}
+                  </a>
+              </li>
+              {% endif %}
+            </ul>
+        </li>
+    {% if resource_name == 'Style' %}
+        <li>
+            <div class="has-child">
+                <a class="has-text-weight-bold">
+                    <span class="icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </span>
+                    {% trans "Style Type" %}
+                </a>
+            </div>
+            <ul class="unfolded" id="styleList"></ul>
+        </li>
+    {% endif %}
+    <li>
+        <div>
+            {% include_resources_tagcloud_modal app_label=app_label model=model_name %}
+        </div>
+    </li>
+    </ul>
+</nav>
+  
+  
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            type: 'GET',
+            url: "{% url url_nav_content %}",
+            success: function (response){
+                if(response.waiting_review){$("#waiting_review").text(response.waiting_review)};
+                if(response.require_action){$("#requiring_action").text(response.require_action)};
+            }
+        })
+
+        {% if resource_name == 'Style' %}
+            $.ajax({
+            type: 'GET',
+            url: "{% url 'style_nav_typelist' %}",
+            success: function (response){
+            let icon_url = response.icon_url;
+            response.qs.forEach(val => {
+            let name = val.fields.name;
+            let icon = val.fields.icon;
+            let encodedName = encodeURIComponent(name);
+            let fullUrl = '/styles/types/' + encodedName + '/';
+            let listItem = `<li class="has-child ${window.location.pathname === fullUrl ? 'is-active' : ''}"><a href="${fullUrl}">`;
+            if (icon) {
+                listItem += `<img src="${icon_url}${icon}" width="12" height="12">&nbsp;`;
+            }
+            listItem += `${name}</a></li>`;
+            $("#styleList").append(listItem);
+            });
+            }
+            });
+        {% endif %}
+
+        // edit search input from base template, in order to use it for related app sharing
+    })
+    function rotateArrow(e) {
+        e.previousElementSibling.querySelector('img').classList.toggle('rotated');
+    }
+
+    function toggleSubMenu(listId) {
+        console.log(listId)
+        let e = document.getElementById(listId);
+        e.classList.toggle('collapsed');
+        rotateArrow(e);
+    }
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('visible');
+        document.getElementById('hamburger-btn').classList.toggle('open');
+    }
+    // expand active section
+    document.querySelectorAll('li.is-active,li:has(.is-active)').forEach(li => {
+        if (e = li.querySelector('ul')) {
+            e.classList.toggle('collapsed');
+        }
+    });
+</script>
