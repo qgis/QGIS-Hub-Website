@@ -34,55 +34,42 @@
     {% block extrajs %}{% endblock %}
 
 </head>
-<body id="page_bg" {% block onload %}{% endblock %}>
+<body {% block onload %}{% endblock %}>
     <qg-top-nav
         breakpoint="1024"
         class="is-highest navbar is-fixed-top"
         location-prefix="https://qgis.org"
     ></qg-top-nav>
     {% include 'layouts/header.html' %}
-    <div id="main_bg">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span3 well" id="leftcolumn" data-spy="scroll">
-                    <a class="related-plugins-collapser" data-toggle="collapse" data-target="#collapse-related-plugins">
-                        Related Plugins and Tags
-                    </a>
-                    <div id="collapse-related-plugins" class="collapse">
-                        {% block leftbar %}
-                            {% block menu %}&nbsp;{% endblock %}
-                        {% endblock %}
-                    </div>
+    {% block pagetitle %}{% endblock %}
+    <section class="section">
+        <div class="container content">
+            <div class="columns is-multiline is-centered">
+                <div class="column is-3">
+                    {% block leftbar %}
+                        {% block menu %}&nbsp;{% endblock %}
+                    {% endblock %}
                 </div>
-                <div class="span9" id="maincolumn">
-                    <section class="info">
-                        {% block app_title %}{% endblock %}
-                    </section>
+                <div class="content column is-9">
                     {% if messages %}
-                    <div class="alert">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <div class="notification is-light">
+                        <button class="delete"></button>
                         {% for message in messages %}
-                        <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</p>
+                            <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</p>
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <div class="responsive-content">
                     {% block content %}
                     {% endblock %}
-                    </div>
-                </div>
-                {% block rightbar %}
-<!--
-                <div class="span2" id="rightcolumn"></div>
--->
-                {% endblock %}
-            </div><!-- end row fluid -->
-        </div><!-- end container fluid -->
 
-        {% get_sustaining_members_section as sustaining_members_section %}
-        {{ sustaining_members_section|safe }}
-        {% include 'layouts/footer.html' %}
-    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% get_sustaining_members_section as sustaining_members_section %}
+    {{ sustaining_members_section|safe }}
+    {% include 'layouts/footer.html' %}
+    
 <script type="text/javascript">
 $('#user-tooltip').tooltip('hide');
 </script>
