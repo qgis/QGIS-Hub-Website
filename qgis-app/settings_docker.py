@@ -163,3 +163,10 @@ if SENTRY_DSN and SENTRY_DSN != "":
         # of transactions for performance monitoring.
         traces_sample_rate=SENTRY_RATE,
     )
+# Webpack
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles',
+        'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats.json'),
+    }
+}

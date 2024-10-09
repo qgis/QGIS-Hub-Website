@@ -85,7 +85,7 @@ services:
       internal:
 
   webpack:
-    container_name: qgis-plugins-webpack
+    container_name: qgis-hub-webpack
     build:
       context: ${PWD}/../
       dockerfile: dockerize/docker/Dockerfile

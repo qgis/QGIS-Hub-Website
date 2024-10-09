@@ -50,3 +50,4 @@ freezegun~=1.4
 sentry-sdk~=2.2
 setuptools~=75.1
 beautifulsoup4~=4.12
+django-webpack-loader~=3.1
