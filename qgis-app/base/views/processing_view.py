@@ -380,12 +380,8 @@ class ResourceBaseListView(ResourceBaseContextMixin, ResourceSearchMixin, ListVi
 
     def get_template_names(self):
         context = self.get_context_data()
-        is_gallery = context["is_gallery"]
-        if is_gallery:
-            self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-            return "base/list_galery.html"
-        else:
-            return "base/list.html"
+        self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+        return "base/list_galery.html"
 
     def get_paginate_by(self, queryset):
         is_gallery = self.request.GET.get("is_gallery", None)
