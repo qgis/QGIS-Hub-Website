@@ -1,9 +1,24 @@
 {% extends 'base/base.html' %}{% load i18n %}
 {% block content %}
-    <h2>{% trans "Delete"%} {{ resource_name }}: {{ object.name }}</h2>
-    <form action="" method="post">{% csrf_token %}
-        <p class="alert alert-danger">{% trans "Are you sure you want to permanently remove this "%}{{ resource_name }}?</p>
-        <p><input type="submit" class="btn btn-danger" name="delete_confirm" value="{% trans "Delete" %}" /> <a class="btn btn-primary" href="{% url url_list %}">{% trans "Cancel" %}</a></p>
-    </form>
-
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">{% trans "Delete"%} {{ resource_name }}: {{ object.name }}</h2>
+            <form action="" method="post">{% csrf_token %}
+                <div class="notification is-danger is-light">
+                    <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                    {% trans "Are you sure you want to permanently remove this "%}{{ resource_name }}?
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="button is-danger" name="delete_confirm">
+                        <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                        <span>{% trans "Delete" %}</span>
+                    </button>
+                    <a class="button" href="{% url url_list %}">
+                        <span class="icon"><i class="fas fa-times"></i></span>
+                        <span>{% trans "Cancel" %}</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
 {% endblock %}
