@@ -1,27 +1,58 @@
 {% load i18n resources_custom_tags%}
-
-<dd></dd>
-<dt>Name</dt>
-<dd>{{ object_detail.name }}</dd>
-<dt>Description</dt>
-<dd>{{ object_detail.description|md_to_html }}</dd>
-<dt>Uploaded Date</dt>
-<dd>{{ object_detail.upload_date|date:"d F Y" }}</dd>
-{% if object_detail.review_set.last.review_date and object_detail.approved%}
-<dt>Approved Date</dt>
-<dd>{{ object_detail.review_set.last.review_date|date:"d F Y"}}</dd>
-{% endif %}
-<dt>Modified Date</dt>
-<dd>{{ object_detail.modified_date|date:"d F Y" }}</dd>
-<dt>Creator</dt>
-<dd>{{ object_detail.get_creator_name|title }}</dd>
-{% if is_qlr %}
-{% include "base/includes/layerdefinition/detail_datasource.html" %}
-{% endif %}
-{# for style app sharing only #}
-{% if object_detail.style_type %}
-<dt>Type</dt>
-<dd>
-  {{ object_detail.style_type.name }}
-</dd>
-{% endif %}
+<div class="columns is-multiline">
+  <div class="column is-12">
+  <label class="label">{% trans "Description" %}:</label>
+  <div>
+    {{ object_detail.description|md_to_html }}
+  </div>
+  </div>
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">{% trans "Uploaded Date" %}:</label>
+      <div class="control truncate">
+        {{ object_detail.upload_date|date:"d F Y" }}
+      </div>
+    </div>
+  </div>
+  {% if object_detail.review_set.last.review_date and object_detail.approved %}
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">{% trans "Approved Date" %}:</label>
+      <div class="control truncate">
+        {{ object_detail.review_set.last.review_date|date:"d F Y" }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">{% trans "Modified Date" %}:</label>
+      <div class="control truncate">
+        {{ object_detail.modified_date|date:"d F Y" }}
+      </div>
+    </div>
+  </div>
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">{% trans "Creator" %}:</label>
+      <div class="control truncate">
+        {{ object_detail.get_creator_name|title }}
+      </div>
+    </div>
+  </div>
+  {% if is_qlr %}
+  <div class="column is-6">
+    {% include "base/includes/layerdefinition/detail_datasource.html" %}
+  </div>
+  {% endif %}
+  {% if object_detail.style_type %}
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">{% trans "Type" %}:</label>
+      <div class="control truncate">
+        {{ object_detail.style_type.name }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>

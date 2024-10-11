@@ -8,50 +8,72 @@
 {% endblock %}
 
 {% block content %}
-        <h3 class="style-title">{{ object_detail.name }}</h3>
-        {% if user == object_detail.creator or user.is_staff %}
-        <div class="row pull-right">
-            <a class="btn btn-primary btn-mini" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}"><i class="icon-pencil icon-white"></i></a>&nbsp
-            <a class="btn btn-danger btn-mini" href="{% url url_delete object_detail.id %}" title="{% trans "Delete" %}"><i class="icon-remove icon-white"></i></a>&nbsp
-        </div>
-        {% endif %}
-        <hr />
-        <div class="row">
-            <div class="span4 mb-5 view-resource">
-                <div class="style-polaroid">
-                  {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
-                    {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-                    <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-                    {% endthumbnail %}
-                  {% endif %}
-                    {% if is_3d_model %}
-                      {% include "base/includes/wavefront/detail_3dviewer.html" %}
-                    {% else %}
-                </div>
-                    {% endif %}
-            </div>
-            <div class="span6 info-resource">
-              <dl class="dl-horizontal">
-                {% include "base/includes/detail_object.html" %}
-                <dt>{{ resource_name }} File</dt>
-                <dd>
-                  <div>
-                        {% if object_detail.file and object_detail.file.file %}
-                          <a class="btn btn-primary btn-mini" href="{% url url_download object_detail.id %}" title="{% trans "Download" %}"><i class="icon-download-alt"></i> Download</a>
-                        {% else %}
-                          <em>File missing: The resource file couldn't be located.</em>
-                        {% endif %}
-                  </div>
-                </dd>
-              </dl>
-            </div>
-
-            {% if license_template %}
-              {% include license_template %}
+<div class="box-content">
+  <div class="columns">
+    <div class="column is-6">
+      <h3 class="title is-4">{{ object_detail.name }}</h3>
+    </div>
+    <div class="column is-6 has-text-right">
+      {% if user == object_detail.creator or user.is_staff %}
+      <div>
+          <a class="button is-success is-small is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
+            <span class="icon is-small">
+              <i class="fas fa-pencil-alt"></i>
+            </span>
+          </a>
+          <a class="button is-danger is-small is-outlined" href="{% url url_delete object_detail.id %}" title="{% trans "Delete" %}">
+            <span class="icon is-small">
+              <i class="fas fa-trash-alt"></i>
+            </span>
+            </a>
+            {% if object_detail.file and object_detail.file.file %}
+            <button class="button is-small" 
+               onclick="location.href='{% url url_download object_detail.id %}'" 
+               title="{% trans "Download" %}">
+              <span class="icon is-small">
+              <i class="fas fa-download"></i>
+              </span>
+              <span>{% trans "Download" %}</span>
+            </button>
+            {% else %}
+            <button class="button is-small" 
+               title="{% trans "File missing: The resource file couldn't be located." %}" 
+               disabled>
+              <span class="icon is-small">
+              <i class="fas fa-exclamation-triangle"></i>
+              </span>
+              <span>{% trans "File missing" %}</span>
+            </button>
             {% endif %}
-
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <hr />
+  <div class="columns">
+    <div class="column is-6 is-flex is-justify-content-center is-align-items-start">
+      <div class="style-polaroid">
+        {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
+          {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
+          <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+          {% endthumbnail %}
+        {% endif %}
+          {% if is_3d_model %}
+            {% include "base/includes/wavefront/detail_3dviewer.html" %}
+          {% endif %}
         </div>
+    
+    </div>
+    <div class="column is-6">
+      {% include "base/includes/detail_object.html" %}
 
+    </div>
+  </div>
+  <hr />
+  {% if license_template %}
+    {% include license_template %}
+  {% endif %}
+</div>
 
   {% for js_src in js %}
     <script type="{% if not js_src.type %}text/javascript{% else %}{{ js_src.type }}{% endif %}" src="{% static js_src.src %}"></script>
