@@ -1,14 +1,20 @@
 {% load i18n resources_custom_tags%}
 <div class="columns is-multiline">
   <div class="column is-12">
-  <label class="label">{% trans "Description" %}:</label>
-  <div>
-    {{ object_detail.description|md_to_html }}
-  </div>
+    <label class="label">
+      <span class="icon"><i class="fas fa-info-circle"></i></span>
+      {% trans "Description" %}:
+    </label>
+    <div>
+      {{ object_detail.description|md_to_html }}
+    </div>
   </div>
   <div class="column is-6">
     <div class="field">
-      <label class="label">{% trans "Uploaded Date" %}:</label>
+      <label class="label">
+        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+        {% trans "Uploaded Date" %}:
+      </label>
       <div class="control truncate">
         {{ object_detail.upload_date|date:"d F Y" }}
       </div>
@@ -17,7 +23,10 @@
   {% if object_detail.review_set.last.review_date and object_detail.approved %}
   <div class="column is-6">
     <div class="field">
-      <label class="label">{% trans "Approved Date" %}:</label>
+      <label class="label">
+        <span class="icon"><i class="fas fa-check-circle"></i></span>
+        {% trans "Approved Date" %}:
+      </label>
       <div class="control truncate">
         {{ object_detail.review_set.last.review_date|date:"d F Y" }}
       </div>
@@ -26,7 +35,10 @@
   {% endif %}
   <div class="column is-6">
     <div class="field">
-      <label class="label">{% trans "Modified Date" %}:</label>
+      <label class="label">
+        <span class="icon"><i class="fas fa-edit"></i></span>
+        {% trans "Modified Date" %}:
+      </label>
       <div class="control truncate">
         {{ object_detail.modified_date|date:"d F Y" }}
       </div>
@@ -34,21 +46,25 @@
   </div>
   <div class="column is-6">
     <div class="field">
-      <label class="label">{% trans "Creator" %}:</label>
+      <label class="label">
+        <span class="icon"><i class="fas fa-user"></i></span>
+        {% trans "Creator" %}:
+      </label>
       <div class="control truncate">
         {{ object_detail.get_creator_name|title }}
       </div>
     </div>
   </div>
   {% if is_qlr %}
-  <div class="column is-6">
-    {% include "base/includes/layerdefinition/detail_datasource.html" %}
-  </div>
+  {% include "base/includes/layerdefinition/detail_datasource.html" %}
   {% endif %}
   {% if object_detail.style_type %}
   <div class="column is-6">
     <div class="field">
-      <label class="label">{% trans "Type" %}:</label>
+      <label class="label">
+        <span class="icon"><i class="fas fa-palette"></i></span>
+        {% trans "Type" %}:
+      </label>
       <div class="control truncate">
         {{ object_detail.style_type.name }}
       </div>

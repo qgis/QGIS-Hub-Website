@@ -50,25 +50,17 @@
     </div>
   </div>
   <hr />
-  <div class="columns">
-    <div class="column is-6 is-flex is-justify-content-center is-align-items-start">
-      <div class="style-polaroid">
-        {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
-          {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-          <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-          {% endthumbnail %}
-        {% endif %}
-          {% if is_3d_model %}
-            {% include "base/includes/wavefront/detail_3dviewer.html" %}
-          {% endif %}
-        </div>
-    
-    </div>
-    <div class="column is-6">
-      {% include "base/includes/detail_object.html" %}
-
-    </div>
+  <div class="style-polaroid">
+    {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
+      {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
+      <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+      {% endthumbnail %}
+    {% endif %}
+      {% if is_3d_model %}
+        {% include "base/includes/wavefront/detail_3dviewer.html" %}
+      {% endif %}
   </div>
+  {% include "base/includes/detail_object.html" %}
   <hr />
   {% if license_template %}
     {% include license_template %}
