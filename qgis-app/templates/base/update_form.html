@@ -71,12 +71,12 @@ ul.as-list {
 {% endblock %}
 
 {% block content %}
-    <h2>{% trans "Update" %} {{ resource_name }}: {{ object.name }}</h2>
+    <h2 class="title is-4">{% trans "Update" %} {{ resource_name }}: {{ object.name }}</h2>
     <p class="help">{% trans "To update your" %} {{ resource_name }}{% trans ", you can change the value in the input field." %}</p>
 
     {% if form.non_field_errors %}
-    <div class="alert alert-error">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <div class="notification is-danger">
+        <button class="delete" type="button"></button>
         {% for error in form.non_field_errors %}
             <p>{{ error }}</p>
         {% endfor %}
@@ -86,7 +86,14 @@ ul.as-list {
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% include "base/form_snippet.html" %}
-        <button class="btn btn-primary" type="submit">{% trans "Update" %}</button>
+        <div class="form-actions has-text-right mt-3">
+            <button class="button is-success" type="submit">
+            <span class="icon is-small">
+                <i class="fas fa-check"></i>
+            </span>
+            <span>{% trans "Update" %}</span>
+            </button>
+        </div>
     </form>
 
 {% endblock %}
