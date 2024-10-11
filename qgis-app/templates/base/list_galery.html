@@ -47,6 +47,7 @@
   .image-info {
     margin-left: 5px;
   }
+
 </style>
 {% endblock %}
 
@@ -74,7 +75,7 @@
 	</div>
 
 	{% if object_list.count %}
-	<div class="mt-3 is-flex is-justify-content-space-between is-flex-wrap-wrap">
+	<div class="pt-3 is-flex is-justify-content-space-between is-flex-wrap-wrap list-options">
 		<div>
 			<div class="field has-addons">
 			<p class="control">
@@ -118,6 +119,43 @@
     {% include 'base/list_pagination.html' %}
   </div>
 
+  <script>
+    function adjustHeaderWidth() {
+      const table = document.getElementById('myTable');
+      const header = table.querySelector('thead');
+      const headerCells = header.querySelectorAll('th');
+      const bodyCells = table.querySelectorAll('tbody tr:first-child td');
+      const offsetTop = table.offsetTop;
+      const listOptions = document.querySelector('.list-options');
+
+      // Check if we need to make the header sticky
+      if (window.scrollY >= offsetTop) {
+        header.classList.add('sticky-header');
+
+        // Set the width of each header cell to match the corresponding body cell
+        headerCells.forEach((th, index) => {
+          th.style.width = `${bodyCells[index].offsetWidth}px`;
+        });
+
+        // Set the top position of the sticky header based on the height of the list-options
+        header.style.top = `${listOptions.offsetHeight + 112}px`;
+      } else {
+        header.classList.remove('sticky-header');
+
+        // Reset header cell widths when sticky is removed
+        headerCells.forEach((th) => {
+          th.style.width = '';
+        });
+
+        // Reset the top position of the header
+        header.style.top = '';
+      }
+    }
+
+    window.addEventListener('scroll', adjustHeaderWidth);
+    window.addEventListener('load', adjustHeaderWidth);
+    window.addEventListener('resize', adjustHeaderWidth);
+  </script>
   <script>
 		$('#table-view-btn').on('click', function() {
 			$('#table-view').removeClass('is-hidden');

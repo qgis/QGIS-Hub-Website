@@ -1,11 +1,13 @@
 {% load i18n humanize static thumbnail %}
 
-<table class="table is-striped is-fullwidth">
+<table id="myTable" class="table is-striped is-fullwidth">
     <thead>
         <tr>
             <th></th>
             <th> Name </th>
-            <th> Type </th>
+            {%if resource_name == 'Style' %}
+                <th> Type </th>
+            {% endif %}
             <th>
                 <i class="fas fa-download" title="{% trans 'Download Count' %}"></i>
             </th>
@@ -27,7 +29,9 @@
                 {% endif %}
                 </td>
                 <td><a href="{% url url_detail pk=object.id %}">{{ object.name|title }}</a></td>
-                <td><span class="center-vertical">{{ object.object_type.name|title }}</span></td>
+                {% if object.style_type %}
+                    <td><span class="center-vertical">{{ object.style_type.name|title }}</span></td>
+                {% endif %}
                 <td>{{ object.download_count }}</td>
                 <td>{{ object.get_creator_name|title }}</td>
                 <td>{{ object.upload_date|date:"d F Y" }}</td>
