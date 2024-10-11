@@ -1,4 +1,7 @@
 require('../style/scss/style.scss');
+import $ from 'jquery';
+
+window.$ = $;
 
  document.addEventListener('DOMContentLoaded', () => {
 

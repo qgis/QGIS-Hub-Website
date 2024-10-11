@@ -1,6 +1,7 @@
 const path = require('path');
 const BundleTracker = require('webpack-bundle-tracker');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 const mode = process.argv.indexOf("production") !== -1 ? "production" : "development";
 console.log(`Webpack mode: ${mode}`);
@@ -10,6 +11,11 @@ let plugins = [
   new MiniCssExtractPlugin({
     filename: 'css/[name].[contenthash].css',
   }),
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+    'window.jQuery': 'jquery'
+  })
 ];
 
 if (mode === 'development') {

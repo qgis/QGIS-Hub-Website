@@ -19,9 +19,6 @@
 
     <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
 
-    <script type="text/javascript" src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap-3.4.1.min.js" %}"></script>
-
     <!-- Cookie disclaimer -->
     <script type="text/javascript" id="cookieinfo" src="{% static 'js/cookieinfo/cookieinfo.min.js' %}" data-bg="#1c2028"
             data-fg="#FFFFFF" data-link="#22961c" data-cookie="CookieInfoScript" data-text-align="left"
@@ -70,9 +67,6 @@
     {{ sustaining_members_section|safe }}
     {% include 'layouts/footer.html' %}
     
-<script type="text/javascript">
-$('#user-tooltip').tooltip('hide');
-</script>
 <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/local_timezone-1.0.js' %}"></script>
 <style>

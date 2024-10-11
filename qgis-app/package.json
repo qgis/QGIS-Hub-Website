@@ -12,9 +12,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "highlight.js": "^11.9.0",
+    "jquery": "^3.7.1"
+  },
   "devDependencies": {
     "css-loader": "^6.8.1",
-    "highlight.js": "^11.9.0",
     "mini-css-extract-plugin": "^2.7.6",
     "sass": "^1.77.8",
     "sass-loader": "^13.3.2",
