@@ -50,15 +50,17 @@
     </div>
   </div>
   <hr />
-  <div class="style-polaroid">
-    {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
-      {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-      <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-      {% endthumbnail %}
-    {% endif %}
-      {% if is_3d_model %}
-        {% include "base/includes/wavefront/detail_3dviewer.html" %}
+  <div class="view-resource mb-3">
+    <div class="style-polaroid">
+      {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
+        {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
+        <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+        {% endthumbnail %}
       {% endif %}
+        {% if is_3d_model %}
+          {% include "base/includes/wavefront/detail_3dviewer.html" %}
+        {% endif %}
+    </div>
   </div>
   {% include "base/includes/detail_object.html" %}
   <hr />
