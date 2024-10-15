@@ -1,0 +1,26 @@
+{% load static %}
+<section class="hero is-dark is-medium has-bg-img" style="background: url({% static "images/hegobg1.webp" %});
+background-position: 50%;
+background-size: cover;">
+<div class="hero-body">
+    <div class="columns container">
+        <div class="column is-8 is-flex hero-text has-text-left">
+            <div class="hero-container">
+                <div class="label">Free and Open Source</div>
+                <h1 class="title hero-title pr-3">
+                    {{title}}
+                </h1>
+                <p class="subtitle hero-subtitle">
+                    Discover a wealth of resources for QGIS including styles, models, 3D models, projects, and QLR files.
+                </p>
+            </div>
+
+        </div>
+        <div class="logo column is-justify-content-center">
+            <figure class="image">
+                <img src="{% static "images/large-logo.svg" %}">
+            </figure>
+        </div>
+    </div>
+</div>
+</section>
