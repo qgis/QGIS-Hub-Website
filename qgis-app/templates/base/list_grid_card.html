@@ -31,22 +31,14 @@ is-one-third-fullhd">
         </div>
         <div class="card-content is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100%;">
             <div class="content mb-0">
-                <p class="title is-5">{{ object.name }}</p>
-                <p class="subtitle">
-                    {{ object.get_creator_name }} | {{ object.upload_date|date:"d F Y" }} 
+                <p class="title is-5 mb-5">{{ object.name }}</p>
+                <p class="subtitle is-7 is-italic">
+                    by {{ object.get_creator_name }}, {{ object.upload_date|date:"d F Y" }} 
                 </p>
 
             </div>
             <p style="height: 100%;"></p>
             <div class="content mb-0">
-                <p class="p-1">
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </span>
-                        <span>{{ object.modified_date|date:"d F Y" }}</span>
-                    </span>
-                </p>
                 <div class="p-1">
                     {% if object.style_type %}
                       Style Type: {{ object.style_type.name|title }}
@@ -54,6 +46,14 @@ is-one-third-fullhd">
                       {{ object.description|md_to_html|striptags|truncatewords:15 }}
                     {% endif %}
                 </div>
+                <p class="p-1">
+                    <span class="icon-text is-size-7 has-text-weight-medium">
+                        <span class="icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                        <span>Updated on {{ object.modified_date|date:"d F Y" }}</span>
+                    </span>
+                </p>
             </div>
         </div>
 
