@@ -96,3 +96,12 @@ def get_sustaining_members_section():
             return "Section not found"
     except requests.RequestException as e:
         return f"Error: {e}"
+
+@register.filter
+def get_string_tags(tags):
+    """
+    Get the string representation of tags
+    """
+    if not tags:
+        return ''
+    return ', '.join([tag.name for tag in tags])

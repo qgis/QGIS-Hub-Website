@@ -5,13 +5,13 @@
 let disableSubmit = () =>{
     $("#licenseAgreed").prop('disabled', true);
     $("#licenseAgreed").removeClass()
-    $("#licenseAgreed").addClass("btn")
+    $("#licenseAgreed").addClass("button")
 }
 
 let enableSubmit = () => {
     $("#licenseAgreed").prop('disabled', false);
     $("#licenseAgreed").removeClass()
-    $("#licenseAgreed").addClass("btn btn-primary")
+    $("#licenseAgreed").addClass("button is-success")
 }
 
 // Disable submit button

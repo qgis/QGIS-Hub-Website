@@ -328,3 +328,11 @@ a.is-active > span {
     height: 16px;
     display:block;
   }
+
+#tag-suggestions {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  max-height: 250px;
+  overflow: auto;
+}
