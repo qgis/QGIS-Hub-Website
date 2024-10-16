@@ -3,6 +3,17 @@
 <nav id="sidebar" class="sidebar">
     <ul class="content-wrapper">
         <li>
+          <a class="button is-success is-medium has-text-weight-medium" href="{% url url_create %}">
+              <span class="icon">
+              <i class="fas fa-upload"></i>
+              </span>
+              <span class="">
+              {% trans "Upload" %}
+              </span>
+          </a>
+        </li>
+        <hr/>
+        <li>
           <div class="has-child">
             <a class="has-text-weight-bold">
               <span class="icon">
