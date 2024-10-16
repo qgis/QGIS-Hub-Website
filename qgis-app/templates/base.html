@@ -67,6 +67,8 @@
     {% get_sustaining_members_section as sustaining_members_section %}
     {{ sustaining_members_section|safe }}
     {% include 'layouts/footer.html' %}
+
+    {% include 'base/includes/resources_tags_modal.html' %}
     
 <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/local_timezone-1.0.js' %}"></script>

@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags %}
+{% extends 'base/base.html' %}{% load i18n bootstrap_pagination humanize static thumbnail resources_custom_tags resources_tagcloud %}
 
 {% block extrajs %}
 {{ block.super }}
@@ -52,6 +52,7 @@
 {% endblock %}
 
 {% block content %}
+  {% include_resources_tags_modal app_label=app_label model=model_name %}
   <h2 class="title is-4">{% if title %}{{title}}{% else %}{% trans "All" %} {{ resource_name }}s{% endif %}</h2>
 
 	<div class="container rich tips mb-3">
