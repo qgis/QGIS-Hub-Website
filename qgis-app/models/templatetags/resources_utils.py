@@ -97,6 +97,13 @@ def get_sustaining_members_section():
     except requests.RequestException as e:
         return f"Error: {e}"
 
+@register.simple_tag
+def get_navigation_menu():
+    """
+    Get the navigation menu from the settings
+    """
+    return settings.NAVIGATION_MENU
+
 @register.filter
 def get_string_tags(tags):
     """

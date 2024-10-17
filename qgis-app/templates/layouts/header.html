@@ -1,4 +1,4 @@
-{% load i18n simplemenu_tags static %}
+{% load i18n simplemenu_tags resources_utils static %}
 <div class="box mb-0 context-container" id="context">
     <div class="container">
         <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -16,24 +16,44 @@
             
             <div id="pluginsNavbar" class="navbar-menu">
                 <div class="navbar-start">
-                    <a 
-                    class="navbar-item has-text-weight-semibold is-size-7" 
-                    href="/">
-                        <span>QGIS Hub Home</span>
-                    </a>
-                    
-                    {% get_namedmenu Hub as Hub %}
-                        {% for item in Hub %}
-                            <a 
-                            class="navbar-item has-text-weight-semibold is-size-7" 
-                            href="{{ item.page.url }}">
+                    {% get_navigation_menu as NAVIGATION_MENU %}
+                    {% for item in NAVIGATION_MENU %}
+                        {% if item.submenu %}
+                            <div class="navbar-item has-dropdown is-hoverable">
+                                <a class="navbar-link has-text-weight-semibold is-size-7">
+                                    <span class="icon">
+                                        <i class="fas {{ item.icon }}"></i>
+                                    </span>
+                                    <span>{{ item.name }}</span>
+                                </a>
+                                <div class="navbar-dropdown">
+                                    {% for subitem in item.submenu %}
+                                        <a class="navbar-item has-text-weight-semibold is-size-7" href="{{ subitem.url }}">
+                                            <span class="icon">
+                                                <i class="fas {{ subitem.icon }}"></i>
+                                            </span>
+                                            <span>{{ subitem.name }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <a class="navbar-item has-text-weight-semibold is-size-7" href="{{ item.url }}">
+                                <span class="icon">
+                                    <i class="fas {{ item.icon }}"></i>
+                                </span>
                                 <span>{{ item.name }}</span>
                             </a>
-                        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
                     {% if user.is_authenticated and user.is_staff %}
                     <a class="navbar-item has-text-weight-semibold is-size-7" href="/admin">
-                        <i class="fas fa-tools mr-3"></i>
-                        {% trans "Admin" %}
+                        <span class="icon mr-2">
+                            <i class="fas fa-tools"></i>
+                        </span>
+                        <span>
+                            {% trans "Admin" %}
+                        </span>
                     </a>
                     {% endif %}
 

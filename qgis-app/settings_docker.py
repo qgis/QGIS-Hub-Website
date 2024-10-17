@@ -170,3 +170,62 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats.json'),
     }
 }
+# Set the navigation menu
+NAVIGATION_MENU = [
+    {
+        'name': 'QGIS Hub Home',
+        'url': '/',
+        'icon': 'fa-house',
+        'order': 0,
+    },
+    {
+        'name': 'Hub',
+        'url': '#',
+        'icon': 'fa-cubes',
+        'order': 1,
+        'submenu': [
+            {
+                'name': 'Styles',
+                'url': '/styles',
+                'icon': 'fa-paint-brush',
+                'order': 1,
+            },
+            {
+                'name': 'Projects',
+                'url': '/geopackages',
+                'icon': 'fa-folder-open',
+                'order': 2,
+            },
+            {
+                'name': 'Models',
+                'url': '/models',
+                'icon': 'fa-cogs',
+                'order': 3,
+            },
+            {
+                'name': '3D Models',
+                'url': '/wavefronts',
+                'icon': 'fa-cube',
+                'order': 4,
+            },
+            {
+                'name': 'QLR',
+                'url': '/layerdefinitions',
+                'icon': 'fa-layer-group',
+                'order': 5,
+            }
+        ]
+    },
+    {
+        'name': 'API',
+        'url': '/api/v1/resources/',
+        'icon': 'fa-code',
+        'order': 2,
+    },
+    {
+        'name': 'Metrics',
+        'url': METABASE_DOWNLOAD_STATS_URL,
+        'icon': 'fa-chart-bar',  # Changed to a more accurate icon
+        'order': 4,
+    }
+]
