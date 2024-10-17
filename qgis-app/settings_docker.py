@@ -170,6 +170,41 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats.json'),
     }
 }
+
+
+HUB_SUBMENU = [
+    {
+        'name': 'Styles',
+        'url': '/styles/?sort=upload_date&order=desc',
+        'icon': 'fa-paint-brush',
+        'order': 1,
+    },
+    {
+        'name': 'Projects',
+        'url': '/geopackages/?sort=upload_date&order=desc',
+        'icon': 'fa-folder-open',
+        'order': 2,
+    },
+    {
+        'name': 'Models',
+        'url': '/models/?sort=upload_date&order=desc',
+        'icon': 'fa-cogs',
+        'order': 3,
+    },
+    {
+        'name': '3D Models',
+        'url': '/wavefronts/?sort=upload_date&order=desc',
+        'icon': 'fa-cube',
+        'order': 4,
+    },
+    {
+        'name': 'QLR',
+        'url': '/layerdefinitions/?sort=upload_date&order=desc',
+        'icon': 'fa-layer-group',
+        'order': 5,
+    }
+]
+
 # Set the navigation menu
 NAVIGATION_MENU = [
     {
@@ -183,38 +218,7 @@ NAVIGATION_MENU = [
         'url': '#',
         'icon': 'fa-cubes',
         'order': 1,
-        'submenu': [
-            {
-                'name': 'Styles',
-                'url': '/styles',
-                'icon': 'fa-paint-brush',
-                'order': 1,
-            },
-            {
-                'name': 'Projects',
-                'url': '/geopackages',
-                'icon': 'fa-folder-open',
-                'order': 2,
-            },
-            {
-                'name': 'Models',
-                'url': '/models',
-                'icon': 'fa-cogs',
-                'order': 3,
-            },
-            {
-                'name': '3D Models',
-                'url': '/wavefronts',
-                'icon': 'fa-cube',
-                'order': 4,
-            },
-            {
-                'name': 'QLR',
-                'url': '/layerdefinitions',
-                'icon': 'fa-layer-group',
-                'order': 5,
-            }
-        ]
+        'submenu': HUB_SUBMENU
     },
     {
         'name': 'API',

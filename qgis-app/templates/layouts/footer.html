@@ -9,11 +9,11 @@
             </div>
             <div class="column mb-6">
                 <div class="columns is-desktop">
-                    {% get_namedmenu Hub as Hub %}
+                    {% get_hub_submenu as Hub %}
                     {% for item in Hub %}
                     <ul class="column mb-5">
                         <li class="is-size-5 mb-5">
-                            <a href="{{ item.page.url }}" class="footertitle text-nowrap">
+                            <a href="{{ item.url }}" class="footertitle text-nowrap">
                                 {{ item.name }}
                             </a>
                         </li>

@@ -104,6 +104,13 @@ def get_navigation_menu():
     """
     return settings.NAVIGATION_MENU
 
+@register.simple_tag
+def get_hub_submenu():
+    """
+    Get the Hub submenu from the settings
+    """
+    return settings.HUB_SUBMENU
+
 @register.filter
 def get_string_tags(tags):
     """
