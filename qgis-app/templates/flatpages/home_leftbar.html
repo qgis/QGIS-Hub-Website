@@ -15,10 +15,10 @@
                         <span class="mr-2">
                             {% if style.thumbnail_image and style.thumbnail_image.file %}
                                 {% thumbnail style.thumbnail_image "16x16" format="PNG" as im %}
-                                    <img class="object-icon" alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
                                 {% endthumbnail %}
                             {% else %}
-                                <img height="16" width="16" class="object-icon" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
                             {% endif %}
                         </span>
                         {{ style.name }}
@@ -42,10 +42,10 @@
                         <span class="mr-2">
                             {% if geopackage.thumbnail_image and geopackage.thumbnail_image.file %}
                                 {% thumbnail geopackage.thumbnail_image "16x16" format="PNG" as im %}
-                                    <img class="object-icon" alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
                                 {% endthumbnail %}
                             {% else %}
-                                <img height="16" width="16" class="object-icon" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
                             {% endif %}
                         </span>
                         {{ geopackage.name }}
@@ -69,10 +69,10 @@
                         <span class="mr-2">
                             {% if model.thumbnail_image and model.thumbnail_image.file %}
                                 {% thumbnail model.thumbnail_image "16x16" format="PNG" as im %}
-                                    <img class="object-icon" alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
                                 {% endthumbnail %}
                             {% else %}
-                                <img height="16" width="16" class="object-icon" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
                             {% endif %}
                         </span>
                         {{ model.name }}
@@ -96,10 +96,10 @@
                         <span class="mr-2">
                             {% if wavefront.thumbnail_image and wavefront.thumbnail_image.file %}
                                 {% thumbnail wavefront.thumbnail_image "16x16" format="PNG" as im %}
-                                    <img class="object-icon" alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
                                 {% endthumbnail %}
                             {% else %}
-                                <img height="16" width="16" class="object-icon" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
                             {% endif %}
                         </span>
                         {{ wavefront.name }}
@@ -123,10 +123,10 @@
                         <span class="mr-2">
                             {% if layerdefinition.thumbnail_image and layerdefinition.thumbnail_image.file %}
                                 {% thumbnail layerdefinition.thumbnail_image "16x16" format="PNG" as im %}
-                                    <img class="object-icon" alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
                                 {% endthumbnail %}
                             {% else %}
-                                <img height="16" width="16" class="object-icon" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
                             {% endif %}
                         </span>
                         {{ layerdefinition.name }}

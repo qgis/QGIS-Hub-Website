@@ -1,4 +1,4 @@
-.plugins-list-table, .versions-list-table
+.resources-list-table, .versions-list-table
   color: inherit
   tr:hover
     background-color: #ECF1F4
@@ -13,6 +13,8 @@
     width: 150px
     overflow: hidden
     text-overflow: ellipsis
+  .object-thumbnail
+    min-width: 50px
   .author
     display: block
     white-space: nowrap
@@ -22,7 +24,7 @@
   .pointer
     cursor: pointer
 
-.plugins-list-grid
+.resources-list-grid
   .card:hover
     background-color: #ECF1F4
     cursor: pointer
@@ -113,7 +115,7 @@
     border-top: 3px solid $danger
 
 div
-  &.plugins-list-table, .versions-list-table
+  &.resources-table, .versions-list-table
     background: #f4f7f978
     padding: 2rem
     border-radius: 10px

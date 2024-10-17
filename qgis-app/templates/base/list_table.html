@@ -1,6 +1,6 @@
 {% load i18n humanize static thumbnail %}
 
-<table id="myTable" class="table is-striped is-fullwidth">
+<table id="myTable" class="table is-fullwidth resources-list-table">
     <thead>
         <tr>
             <th></th>
@@ -18,23 +18,25 @@
     </thead>
     <tbody>
         {% for object in object_list %}
-            <tr>
-                <td>
+            <tr onclick="window.location.href='{% url url_detail pk=object.id %}';">
+                <td class="object-thumbnail">
                 {% if object.thumbnail_image and object.thumbnail_image.file %}
-                    {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
-                        <img class="object-icon" alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    {% thumbnail object.thumbnail_image "96x96" format="PNG" as im %}
+                        <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
                 {% else %}
                     <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
                 </td>
-                <td><a href="{% url url_detail pk=object.id %}">{{ object.name|title }}</a></td>
+                <td>{{ object.name|title }}</td>
                 {% if object.style_type %}
-                    <td><span class="center-vertical">{{ object.style_type.name|title }}</span></td>
+                    <td class="has-text-centered">
+                        <span class="tag is-info is-light">{{ object.style_type.name|title }}</span>
+                    </td>
                 {% endif %}
-                <td>{{ object.download_count }}</td>
+                <td>{{ object.download_count|intcomma }}</td>
                 <td>{{ object.get_creator_name|title }}</td>
-                <td>{{ object.upload_date|date:"d F Y" }}</td>
+                <td>{{ object.upload_date|date:"d M. Y" }}</td>
                 <td>
                     {% if user.is_staff or user == object.creator %}
                     <a class="button is-small is-success is-outlined" href="{% url url_update pk=object.id %}" title="{% trans "Edit" %}"><i class="fas fa-pencil-alt"></i></a>
