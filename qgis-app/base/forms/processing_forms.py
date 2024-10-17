@@ -20,12 +20,13 @@ class ResourceBaseReviewForm(forms.Form):
         super(ResourceBaseReviewForm, self).__init__(*args, **kwargs)
         self.fields["comment"].widget = forms.Textarea(
             attrs={
-                "placeholder": _(
-                    "Please provide clear feedback if you decided to not "
-                    "approve this %s."
-                )
-                % self.resource_name,
-                "rows": "5",
+            "placeholder": _(
+                "Please provide clear feedback if you decided to not "
+                "approve this %s."
+            )
+            % self.resource_name,
+            "rows": "5",
+            "class": "textarea",
             }
         )
 
