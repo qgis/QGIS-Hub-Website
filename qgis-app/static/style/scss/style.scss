@@ -235,9 +235,8 @@ a.is-active > span {
 }
 
 .login-container {
-  // box-shadow: 0 8px 12px 0 rgba(60, 60, 60, 0.75);
-  // border-radius: 20px;
-  max-width: 500px;
+  max-width: 100%;
+  min-width: 40dvw;
 }
 
 .login-container hr {
@@ -335,4 +334,27 @@ a.is-active > span {
   z-index: 1;
   max-height: 250px;
   overflow: auto;
+}
+
+.is-image-block { 
+  /* url to be inlined in html style=... */
+  background-image: url(""); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat:no-repeat;
+}
+
+.is-min-height {
+  min-height: 300px;
+}
+
+.is-vcentered {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center; /* used this for multiple child */
+  align-items: center; /* if an only child */
+}
+
+.is-transparent {
+  background-color:rgba(0, 0, 0, 0) !important;
 }
