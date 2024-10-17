@@ -71,4 +71,19 @@
     </div>
   </div>
   {% endif %}
+  {% if object_detail.tags.all %}
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">
+        <span class="icon"><i class="fas fa-tags"></i></span>
+        {% trans "Tags" %}:
+        </label>
+        <div class="control">
+          {% for tag in object_detail.tags.all %}
+            <span class="tag is-info mt-1">{{ tag.name }}</span>
+          {% endfor %}
+        </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
