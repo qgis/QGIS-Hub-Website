@@ -7,6 +7,6 @@ class TestFormResourceBaseReviewForm(TestCase):
         form = ResourceBaseReviewForm(resource_name="test resource")
         self.assertIn(
             'placeholder="Please provide clear feedback if you decided to not '
-            'approve this test resource." required id="id_comment"',
+            'approve this test resource." class="textarea" required id="id_comment"',
             form.as_table(),
         )

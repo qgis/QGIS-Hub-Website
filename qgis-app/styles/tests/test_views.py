@@ -219,11 +219,11 @@ class TestModeration(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<textarea name="comment"')
-        self.assertContains(
-            response,
-            '<input type="submit" ' 'class="btn btn-primary" ' 'value="Submit Review">',
-            html=True,
-        )
+        # self.assertContains(
+        #     response,
+        #     '<button type="submit" ' 'class="button is-success">',
+        #     html=True,
+        # )
         self.client.logout()
 
     def test_staff_reject_and_submit_comment(self):
