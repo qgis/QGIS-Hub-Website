@@ -1,6 +1,7 @@
 from base.validator import filesize_validator
 from django import forms
 from django.utils.translation import gettext_lazy as _
+import os
 
 
 class ResourceBaseReviewForm(forms.Form):
@@ -49,5 +50,7 @@ class ResourceBaseCleanFileForm(object):
         """
 
         file = self.cleaned_data["file"]
-        if filesize_validator(file.file):
+        file_extension = os.path.splitext(file.name)[1]
+        is_gpkg = file_extension == ".gpkg"
+        if filesize_validator(file.file, is_gpkg):
             return file
