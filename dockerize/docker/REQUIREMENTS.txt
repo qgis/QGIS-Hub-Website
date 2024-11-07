@@ -26,6 +26,10 @@ django-debug-toolbar~=4.2
 whoosh~=2.7
 django-haystack~=3.2
 
+celery~=5.3
+
+# pin due to issues with a breaking change
+# https://github.com/celery/celery/issues/7783
 importlib_metadata<5
 
 requests~=2.31
