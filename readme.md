@@ -1,6 +1,6 @@
 # Introduction
 
-![image](./img/Hub_Website.png)
+![image](./img/homepage.webp)
 
 This directory contains the source code for the hub repository server used by
 the QGIS project.
