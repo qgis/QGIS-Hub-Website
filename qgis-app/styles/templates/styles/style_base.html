@@ -1,7 +1,8 @@
 {% extends BASE_TEMPLATE %}{% load i18n static thumbnail %}
 {% block extratitle %}{% trans "Style"%}{% endblock %}
+
 {% block app_title %}
-<h2 xmlns="http://www.w3.org/1999/html">{% trans "QGIS Style"%}</h2>
+    <h2>{% trans "QGIS Style"%}</h2>
 {% endblock %}
 
 {% block extrajs %}
@@ -11,9 +12,6 @@
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             text-align: center;
             margin-top: 23px;
-        }
-        div.style-polaroid, div.span12.license {
-            margin-left: 1em;
         }
         .style-title {
             margin-bottom: 0;
@@ -73,6 +71,3 @@
     
 {% endblock %}
 
-{% block "credits" %}
-{% trans "This web application was developed by:" %}&nbsp;<a href="https://www.itopen.it">Alessandro Pasotti</a> and &nbsp;<a href="https://kartoza.com"><img src="{% static 'images/kartoza-logo-only.png' %}" alt="Kartoza icon" width="16" height="16">Kartoza</a>.
-{% endblock %}

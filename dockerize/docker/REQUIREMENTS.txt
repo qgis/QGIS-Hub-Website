@@ -26,6 +26,10 @@ django-debug-toolbar~=4.2
 whoosh~=2.7
 django-haystack~=3.2
 
+celery~=5.3
+
+# pin due to issues with a breaking change
+# https://github.com/celery/celery/issues/7783
 importlib_metadata<5
 
 requests~=2.31
@@ -49,3 +53,5 @@ freezegun~=1.4
 
 sentry-sdk~=2.2
 setuptools~=75.1
+beautifulsoup4~=4.12
+django-webpack-loader~=3.1

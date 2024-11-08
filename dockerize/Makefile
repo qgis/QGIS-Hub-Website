@@ -193,6 +193,13 @@ exec:
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) $(c)
 
+get-sustaining-members:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Collecting static in production mode"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) run uwsgi python manage.py get_sustaining_members
+
 # ----------------------------------------------------------------------------
 #    D E V E L O P M E N T    C O M M A N D S
 # ----------------------------------------------------------------------------
@@ -216,7 +223,7 @@ devweb: db
 	@echo "------------------------------------------------------------------"
 	@echo "Running in DEVELOPMENT mode"
 	@echo "------------------------------------------------------------------"
-	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb
+	@docker compose -p $(PROJECT_ID) up --no-deps -d devweb webpack
 
 devweb-runserver: devweb
 	@echo

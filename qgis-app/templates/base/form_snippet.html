@@ -1,35 +1,217 @@
-{% load i18n resources_custom_tags %}
-    <fieldset>
-    {% for field in form %}
-        <div class="fieldWrapper {{ field.css_classes }}">
-            {% if field|is_checkbox %}
-                <label for="{{ field.html_name }}" class="checkbox {{ field.css_classes }}">
-                    {{ field.label }}
-                    {% if field.errors %}
-                    <div class="alert alert-error">
-                    {{ field.errors }}
-                    </div>
-                    {% endif %}
-                    <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" {% if field.value %}checked="checked"{% endif %} />
-                </label>
-            {% else %}
-                {{ field.label_tag }}
-                {% if field.errors %}
-                <div class="alert alert-error">
-                    {{ field.errors }}
-                </div>
-                {% endif %}
-                {{ field }}
-            {% endif %}
-            <span class="help-block"><i>{{ field.help_text }}</i></span>
+{% load i18n resources_custom_tags resources_utils %}
+<fieldset>
+  {% for field in form %}
+  <div class="field {{ field.css_classes }}">
+    {% if field.field.widget|klass == 'CheckboxInput' %}
+    <div class="control">
+      <label for="{{ field.html_name }}" class="checkbox label{{ field.css_classes }}">
+        <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" {% if field.value %}checked="checked"{% endif %} />
+        {{ field.label }}
+      </label>
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% elif field.field.widget|klass == 'ClearableFileInput' %}
+    <div class="file has-name">
+      <label class="file-label">
+        <input class="file-input" type="file" id="{{ field.html_name }}" name="{{ field.html_name }}" />
+        <span class="file-cta">
+          <span class="file-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </span>
+          <span class="file-label">{{ field.label }}</span>
+        </span>
+        <span class="file-name" id="filename">Choose a file…</span>
+      </label>
+    </div>
+    {% if field.errors %}
+      {% for error in field.errors %}
+        <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+      {% endfor %}
+    {% endif %}
+    {% elif field.field.widget|klass == 'Textarea' %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }}</label>
+      <div class="control">
+        <textarea class="textarea" placeholder="{{ field.help_text | safe }}" id="{{ field.html_name }}" name="{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+      </div>
+      {% if field.errors %}
+        <p class="help is-danger">{{ field.errors }}</p>
+      {% endif %}
+    </div>
+    {% elif field.field.widget|klass == 'TextInput' or field.field.widget|klass == 'URLInput' %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }}</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="{{ field.help_text | safe }}" id="{{ field.html_name }}" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}" />
+      </div>
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% elif field.field.widget|klass == 'EmailInput' %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }}</label>
+      <div class="control has-icons-left">
+        <input class="input" type="email" id="{{ field.html_name }}" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}" />
+        <span class="icon is-small is-left">
+          <i class="fas fa-envelope"></i>
+        </span>
+      </div>
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% elif field.field.widget|klass == 'Select' %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }}</label>
+      <div class="control">
+        <div class="select">
+          <select id="{{ field.html_name }}" name="{{ field.html_name }}">
+            {% for value, label in field.field.choices %}
+              <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
         </div>
-    {% endfor %}
-    </fieldset>
+      </div>
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% elif field.field.widget|klass == 'TagWidget' %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }}</label>
+      <div class="control input is-block" style="height: fit-content;">
+        <div id="selected-tags" class="tags mb-0"></div>
+        <input type="hidden" name="{{ field.html_name }}" id="{{ field.html_name }}" value="{{ field.value|get_string_tags }}">
+        <input 
+          id="tag-input" 
+          type="text" 
+          class="input p-0" 
+          style="border: none; box-shadow: none;"
+          placeholder="Type to search for tags..." 
+          />
+      </div>
+      <div class="control">
+        <div id="tag-suggestions" class="dropdown-content is-hidden"></div>
+      </div>
+    </div>
+    {% else %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }} {{ field.field.widget|klass }}</label>
+      <div class="control">
+        {{ field }}
+      </div>
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% endif %}
+    <div class="help has-text-grey">{{ field.help_text | safe }}</div>
+  </div>
+  {% endfor %}
+</fieldset>
 
-{% block extrajs %}
-    <style>
-        .fieldWrapper{
-            margin-bottom: 0.75rem;
-        }
-    </style>
-{% endblock %}
+<script>
+  $(document).ready(function () {
+    const fileInput = $(".file-input");
+    const fileName = $("#filename");
+    const hiddenInput = $('#tags');
+    const tagInput = $('#tag-input');
+    const suggestionBox = $('#tag-suggestions');
+    const selectedTags = $('#selected-tags');
+
+    // Initialize selected tags if hidden input has values
+    const initialTags = hiddenInput.val().split(',');
+    initialTags.forEach(tagName => {
+      if (tagName.trim() !== '') {
+        addTag(tagName.trim());
+      }
+    });
+
+    fileInput.on("change", function () {
+      if (fileInput[0].files.length > 0) {
+        fileName.text(fileInput[0].files[0].name);
+      } else {
+        fileName.text("Choose a file…");
+      }
+    });
+
+    tagInput.on('input', function () {
+      const query = tagInput.val();
+
+      if (query.length > 1) {
+        $.ajax({
+          url: `/taggit_autosuggest/list/?q=${query}`,
+          method: 'GET',
+          success: function (suggestions) {
+            // Clear previous suggestions
+            suggestionBox.empty();
+
+            // Display new suggestions
+            suggestions.forEach(tag => {
+              const tagElement = $('<a class="dropdown-item"></a>').addClass('dropdown-item').text(tag.name);
+              tagElement.on('click', function () {
+                addTag(tag.name);
+              });
+              suggestionBox.append(tagElement);
+            });
+
+            // Add option to add new tag if no suggestions match
+            if (suggestions.length === 0) {
+              const addNewTagElement = $('<a class="dropdown-item"></a>').addClass('dropdown-item').text(`Add "${query}"`);
+              addNewTagElement.on('click', function () {
+                addTag(query);
+              });
+              suggestionBox.append(addNewTagElement);
+            }
+
+            suggestionBox.removeClass('is-hidden');
+          }
+        });
+      } else {
+        suggestionBox.addClass('is-hidden');
+      }
+    });
+
+    function addTag(tagName) {
+      // Check if tag already exists
+      if (selectedTags.children().toArray().some(tag => $(tag).text().trim() === tagName)) return;
+
+      // Add tag to selected tags
+      const tagEl = $('<span></span>').addClass('tag is-info m-1').text(tagName);
+
+      const deleteBtn = $('<button></button>').addClass('delete is-small');
+      deleteBtn.on('click', function () {
+        tagEl.remove();
+        updateHiddenInput();
+      });
+
+      tagEl.append(deleteBtn);
+      selectedTags.append(tagEl);
+
+      // Clear suggestions and input
+      suggestionBox.addClass('is-hidden');
+      tagInput.val('');
+
+      // Update hidden input
+      updateHiddenInput();
+    }
+
+    function updateHiddenInput() {
+      const tags = selectedTags.children().toArray().map(tag => $(tag).text().trim());
+      hiddenInput.val(tags.join(','));
+    }
+  });
+</script>

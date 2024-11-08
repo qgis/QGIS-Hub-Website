@@ -68,17 +68,27 @@ def get_resources_tagcloud(context, app_label, model):
 
     return queryset
 
+def get_tags_title(model):
+    tags_title = model[0].upper() + model[1:]
+    if model.lower() == "wavefront":
+        tags_title = "3D Model"
+    elif model.lower() == "layerdefinition":
+        tags_title = "Layer Definition"
+    return tags_title + " Tags"
+
 @register.inclusion_tag("base/includes/resources_tagcloud_modal_include.html", takes_context=True)
 def include_resources_tagcloud_modal(context, app_label, model):
-    tags = get_resources_tagcloud(context, app_label, model)
-    tags_title = model[0].upper() + model[1:]
-    if str(model).lower() == "wavefront":
-        tags_title = "3D Model"
-    elif str(model).lower() == "layerdefinition":
-        tags_title = "Layer Definition"
+    tags_title = get_tags_title(model)
+    return {
+        'tags_title': tags_title
+    }
 
+@register.inclusion_tag("base/includes/resources_tags_modal.html", takes_context=True)
+def include_resources_tags_modal(context, app_label, model):
+    tags = get_resources_tagcloud(context, app_label, model)
+    tags_title = get_tags_title(model)
     return {
         'tags': tags, 
-        'tags_title': tags_title + " Tags",
+        'tags_title': tags_title,
         'tags_list_url': model + "_tag"
     }

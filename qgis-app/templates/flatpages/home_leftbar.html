@@ -1,0 +1,139 @@
+{% load i18n resources_tagcloud thumbnail resources_utils static %}
+<nav id="sidebar" class="sidebar">
+    <ul class="content-wrapper">
+        <li>
+            <div class="has-child">
+                <a href="{% url 'style_list'%}" class="has-text-weight-semibold">
+                    <i class="fas fa-paint-brush is-size-5 mr-3"></i>
+                    {% trans "Latest Styles" %}
+                </a>
+            </div>
+            <ul>
+                {% for style in latest_styles  %}
+                <li>
+                    <a href="{% url "style_detail" style.pk %}" class="truncate">
+                        <span class="mr-2">
+                            {% if style.thumbnail_image and style.thumbnail_image.file %}
+                                {% thumbnail style.thumbnail_image "16x16" format="PNG" as im %}
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                {% endthumbnail %}
+                            {% else %}
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                            {% endif %}
+                        </span>
+                        {{ style.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <hr/>
+        <li>
+            <div class="has-child">
+                <a href="{% url 'geopackage_list'%}" class="has-text-weight-semibold">
+                    <i class="fas fa-folder-open is-size-5 mr-3"></i>
+                    {% trans "Latest Projects" %}
+                </a>
+            </div>
+            <ul>
+                {% for geopackage in latest_geopackages  %}
+                <li>
+                    <a href="{% url "geopackage_detail" geopackage.pk %}" class="truncate">
+                        <span class="mr-2">
+                            {% if geopackage.thumbnail_image and geopackage.thumbnail_image.file %}
+                                {% thumbnail geopackage.thumbnail_image "16x16" format="PNG" as im %}
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                {% endthumbnail %}
+                            {% else %}
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                            {% endif %}
+                        </span>
+                        {{ geopackage.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <hr/>
+        <li>
+            <div class="has-child">
+                <a href="{% url 'model_list'%}" class="has-text-weight-semibold">
+                    <i class="fas fa-cogs is-size-5 mr-3"></i>
+                    {% trans "Latest Models" %}
+                </a>
+            </div>
+            <ul>
+                {% for model in latest_models  %}
+                <li>
+                    <a href="{% url "model_detail" model.pk %}" class="truncate">
+                        <span class="mr-2">
+                            {% if model.thumbnail_image and model.thumbnail_image.file %}
+                                {% thumbnail model.thumbnail_image "16x16" format="PNG" as im %}
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                {% endthumbnail %}
+                            {% else %}
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                            {% endif %}
+                        </span>
+                        {{ model.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <hr/>
+        <li>
+            <div class="has-child">
+                <a href="{% url 'wavefront_list'%}" class="has-text-weight-semibold">
+                    <i class="fas fa-cube is-size-5 mr-3"></i>
+                    {% trans "Latest 3D Models" %}
+                </a>
+            </div>
+            <ul>
+                {% for wavefront in latest_wavefronts  %}
+                <li>
+                    <a href="{% url "wavefront_detail" wavefront.pk %}" class="truncate">
+                        <span class="mr-2">
+                            {% if wavefront.thumbnail_image and wavefront.thumbnail_image.file %}
+                                {% thumbnail wavefront.thumbnail_image "16x16" format="PNG" as im %}
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                {% endthumbnail %}
+                            {% else %}
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                            {% endif %}
+                        </span>
+                        {{ wavefront.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <hr/>
+        <li>
+            <div class="has-child">
+                <a href="{% url 'layerdefinition_list'%}" class="has-text-weight-semibold">
+                    <i class="fas fa-layer-group is-size-5 mr-3"></i>
+                    {% trans "Latest QGIS Layer Definition File" %}
+                </a>
+            </div>
+            <ul>
+                {% for layerdefinition in latest_layerdefinitions  %}
+                <li>
+                    <a href="{% url "layerdefinition_detail" layerdefinition.pk %}" class="truncate">
+                        <span class="mr-2">
+                            {% if layerdefinition.thumbnail_image and layerdefinition.thumbnail_image.file %}
+                                {% thumbnail layerdefinition.thumbnail_image "16x16" format="PNG" as im %}
+                                    <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="16" height="16" />
+                                {% endthumbnail %}
+                            {% else %}
+                                <img height="16" width="16" src="{% static "images/qgis-icon-16x16.png" %}" alt="{% trans "Plugin icon" %}" />
+                            {% endif %}
+                        </span>
+                        {{ layerdefinition.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</nav>

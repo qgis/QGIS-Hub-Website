@@ -1,6 +1,7 @@
 from base.validator import filesize_validator
 from django import forms
 from django.utils.translation import gettext_lazy as _
+import os
 
 
 class ResourceBaseReviewForm(forms.Form):
@@ -20,12 +21,13 @@ class ResourceBaseReviewForm(forms.Form):
         super(ResourceBaseReviewForm, self).__init__(*args, **kwargs)
         self.fields["comment"].widget = forms.Textarea(
             attrs={
-                "placeholder": _(
-                    "Please provide clear feedback if you decided to not "
-                    "approve this %s."
-                )
-                % self.resource_name,
-                "rows": "5",
+            "placeholder": _(
+                "Please provide clear feedback if you decided to not "
+                "approve this %s."
+            )
+            % self.resource_name,
+            "rows": "5",
+            "class": "textarea",
             }
         )
 
@@ -48,5 +50,7 @@ class ResourceBaseCleanFileForm(object):
         """
 
         file = self.cleaned_data["file"]
-        if filesize_validator(file.file):
+        file_extension = os.path.splitext(file.name)[1]
+        is_gpkg = file_extension == ".gpkg"
+        if filesize_validator(file.file, is_gpkg):
             return file

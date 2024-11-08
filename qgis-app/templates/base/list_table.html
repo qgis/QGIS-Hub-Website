@@ -1,0 +1,50 @@
+{% load i18n humanize static thumbnail %}
+
+<table id="myTable" class="table is-fullwidth resources-list-table">
+    <thead>
+        <tr>
+            <th></th>
+            <th> Name </th>
+            {%if resource_name == 'Style' %}
+                <th> Type </th>
+            {% endif %}
+            <th>
+                <i class="fas fa-download" title="{% trans 'Download Count' %}"></i>
+            </th>
+            <th> Creator </th>
+            <th> Upload Date </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+            <tr onclick="window.location.href='{% url url_detail pk=object.id %}';">
+                <td class="object-thumbnail">
+                {% if object.thumbnail_image and object.thumbnail_image.file %}
+                    {% thumbnail object.thumbnail_image "96x96" format="PNG" as im %}
+                        <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+                    {% endthumbnail %}
+                {% else %}
+                    <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                {% endif %}
+                </td>
+                <td>{{ object.name|title }}</td>
+                {% if object.style_type %}
+                    <td class="has-text-centered">
+                        <span class="tag is-info is-light">{{ object.style_type.name|title }}</span>
+                    </td>
+                {% endif %}
+                <td>{{ object.download_count|intcomma }}</td>
+                <td>{{ object.get_creator_name|title }}</td>
+                <td>{{ object.upload_date|date:"d M. Y" }}</td>
+                <td>
+                    {% if user.is_staff or user == object.creator %}
+                    <a class="button is-small is-success is-outlined" href="{% url url_update pk=object.id %}" title="{% trans "Edit" %}"><i class="fas fa-pencil-alt"></i></a>
+                    <a class="button is-small is-danger is-outlined" href="{% url url_delete pk=object.id %}" title="{% trans "Delete" %}"><i class="fas fa-trash-alt"></i></a>
+                    {% endif %}
+                    <a class="button is-small is-success is-outlined" href="{% url url_download pk=object.id %}" title="{% trans "Download" %}"><i class="fas fa-download"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -95,7 +95,7 @@ class TestFormValidation(SetUpTest, TestCase):
         form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(
-            form.errors, {"file": ["File is too big. Max size is 1.0 Megabytes"]}
+            form.errors, {"file": ["File is too big. Max size is 5.0 Megabytes"]}
         )
 
 

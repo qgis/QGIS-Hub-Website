@@ -174,7 +174,7 @@ class ResourceSearchMixin(object):
     def get_queryset_search(self, qs):
         # Allowed fields for ordering
         allowed_order_by_fields = [
-            "name", "type", "download_count"
+            "name", "type", "download_count",
             "creator", "upload_date", "modified_date"
         ]
         q = self.request.GET.get("q")
@@ -188,17 +188,19 @@ class ResourceSearchMixin(object):
                     + SearchVector("creator__last_name")
                 )
             ).filter(search=q)
-        order_by = self.request.GET.get("order_by", None)
-        if order_by:
-            # for style sharing app, there is style_type column that doesn't
-            # exist in deafult sharing app
-            if order_by == "-type":
-                qs = qs.order_by("-style_type__name")
-            elif order_by == "type":
-                qs = qs.order_by("style_type__name")
-            else:
-                if order_by.lstrip('-') in allowed_order_by_fields:
-                    qs = qs.order_by(order_by)
+
+        sort = self.request.GET.get("sort", None)
+        order = self.request.GET.get("order", "asc")
+        if sort:
+            if sort in allowed_order_by_fields:
+                if order == "desc":
+                    sort = f"-{sort}"
+                qs = qs.order_by(sort)
+            elif sort == "type":
+                if order == "desc":
+                    qs = qs.order_by("-style_type__name")
+                else:
+                    qs = qs.order_by("style_type__name")
         return qs
 
     def get_queryset_search_and_is_creator(self, qs):
@@ -380,12 +382,8 @@ class ResourceBaseListView(ResourceBaseContextMixin, ResourceSearchMixin, ListVi
 
     def get_template_names(self):
         context = self.get_context_data()
-        is_gallery = context["is_gallery"]
-        if is_gallery:
-            self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
-            return "base/list_galery.html"
-        else:
-            return "base/list.html"
+        self.paginate_by = settings.PAGINATION_DEFAULT_PAGINATION
+        return "base/list_galery.html"
 
     def get_paginate_by(self, queryset):
         is_gallery = self.request.GET.get("is_gallery", None)

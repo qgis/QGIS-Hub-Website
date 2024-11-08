@@ -54,7 +54,7 @@ services:
       - ./docker/uwsgi.conf:/uwsgi.conf
       - ${QGISHUB_STATIC_VOLUME}:/home/web/static:rw
       - ${QGISHUB_MEDIA_VOLUME}:/home/web/media:rw
-    command: uwsgi --ini /uwsgi.conf
+    command: bash -c "npm install && npm run build && uwsgi --ini /uwsgi.conf"
     depends_on:
       - db
     restart: unless-stopped
@@ -84,6 +84,18 @@ services:
     networks:
       internal:
 
+  webpack:
+    container_name: qgis-hub-webpack
+    build:
+      context: ${PWD}/../
+      dockerfile: dockerize/docker/Dockerfile
+      target: dev
+    working_dir: /home/web/django_project
+    command: npm start
+    volumes:
+      - ../qgis-app:/home/web/django_project
+      - ${QGISHUB_STATIC_VOLUME}:/home/web/static:rw
+      - ${QGISHUB_MEDIA_VOLUME}:/home/web/media:rw
   web:
     # Note you cannot scale if you use container_name
     container_name: qgis-hub-web

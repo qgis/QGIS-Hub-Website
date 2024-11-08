@@ -1,4 +1,31 @@
-<dt>Provider</dt>
-<dd>{{ object_detail.provider }}</dd>
-<dt>Metadata</dt>
-<dd>{% if object_detail.url_metadata%}{{object_detail.url_metadata}}{% else %}-{% endif %}</dd>
+{% load static i18n %}
+<div class="column is-6">
+    <div class="field">
+        <label class="label">
+            <span class="icon">
+                <i class="fas fa-database"></i>
+            </span>
+            {% trans "Provider" %}:
+        </label>
+        <div class="control truncate">
+            {{ object_detail.provider }}
+        </div>
+    </div>
+</div>
+<div class="column is-6">
+    <div class="field">
+        <label class="label">
+            <span class="icon">
+                <i class="fas fa-info-circle"></i>
+            </span>
+            {% trans "Metadata" %}:
+        </label>
+        <div class="control truncate">
+            {% if object_detail.url_metadata %}
+                <a href="{{ object_detail.url_metadata }}" target="_blank">{{ object_detail.url_metadata }}</a>
+            {% else %}
+                -
+            {% endif %}
+        </div>
+    </div>
+</div>

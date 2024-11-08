@@ -1,0 +1,75 @@
+{% load i18n resources_custom_tags thumbnail static%}
+{% load humanize %}
+
+<div class="
+column
+is-medium     
+is-half-tablet
+is-half-desktop
+is-one-quarter-widescreen
+is-one-third-fullhd">
+    <div 
+        class="
+            card 
+            is-flex 
+            is-flex-direction-column 
+            is-justify-content-space-between
+        "
+        onclick="window.location.href='{% url url_detail pk=object.id %}';"
+        >
+
+        <div class="card-image">
+            <figure class="image is-4by3">
+                {% if object.thumbnail_image and object.thumbnail_image.file %}
+                    {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
+                        <img alt="{% trans "Style icon" %}" src="{{ im.url }}" />
+                    {% endthumbnail %}
+                {% else %}
+                    <img height="32" width="32" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                {% endif %}
+            </figure>
+        </div>
+        <div class="card-content is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100%;">
+            <div class="content mb-0">
+                <p class="title is-5 mb-5">{{ object.name }}</p>
+                <p class="subtitle is-7 is-italic">
+                    by {{ object.get_creator_name }}, {{ object.upload_date|date:"d F Y" }} 
+                </p>
+
+            </div>
+            <p style="height: 100%;"></p>
+            <div class="content mb-0">
+                <div class="p-1">
+                    {% if object.style_type %}
+                      <span class="tag is-info is-light">{{ object.style_type.name|title }}</span>
+                    {%  else %}
+                      {{ object.description|md_to_html|striptags|truncatewords:15 }}
+                    {% endif %}
+                </div>
+                <p class="p-1">
+                    <span class="icon-text is-size-7 has-text-weight-medium">
+                        <span class="icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                        <span>Updated on {{ object.modified_date|date:"d F Y" }}</span>
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <footer class="card-footer">
+            <a href="{% url url_download pk=object.id %}" class="card-footer-item">
+                <span class="icon">
+                    <i class="fas fa-download"></i>
+                </span>
+                <span>Download</span>
+            </a>
+            <p class="card-footer-item m-0">
+                <span class="icon">
+                    <i class="fas fa-download"></i>
+                </span>
+                <span>{{ object.download_count|intcomma }}</span>
+            </p>
+        </footer>
+    </div>
+</div>

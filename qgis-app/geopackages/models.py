@@ -17,7 +17,7 @@ class Geopackage(Resource):
     # file
     file = models.FileField(
         _("GeoPackage file"),
-        help_text=_("A GeoPackage file. The filesize must less than 1MB "),
+        help_text=_("A GeoPackage file. The filesize must less than 5MB "),
         upload_to=GEOPACKAGES_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["gpkg", "zip"])],
         null=False,

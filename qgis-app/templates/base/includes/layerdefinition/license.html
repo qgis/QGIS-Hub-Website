@@ -1,12 +1,27 @@
-{% load static %}
-          <div class="span12 license" >
-            <div class="span8" style="margin-top: 2rem">
-              <p><strong>Data source</strong>: <a href="{{ object_detail.url_datasource }}" target="_blank">{{ object_detail.url_datasource }}</a></p>
-              <p><strong>License</strong>:
-                {% if object_detail.license %}
-                <br /><span class="custom-license">{{ object_detail.license }}</span></p>
-                {% else %}
-                -
-                {% endif %}
-            </div>
-          </div>
+{% load static i18n %}
+<div class="columns is-multiline">
+  <div class="column is-12">
+    <div class="field">
+      <label class="label">
+        <i class="fas fa-database"></i> {% trans "Data source" %}:
+      </label>
+      <div class="control truncate">
+        <a href="{{ object_detail.url_datasource }}" target="_blank">{{ object_detail.url_datasource }}</a>
+      </div>
+    </div>
+  </div>
+  <div class="column is-12">
+    <div class="field">
+      <label class="label">
+        <i class="fas fa-file-alt"></i> {% trans "License" %}:
+      </label>
+      <div class="control">
+        {% if object_detail.license %}
+        <span class="custom-license" style="word-break: break-all;">{{ object_detail.license }}</span>
+        {% else %}
+        -
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

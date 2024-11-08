@@ -1,4 +1,26 @@
-<dt>Datasource</dt>
-<dd><a href="{{ object_detail.url_datasource }}" target="_blank">{{ object_detail.url_datasource }}</a></dd>
-<dt>License</dt>
-<dd>{% if object_detail.license %}{{ object_detail.license }}{% else %}-{% endif%}</dd>
+<div class="columns">
+    <div class="column is-6">
+        <div class="field">
+            <div class="label">Datasource:</div>
+            <div class="control">
+                {% if object_detail.url_datasource %}
+                    <a href="{{ object_detail.url_datasource }}" target="_blank">{{ object_detail.url_datasource }}</a>
+                {% else %}
+                    -
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="column is-6">
+        <div class="field">
+            <div class="label">License:</div>
+            <div class="control">
+                {% if object_detail.license %}
+                    {{ object_detail.license }}
+                {% else %}
+                    -
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

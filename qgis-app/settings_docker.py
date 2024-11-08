@@ -83,7 +83,9 @@ INSTALLED_APPS = [
     # models (sharing .model3 file feature)
     "models",
     "wavefronts",
-    "matomo"
+    "matomo",
+    # Webpack
+    "webpack_loader"
 ]
 
 DATABASES = {
@@ -161,3 +163,73 @@ if SENTRY_DSN and SENTRY_DSN != "":
         # of transactions for performance monitoring.
         traces_sample_rate=SENTRY_RATE,
     )
+# Webpack
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles',
+        'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats.json'),
+    }
+}
+
+
+HUB_SUBMENU = [
+    {
+        'name': 'Styles',
+        'url': '/styles/?sort=upload_date&order=desc',
+        'icon': 'fa-paint-brush',
+        'order': 1,
+    },
+    {
+        'name': 'Projects',
+        'url': '/geopackages/?sort=upload_date&order=desc',
+        'icon': 'fa-folder-open',
+        'order': 2,
+    },
+    {
+        'name': 'Models',
+        'url': '/models/?sort=upload_date&order=desc',
+        'icon': 'fa-cogs',
+        'order': 3,
+    },
+    {
+        'name': '3D Models',
+        'url': '/wavefronts/?sort=upload_date&order=desc',
+        'icon': 'fa-cube',
+        'order': 4,
+    },
+    {
+        'name': 'QLR',
+        'url': '/layerdefinitions/?sort=upload_date&order=desc',
+        'icon': 'fa-layer-group',
+        'order': 5,
+    }
+]
+
+# Set the navigation menu
+NAVIGATION_MENU = [
+    {
+        'name': 'QGIS Hub Home',
+        'url': '/',
+        'icon': 'fa-house',
+        'order': 0,
+    },
+    {
+        'name': 'Hub',
+        'url': '#',
+        'icon': 'fa-cubes',
+        'order': 1,
+        'submenu': HUB_SUBMENU
+    },
+    {
+        'name': 'API',
+        'url': '/api/v1/resources/',
+        'icon': 'fa-code',
+        'order': 2,
+    },
+    {
+        'name': 'Metrics',
+        'url': METABASE_DOWNLOAD_STATS_URL,
+        'icon': 'fa-chart-bar',  # Changed to a more accurate icon
+        'order': 4,
+    }
+]

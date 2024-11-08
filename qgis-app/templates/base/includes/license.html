@@ -1,11 +1,15 @@
 {% load static %}
-          <div class="span12 license">
-              <div class="media" style="margin-top: 2rem">
-                <a class="pull-left" href="#">
-                  <img src="{% static 'images/cc-zero.svg' %}">
-                </a>
-                <div class="media-body">
-                  <p>This {{ resource_name }} is made available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.</p>
-                </div>
-              </div>
-            </div>
+<div>
+  <div class="media" style="margin-top: 2rem">
+    <figure class="ml-0 mb-0">
+      <p class="image">
+        <img src="{% static 'images/cc-zero.svg' %}">
+      </p>
+    </figure>
+    <div class="media-content">
+      <div class="content">
+        <p>This {{ resource_name }} is made available under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>

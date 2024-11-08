@@ -42,7 +42,7 @@ class TagCloudTests(SetUpTest, TestCase):
     def test_include_resources_tagcloud_modal(self):
         context = Context({'request': self.factory.get('/')})
         rendered = Template(
-            '{% load resources_tagcloud %}{% include_resources_tagcloud_modal "models" "model" %}'
+            '{% load resources_tagcloud %}{% include_resources_tags_modal "models" "model" %}'
         ).render(context)
 
         self.assertIn('model', rendered)
