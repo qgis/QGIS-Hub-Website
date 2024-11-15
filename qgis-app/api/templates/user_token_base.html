@@ -1,0 +1,22 @@
+{% extends BASE_TEMPLATE %}{% load i18n %}
+{% block app_title %}
+<h2 xmlns="http://www.w3.org/1999/html">{{ title }}</h2>
+{% endblock %}
+
+{% block menu %}
+{{ block.super }}
+<form method="post" action="{% url "user_token_create"%}">{% csrf_token %}
+  <div class="field">
+    <h2 class="title is-4">
+      <button type="submit" name="user_token_create" id="user_token_create"
+        class="button is-success is-medium has-text-weight-medium">
+        <span class="icon is-small">
+          <i class="fas fa-plus"></i>
+        </span>
+        <span>{% trans "Generate a New Token" %}</span>
+      </button>
+    </h2>
+  </div>
+</form>
+
+{% endblock %}

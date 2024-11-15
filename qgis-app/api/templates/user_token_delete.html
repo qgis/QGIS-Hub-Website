@@ -1,0 +1,19 @@
+{% extends 'user_token_base.html' %}{% load i18n %}
+{% block content %}
+    <h3 class="title is-3">Delete token of "{{ username }}"</h3>
+    <form action="" method="post">{% csrf_token %}
+        <div class="notification is-danger is-light">
+            <p>{% trans "You asked to delete a token.<br />It will be permanently deleted and this action cannot be undone.<br />Please confirm." %}</p>
+        </div>
+        <div class="buttons">
+            <button type="submit" class="button is-danger" name="delete_confirm">
+                <span class="icon"><i class="fas fa-check"></i></span>
+                <span>{% trans "Ok" %}</span>
+            </button>
+            <a class="button is-light" href="javascript:history.back()">
+                <span class="icon"><i class="fas fa-times"></i></span>
+                <span>{% trans "Cancel" %}</span>
+            </a>
+        </div>
+    </form>
+{% endblock %}
