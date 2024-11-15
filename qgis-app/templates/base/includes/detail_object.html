@@ -9,6 +9,19 @@
       {{ object_detail.description|md_to_html }}
     </div>
   </div>
+  {% if object_detail.dependencies %}
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">
+        <span class="icon"><i class="fas fa-link"></i></span>
+        {% trans "Dependencies" %}:
+      </label>
+      <div class="control">
+        {{ object_detail.dependencies|default:"-" }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <div class="column is-6">
     <div class="field">
       <label class="label">
