@@ -205,6 +205,21 @@ HUB_SUBMENU = [
     }
 ]
 
+API_SUBMENU = [
+    {
+        'name': 'Resources RAW',
+        'url': '/api/v1/resources/',
+        'icon': 'fa-database',
+        'order': 0,
+    },
+    {
+        'name': 'Tokens',
+        'url': '/api/v1/tokens/',
+        'icon': 'fa-key',
+        'order': 1,
+    },
+]
+
 # Set the navigation menu
 NAVIGATION_MENU = [
     {
@@ -222,14 +237,15 @@ NAVIGATION_MENU = [
     },
     {
         'name': 'API',
-        'url': '/api/v1/resources/',
+        'url': '/api/v1/tokens/',
         'icon': 'fa-code',
         'order': 2,
+        'submenu': API_SUBMENU
     },
     {
         'name': 'Metrics',
         'url': METABASE_DOWNLOAD_STATS_URL,
-        'icon': 'fa-chart-bar',  # Changed to a more accurate icon
+        'icon': 'fa-chart-bar',
         'order': 4,
     }
 ]

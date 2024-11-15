@@ -1,0 +1,60 @@
+{% extends 'user_token_base.html' %}{% load i18n %}
+{% block content %}
+<h2 class="title is-4">{% trans "My Tokens" %}</h2>
+<p>
+  The token allows access to the Resources API, enabling you to create, view, update, or delete resources. 
+  For more details, refer to the <a href="https://github.com/qgis/QGIS-Hub-Website/blob/master/HUB_API.md" target="_blank">HUB_API.md</a> file.
+</p>
+{% if object_list.count %}
+<div>
+  <table class="table is-striped is-fullwidth">
+    <thead>
+      <tr>
+        <th>{% trans "Description" %}</th>
+        <th>{% trans "Created at" %}</th>
+        {% comment %} <th>{% trans "Expires at" %}</th> {% endcomment %}
+        <th>{% trans "Last used at" %}</th>
+        <th>{% trans "Manage" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user_token in object_list %}
+      <tr>
+        <td class="has-text-centered">{{ user_token.description|default:"-" }}</td>
+        <td class="has-text-centered">{{ user_token.token.created_at }} UTC</td>
+        <td class="has-text-centered">{{ user_token.last_used_on|default:"-" }}{% if user_token.last_used_on %} UTC{% endif %}</td>
+        <td class="has-text-centered">
+          <a class="button is-success is-outlined is-small" href="{% url "user_token_update" user_token.pk %}"
+            title="{% trans "Edit description" %}"><span class="icon"><i class="fas fa-pencil-alt"></i></span></a>&nbsp;
+          <a class="button is-danger is-outlined is-small" href="{% url "user_token_delete" user_token.pk %}"
+            title="{% trans "Delete" %}"><span class="icon"><i class="fas fa-trash-alt"></i></span></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="notification">
+  <i class="fas fa-info mr-3"></i>
+  {% trans "This list is empty!" %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extracss %}
+{{ block.super }}
+<style>
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    direction: rtl;
+  }
+</style>
+{% endblock %}

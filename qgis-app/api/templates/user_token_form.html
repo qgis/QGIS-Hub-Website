@@ -1,0 +1,32 @@
+{% extends 'user_token_base.html' %}{% load i18n %}
+{% block content %}
+<h2 class="title is-4">{% trans "Edit token description " %} {{ token.jti }}</h2>
+
+{% if form.errors %}
+<div class="notification is-danger">
+  <button class="delete"></button>
+  <p>{% trans "The form contains errors and cannot be submitted, please check the fields highlighted in red." %}</p>
+</div>
+{% endif %}
+{% if form.non_field_errors %}
+<div class="notification is-danger">
+  <button class="delete"></button>
+  {% for error in form.non_field_errors %}
+  <p>{{ error }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+  {% include "base/form_snippet.html" %}
+  <div class="field is-grouped">
+    <div class="control">
+      <button class="button is-success" type="submit">
+        <span class="icon">
+          <i class="fas fa-save"></i>
+        </span>
+        <span>{% trans "Save" %}</span>
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}
