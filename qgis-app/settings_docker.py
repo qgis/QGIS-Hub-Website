@@ -249,3 +249,7 @@ NAVIGATION_MENU = [
         'order': 4,
     }
 ]
+
+# Set the default timezone
+USE_TZ = False
+TIME_ZONE = 'UTC'
