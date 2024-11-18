@@ -21,8 +21,8 @@
       {% for user_token in object_list %}
       <tr>
         <td class="has-text-centered">{{ user_token.description|default:"-" }}</td>
-        <td class="has-text-centered">{{ user_token.token.created_at }} UTC</td>
-        <td class="has-text-centered">{{ user_token.last_used_on|default:"-" }}{% if user_token.last_used_on %} UTC{% endif %}</td>
+        <td class="has-text-centered">{{ user_token.created_at }} UTC</td>
+        <td class="has-text-centered">{{ user_token.last_used_at|default:"-" }}{% if user_token.last_used_at %} UTC{% endif %}</td>
         <td class="has-text-centered">
           <a class="button is-success is-outlined is-small" href="{% url "user_token_update" user_token.pk %}"
             title="{% trans "Edit description" %}"><span class="icon"><i class="fas fa-pencil-alt"></i></span></a>&nbsp;
