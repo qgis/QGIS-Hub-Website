@@ -33,7 +33,6 @@ if [ $# -eq 1 ]; then
 			echo "Run in staging SSL mode"
 			CONF_FILE=staging-ssl.conf
 			ln -s /etc/nginx/sites-available/$CONF_FILE /etc/nginx/conf.d/$CONF_FILE
-			ln -s /etc/nginx/sites-available/redirections.conf /etc/nginx/redirections.conf
 			exec nginx -g "daemon off;"
 			;;
 	esac
