@@ -103,6 +103,51 @@ class TestUploadStyle(TestCase):
         url = reverse("style_require_action")
         self.response = self.client.get(url)
         self.assertContains(self.response, "No data.")
+    
+    def test_upload_gpl_file(self):
+        url = reverse("style_create")
+        f = os.path.join(STYLE_DIR, "colors.gpl")
+        with open(f) as gpl_file:
+            self.client.post(
+                url,
+                {
+                    "file": gpl_file,
+                    "thumbnail_image": self.thumbnail,
+                    "description": "This style is for testing only purpose",
+                    "tags": "gpl,style,test"
+                },
+            )
+        self.assertEqual(self.response.status_code, 200)
+        
+        # Should send email to style managers
+        self.assertEqual(
+            mail.outbox[0].recipients(),
+            ['staff@email.com']
+        )
+
+        # Should use the new email
+        self.assertEqual(
+            mail.outbox[0].from_email,
+            settings.EMAIL_HOST_USER
+        )
+
+        # Check the tags
+        self.assertEqual(
+            Style.objects.get(name='Qgis Palette').tags.filter(
+                name__in=['gpl', 'style', 'test']).count(),
+            3)
+
+        # style should be in Waiting Review
+        url = reverse("style_unapproved")
+        self.response = self.client.get(url)
+        self.assertContains(self.response, "1 record found.")
+        self.assertContains(self.response, "Qgis Palette")
+        self.assertContains(self.response, "Color Palette")
+        self.assertContains(self.response, "Creator")
+        # style should not be in Requiring Update
+        url = reverse("style_require_action")
+        self.response = self.client.get(url)
+        self.assertContains(self.response, "No data.")
 
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")

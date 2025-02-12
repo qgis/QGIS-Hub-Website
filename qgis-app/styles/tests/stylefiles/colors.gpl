@@ -1,0 +1,11 @@
+GIMP Palette
+Name: QGIS Palette
+Columns: 4
+#
+255 245 240	#fff5f0
+  0   0   0	#000000
+255 255 255	#ffffff
+131 160  44	#83a02c
+182 182 182	#b6b6b6
+ 51 160  44	#33a02c
+255 127   0	#ff7f00
