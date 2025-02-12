@@ -103,7 +103,7 @@ class TestUploadStyle(TestCase):
         url = reverse("style_require_action")
         self.response = self.client.get(url)
         self.assertContains(self.response, "No data.")
-    
+
     def test_upload_gpl_file(self):
         url = reverse("style_create")
         f = os.path.join(STYLE_DIR, "colors.gpl")
@@ -118,7 +118,7 @@ class TestUploadStyle(TestCase):
                 },
             )
         self.assertEqual(self.response.status_code, 200)
-        
+
         # Should send email to style managers
         self.assertEqual(
             mail.outbox[0].recipients(),

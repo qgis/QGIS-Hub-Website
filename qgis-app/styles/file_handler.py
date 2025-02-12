@@ -103,7 +103,7 @@ def gpl_validator(gplfile):
         lines = gplfile.readlines()
     except Exception:
         raise ValidationError(_("Cannot read the GPL file. Please ensure your file is correct."))
-    
+
     if len(lines) == 0:
         raise ValidationError(_("Empty file. Please ensure your file is correct."))
     if not lines[0].strip().decode() == "GIMP Palette":
@@ -114,7 +114,7 @@ def gpl_validator(gplfile):
 
     if not lines[2].strip().decode().startswith("Columns:"):
         raise ValidationError(_("Missing 'Columns' in GPL file. Please ensure your file is correct."))
-    
+
     for line in lines[4:]:
         if line.strip().decode() and not line.strip().decode().startswith("#"):
             parts = line.decode().split()
