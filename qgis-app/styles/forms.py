@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from styles.file_handler import validator
+from styles.file_handler import validator, gpl_validator
 from styles.models import Style
 from taggit.forms import TagField
 
@@ -38,15 +38,16 @@ class UploadForm(forms.ModelForm):
         Cleaning file field data.
         """
 
-        xml_file = self.cleaned_data["file"]
-
-        if xml_file:
-            style = validator(xml_file.file)
+        style_file = self.cleaned_data["file"]
+        if style_file.name.lower().endswith('.gpl'):
+            gpl_validator(style_file)
+        else:
+            style = validator(style_file.file)
             if not style:
                 raise ValidationError(
                     _("Undefined style type. " "Please register your style type.")
                 )
-        return xml_file
+        return style_file
 
 
 class UpdateForm(ResourceFormMixin):

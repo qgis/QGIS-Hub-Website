@@ -21,7 +21,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
-from styles.file_handler import read_xml_style
+from styles.file_handler import read_xml_style, get_gpl_name
 from styles.forms import UpdateForm, UploadForm
 from styles.models import Review, Style, StyleType
 from urllib.parse import unquote
@@ -51,22 +51,29 @@ class StyleCreateView(ResourceMixin, ResourceBaseCreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.creator = self.request.user
-        xml_parse = read_xml_style(obj.file)
-        if xml_parse:
+        if obj.file.name.lower().endswith(".gpl"):
+            style_name = get_gpl_name(obj.file)
+            style_type_str = "Color Palette"
+        else:
+            xml_parse = read_xml_style(obj.file)
+            if xml_parse:
+                style_name = xml_parse["name"]
+                style_type_str = xml_parse["type"]
+        if style_name and style_type_str:
             # check if name exists
-            name_exist = Style.objects.filter(name__iexact=xml_parse["name"]).exists()
+            name_exist = Style.objects.filter(name__iexact=style_name).exists()
             if name_exist:
                 obj.name = "%s_%s" % (
-                    xml_parse["name"].title(),
+                    style_name.title(),
                     get_random_string(length=5),
                 )
             else:
-                obj.name = xml_parse["name"].title()
-            style_type = StyleType.objects.filter(symbol_type=xml_parse["type"]).first()
+                obj.name = style_name.title()
+            style_type = StyleType.objects.filter(symbol_type=style_type_str).first()
             if not style_type:
                 style_type = StyleType.objects.create(
-                    symbol_type=xml_parse["type"],
-                    name=xml_parse["type"].title(),
+                    symbol_type=style_type_str,
+                    name=style_type_str.title(),
                     description="Automatically created from '"
                     "'an uploaded Style file",
                 )

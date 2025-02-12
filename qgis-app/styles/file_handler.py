@@ -88,6 +88,71 @@ def validator(xmlfile):
     xmlfile.seek(0)
     return True
 
+# Validator for GPL file
+def gpl_validator(gplfile):
+    """
+    Validate a GPL file.
+
+    The file should be a valid GPL file.
+    The file should contain:
+    - Header with "GIMP Palette"
+    - Name and Columns information
+    - RGB values and color name
+    """
+    try:
+        lines = gplfile.readlines()
+    except Exception:
+        raise ValidationError(_("Cannot read the GPL file. Please ensure your file is correct."))
+    
+    if len(lines) == 0:
+        raise ValidationError(_("Empty file. Please ensure your file is correct."))
+    if not lines[0].strip().decode() == "GIMP Palette":
+        raise ValidationError(_("Invalid GPL file header. Please ensure your file is correct."))
+
+    if not lines[1].strip().decode().startswith("Name:"):
+        raise ValidationError(_("Missing 'Name' in GPL file. Please ensure your file is correct."))
+
+    if not lines[2].strip().decode().startswith("Columns:"):
+        raise ValidationError(_("Missing 'Columns' in GPL file. Please ensure your file is correct."))
+    
+    for line in lines[4:]:
+        if line.strip().decode() and not line.strip().decode().startswith("#"):
+            parts = line.decode().split()
+            if len(parts) < 4:
+                raise ValidationError(_("Invalid color definition in GPL file. Please ensure your file is correct."))
+            try:
+                r, g, b = int(parts[0]), int(parts[1]), int(parts[2])
+                if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):
+                    raise ValidationError(_("RGB values must be between 0 and 255."))
+            except ValueError:
+                raise ValidationError(_("RGB values must be integers."))
+    gplfile.seek(0)
+    return True
+
+# Get the name from the GPL file
+def get_gpl_name(gplfile):
+    """
+    Get the name of the GPL file.
+
+    The file should be a valid GPL file.
+    The file should contain:
+    - Header with "GIMP Palette"
+    - Name and Columns information
+    - RGB values and color name
+    """
+    try:
+        lines = gplfile.readlines()
+    except Exception:
+        raise ValidationError(_("Cannot read the GPL file. Please ensure your file is correct."))
+    if not lines[0].strip().decode() == "GIMP Palette":
+        raise ValidationError(_("Invalid GPL file header. Please ensure your file is correct."))
+
+    if not lines[1].strip().decode().startswith("Name:"):
+        raise ValidationError(_("Missing 'Name' in GPL file. Please ensure your file is correct."))
+
+    name = lines[1].decode().split(":")[1].strip()
+    gplfile.seek(0)
+    return name
 
 def read_xml_style(xmlfile):
     """
