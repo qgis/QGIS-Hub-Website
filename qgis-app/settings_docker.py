@@ -212,16 +212,22 @@ HUB_SUBMENU = [
 
 API_SUBMENU = [
     {
-        'name': 'Resources RAW',
-        'url': '/api/v1/resources/',
-        'icon': 'fa-database',
-        'order': 0,
-    },
-    {
         'name': 'Tokens',
         'url': '/api/v1/tokens/',
         'icon': 'fa-key',
+        'order': 0,
+    },
+    {
+        'name': 'Swagger',
+        'url': '/swagger/',
+        'icon': 'fa-book',
         'order': 1,
+    },
+    {
+        'name': 'Resources RAW',
+        'url': '/api/v1/resources/',
+        'icon': 'fa-database',
+        'order': 2,
     },
 ]
 
