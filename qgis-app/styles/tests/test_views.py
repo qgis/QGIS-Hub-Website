@@ -149,6 +149,32 @@ class TestUploadStyle(TestCase):
         self.response = self.client.get(url)
         self.assertContains(self.response, "No data.")
 
+    def test_upload_gpl_different_encoding(self):
+        url = reverse("style_create")
+        f = os.path.join(STYLE_DIR, "color-blind_windows1250.gpl")
+        with open(f, 'rb') as gpl_file:
+            self.client.post(
+                url,
+                {
+                    "file": gpl_file,
+                    "thumbnail_image": self.thumbnail,
+                    "description": "This style is for testing only purpose",
+                    "tags": "gpl,style,test"
+                },
+            )
+        self.assertEqual(self.response.status_code, 200)
+        # style should be in Waiting Review
+        url = reverse("style_unapproved")
+        self.response = self.client.get(url)
+        self.assertContains(self.response, "1 record found.")
+        self.assertContains(self.response, "Boje Za Daltoniste")
+        self.assertContains(self.response, "Color Palette")
+        self.assertContains(self.response, "Creator")
+        # style should not be in Requiring Update
+        url = reverse("style_require_action")
+        self.response = self.client.get(url)
+        self.assertContains(self.response, "No data.")
+
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")
 class TestModeration(TestCase):
