@@ -178,30 +178,35 @@ HUB_SUBMENU = [
         'url': '/styles/?sort=upload_date&order=desc',
         'icon': 'fa-paint-brush',
         'order': 1,
+        'description': 'QGIS styles are a set of properties that can be applied to vector layers. They are used to render the layer in the map canvas.'
     },
     {
         'name': 'Projects',
         'url': '/geopackages/?sort=upload_date&order=desc',
         'icon': 'fa-folder-open',
         'order': 2,
+        'description': 'Geopackage files that contain a QGIS project file and all the data layers used in the project.'
     },
     {
         'name': 'Models',
         'url': '/models/?sort=upload_date&order=desc',
         'icon': 'fa-cogs',
         'order': 3,
+        'description': 'QGIS models are a set of processing algorithms that can be run in a sequence to automate a task.'
     },
     {
         'name': '3D Models',
         'url': '/wavefronts/?sort=upload_date&order=desc',
         'icon': 'fa-cube',
         'order': 4,
+        'description': 'QGIS 3D models can be used in any 3D software to visualize and analyze spatial data in three dimensions.'
     },
     {
         'name': 'QLR',
         'url': '/layerdefinitions/?sort=upload_date&order=desc',
         'icon': 'fa-layer-group',
         'order': 5,
+        'description': 'The QGIS Layer Definition (QLR) format makes it possible to share “complete” QGIS layers with other QGIS users. QLR files contain links to the data sources and all the QGIS style information necessary to style the layer.'
     }
 ]
 

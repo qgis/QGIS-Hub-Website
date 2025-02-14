@@ -14,6 +14,7 @@ from models.forms import UpdateForm, UploadForm
 from models.models import Model, Review
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
+from django.conf import settings
 
 
 class ResourceMixin:
@@ -48,6 +49,17 @@ class ModelUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class ModelListView(ResourceMixin, ResourceBaseListView):
     """Approved Model ListView"""
+
+    def get_context_data(self, **kwargs):
+        """
+        Override get_context_data.
+
+        Add 'description' to be displayed as page description
+        """
+
+        context = super(ModelListView, self).get_context_data(**kwargs)
+        context["description"] = settings.HUB_SUBMENU[2]['description']
+        return context
 
 
 class ModelUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):

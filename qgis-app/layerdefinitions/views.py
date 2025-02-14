@@ -26,6 +26,7 @@ from layerdefinitions.license import zipped_with_license
 from layerdefinitions.models import LayerDefinition, Review
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
+from django.conf import settings
 
 
 class ResourceMixin:
@@ -98,6 +99,17 @@ class LayerDefinitionUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class LayerDefinitionListView(ResourceMixin, ResourceBaseListView):
     """Approved Layer Definition File (.qlr) ListView"""
+
+    def get_context_data(self, **kwargs):
+        """
+        Override get_context_data.
+
+        Add 'description' to be displayed as page description
+        """
+
+        context = super(LayerDefinitionListView, self).get_context_data(**kwargs)
+        context["description"] = settings.HUB_SUBMENU[4]['description']
+        return context
 
 
 class LayerDefinitionUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):

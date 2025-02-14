@@ -26,6 +26,7 @@ from wavefronts.models import Review, Wavefront
 from wavefronts.utilities import zipped_all_with_license
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
+from django.conf import settings
 
 
 class ResourceMixin:
@@ -99,6 +100,17 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class WavefrontListView(ResourceMixin, ResourceBaseListView):
     """Approved Wavefront ListView"""
+
+    def get_context_data(self, **kwargs):
+        """
+        Override get_context_data.
+
+        Add 'description' to be displayed as page description
+        """
+
+        context = super(WavefrontListView, self).get_context_data(**kwargs)
+        context["description"] = settings.HUB_SUBMENU[3]['description']
+        return context
 
 
 class WavefrontUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):

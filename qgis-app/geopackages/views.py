@@ -14,6 +14,7 @@ from geopackages.forms import UpdateForm, UploadForm
 from geopackages.models import Geopackage, Review
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
+from django.conf import settings
 
 
 class ResourceMixin:
@@ -48,6 +49,17 @@ class GeopackageUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class GeopackageListView(ResourceMixin, ResourceBaseListView):
     """Approved GeoPackage ListView"""
+
+    def get_context_data(self, **kwargs):
+        """
+        Override get_context_data.
+
+        Add 'description' to be displayed as page description
+        """
+
+        context = super(GeopackageListView, self).get_context_data(**kwargs)
+        context["description"] = settings.HUB_SUBMENU[1]['description']
+        return context
 
 
 class GeopackageUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):

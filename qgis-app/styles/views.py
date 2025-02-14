@@ -115,6 +115,17 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
 class StyleListView(ResourceMixin, ResourceBaseListView):
     """Style ListView."""
 
+    def get_context_data(self, **kwargs):
+        """
+        Override get_context_data.
+
+        Add 'description' to be displayed as page description
+        """
+
+        context = super(StyleListView, self).get_context_data(**kwargs)
+        context["description"] = settings.HUB_SUBMENU[0]['description']
+        return context
+
 class StyleByTagView(StyleListView):
     """Display StyleListView filtered on style tag"""
 
