@@ -42,6 +42,9 @@ class ResourceMixin:
     # The url name in urls.py should start with this value
     resource_name_url_base = "wavefront"
 
+    # The index of the submenu in the navigation menu (settings_docker.py)
+    hub_submenu_index = 3
+
 
 class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
     """Upload a Wavefront File"""
@@ -100,17 +103,6 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class WavefrontListView(ResourceMixin, ResourceBaseListView):
     """Approved Wavefront ListView"""
-
-    def get_context_data(self, **kwargs):
-        """
-        Override get_context_data.
-
-        Add 'description' to be displayed as page description
-        """
-
-        context = super(WavefrontListView, self).get_context_data(**kwargs)
-        context["description"] = settings.HUB_SUBMENU[3]['description']
-        return context
 
 
 class WavefrontUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):

@@ -40,6 +40,9 @@ class ResourceMixin:
     # The url name in urls.py should start start with this value
     resource_name_url_base = "style"
 
+    # The index of the submenu in the navigation menu (settings_docker.py)
+    hub_submenu_index = 0
+
 
 class StyleCreateView(ResourceMixin, ResourceBaseCreateView):
     """
@@ -115,16 +118,6 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
 class StyleListView(ResourceMixin, ResourceBaseListView):
     """Style ListView."""
 
-    def get_context_data(self, **kwargs):
-        """
-        Override get_context_data.
-
-        Add 'description' to be displayed as page description
-        """
-
-        context = super(StyleListView, self).get_context_data(**kwargs)
-        context["description"] = settings.HUB_SUBMENU[0]['description']
-        return context
 
 class StyleByTagView(StyleListView):
     """Display StyleListView filtered on style tag"""

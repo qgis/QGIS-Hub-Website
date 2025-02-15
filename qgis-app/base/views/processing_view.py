@@ -373,6 +373,7 @@ class ResourceBaseListView(ResourceBaseContextMixin, ResourceSearchMixin, ListVi
         context["order_by"] = self.request.GET.get("order_by", None)
         context["queries"] = self.request.GET.get("q", None)
         context["is_gallery"] = self.request.GET.get("is_gallery", None)
+        context["description"] = settings.HUB_SUBMENU[self.hub_submenu_index]['description']
         return context
 
     def get_queryset(self):

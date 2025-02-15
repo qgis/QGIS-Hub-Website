@@ -30,6 +30,9 @@ class ResourceMixin:
     # The url name in urls.py should start with this value
     resource_name_url_base = "model"
 
+    # The index of the submenu in the navigation menu (settings_docker.py)
+    hub_submenu_index = 2
+
 
 class ModelCreateView(ResourceMixin, ResourceBaseCreateView):
     """Upload a Model File"""
@@ -49,17 +52,6 @@ class ModelUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class ModelListView(ResourceMixin, ResourceBaseListView):
     """Approved Model ListView"""
-
-    def get_context_data(self, **kwargs):
-        """
-        Override get_context_data.
-
-        Add 'description' to be displayed as page description
-        """
-
-        context = super(ModelListView, self).get_context_data(**kwargs)
-        context["description"] = settings.HUB_SUBMENU[2]['description']
-        return context
 
 
 class ModelUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):

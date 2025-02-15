@@ -42,6 +42,9 @@ class ResourceMixin:
     # The url name in urls.py should start start with this value
     resource_name_url_base = "layerdefinition"
 
+    # The index of the submenu in the navigation menu (settings_docker.py)
+    hub_submenu_index = 4
+
 
 class LayerDefinitionCreateView(ResourceMixin, ResourceBaseCreateView):
     """Upload a Layer Definition File (.qlr)."""
@@ -99,17 +102,6 @@ class LayerDefinitionUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class LayerDefinitionListView(ResourceMixin, ResourceBaseListView):
     """Approved Layer Definition File (.qlr) ListView"""
-
-    def get_context_data(self, **kwargs):
-        """
-        Override get_context_data.
-
-        Add 'description' to be displayed as page description
-        """
-
-        context = super(LayerDefinitionListView, self).get_context_data(**kwargs)
-        context["description"] = settings.HUB_SUBMENU[4]['description']
-        return context
 
 
 class LayerDefinitionUnapprovedListView(ResourceMixin, ResourceBaseUnapprovedListView):
