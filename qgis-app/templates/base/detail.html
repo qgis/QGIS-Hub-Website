@@ -14,39 +14,39 @@
       <h3 class="title is-4">{{ object_detail.name }}</h3>
     </div>
     <div class="column is-6 has-text-right">
-      {% if user == object_detail.creator or user.is_staff %}
       <div>
-          <a class="button is-success is-small is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
-            <span class="icon is-small">
-              <i class="fas fa-pencil-alt"></i>
-            </span>
-          </a>
-          <a class="button is-danger is-small is-outlined" href="{% url url_delete object_detail.id %}" title="{% trans "Delete" %}">
-            <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
-            </span>
+          {% if user == object_detail.creator or user.is_staff %}
+            <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
+              <span class="icon">
+                <i class="fas fa-pencil-alt"></i>
+              </span>
             </a>
+            <a class="button is-danger is-outlined" href="{% url url_delete object_detail.id %}" title="{% trans "Delete" %}">
+              <span class="icon">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </a>
+          {% endif %}
             {% if object_detail.file and object_detail.file.file %}
-            <button class="button is-small" 
+            <button class="button is-success" 
                onclick="location.href='{% url url_download object_detail.id %}'" 
                title="{% trans "Download" %}">
-              <span class="icon is-small">
+              <span class="icon">
               <i class="fas fa-download"></i>
               </span>
               <span>{% trans "Download" %}</span>
             </button>
             {% else %}
-            <button class="button is-small" 
+            <button class="button" 
                title="{% trans "File missing: The resource file couldn't be located." %}" 
                disabled>
-              <span class="icon is-small">
+              <span class="icon">
               <i class="fas fa-exclamation-triangle"></i>
               </span>
               <span>{% trans "File missing" %}</span>
             </button>
             {% endif %}
       </div>
-      {% endif %}
     </div>
   </div>
   <hr />
