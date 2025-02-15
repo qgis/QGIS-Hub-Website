@@ -42,7 +42,7 @@ class ResourceMixin:
     # The url name in urls.py should start start with this value
     resource_name_url_base = "layerdefinition"
 
-    # The index of the submenu in the navigation menu (settings_docker.py)
+    # The index of the submenu in the settings variable HUB_SUBMENU
     hub_submenu_index = 4
 
 

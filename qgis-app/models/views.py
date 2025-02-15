@@ -30,7 +30,7 @@ class ResourceMixin:
     # The url name in urls.py should start with this value
     resource_name_url_base = "model"
 
-    # The index of the submenu in the navigation menu (settings_docker.py)
+    # The index of the submenu in the settings variable HUB_SUBMENU
     hub_submenu_index = 2
 
 
