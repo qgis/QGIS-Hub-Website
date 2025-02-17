@@ -1,0 +1,20 @@
+GIMP Palette
+Name: Boje za daltoniste
+Columns: 8
+# 15-level colorblind-friendly palette
+# https://jacksonlab.agronomy.wisc.edu/2016/05/23/15-level-colorblind-friendly-palette
+  0    0    0  Jedan
+  0   73   73  Dva
+  0  146  146  Tri
+255  109  182  Èetiri
+255  182  219  Pet
+ 73    0  146  Šest
+  0  109  219  Sedam
+182  109  255  Osam
+109  182  255  Devet
+182  219  255  Deset
+146    0    0  Jedanaest
+146   73    0  Dvanaest
+219  109    0  Trinaest
+ 36  255   36  Èetrnaest
+255  255  109  Petnaest
