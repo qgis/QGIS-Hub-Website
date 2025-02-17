@@ -40,6 +40,9 @@ class ResourceMixin:
     # The url name in urls.py should start start with this value
     resource_name_url_base = "style"
 
+    # The index of the submenu in the settings variable HUB_SUBMENU
+    hub_submenu_index = 0
+
 
 class StyleCreateView(ResourceMixin, ResourceBaseCreateView):
     """
@@ -114,6 +117,7 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
 class StyleListView(ResourceMixin, ResourceBaseListView):
     """Style ListView."""
+
 
 class StyleByTagView(StyleListView):
     """Display StyleListView filtered on style tag"""

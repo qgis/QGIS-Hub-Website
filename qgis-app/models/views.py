@@ -14,6 +14,7 @@ from models.forms import UpdateForm, UploadForm
 from models.models import Model, Review
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
+from django.conf import settings
 
 
 class ResourceMixin:
@@ -28,6 +29,9 @@ class ResourceMixin:
 
     # The url name in urls.py should start with this value
     resource_name_url_base = "model"
+
+    # The index of the submenu in the settings variable HUB_SUBMENU
+    hub_submenu_index = 2
 
 
 class ModelCreateView(ResourceMixin, ResourceBaseCreateView):

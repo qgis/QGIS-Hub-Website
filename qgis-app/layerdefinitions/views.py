@@ -26,6 +26,7 @@ from layerdefinitions.license import zipped_with_license
 from layerdefinitions.models import LayerDefinition, Review
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
+from django.conf import settings
 
 
 class ResourceMixin:
@@ -40,6 +41,9 @@ class ResourceMixin:
 
     # The url name in urls.py should start start with this value
     resource_name_url_base = "layerdefinition"
+
+    # The index of the submenu in the settings variable HUB_SUBMENU
+    hub_submenu_index = 4
 
 
 class LayerDefinitionCreateView(ResourceMixin, ResourceBaseCreateView):
