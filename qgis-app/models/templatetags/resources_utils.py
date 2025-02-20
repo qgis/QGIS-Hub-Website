@@ -108,6 +108,8 @@ def get_string_tags(tags):
     """
     Get the string representation of tags
     """
+    if isinstance(tags, str):
+        return tags
     if not tags:
         return ''
     return ', '.join([tag.name for tag in tags])

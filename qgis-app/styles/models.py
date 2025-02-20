@@ -118,7 +118,7 @@ class Style(Resource):
     # file
     file = models.FileField(
         _("Style file"),
-        help_text=_("A QGIS Style (.xml) or Color Palette (.gpl) file."),
+        help_text=_("Upload a QGIS Style (.xml) or a Color Palette (.gpl) file."),
         upload_to=STYLES_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["xml", "gpl"])],
         null=False,

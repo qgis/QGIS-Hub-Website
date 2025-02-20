@@ -63,7 +63,7 @@ class TestUploadStyle(TestCase):
         url = reverse("style_create")
         f = os.path.join(STYLE_DIR, "cattrail.xml")
         with open(f) as xml_file:
-            self.client.post(
+            response = self.client.post(
                 url,
                 {
                     "file": xml_file,
@@ -72,7 +72,7 @@ class TestUploadStyle(TestCase):
                     "tags": "xml,style,test"
                 },
             )
-        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
         # Should send email to style managers
         self.assertEqual(
@@ -94,21 +94,21 @@ class TestUploadStyle(TestCase):
 
         # style should be in Waiting Review
         url = reverse("style_unapproved")
-        self.response = self.client.get(url)
-        self.assertContains(self.response, "1 record found.")
-        self.assertContains(self.response, "Cat Trail")
-        self.assertContains(self.response, "Line")
-        self.assertContains(self.response, "Creator")
+        response = self.client.get(url)
+        self.assertContains(response, "1 record found.")
+        self.assertContains(response, "Cat Trail")
+        self.assertContains(response, "Line")
+        self.assertContains(response, "Creator")
         # style should not be in Requiring Update
         url = reverse("style_require_action")
-        self.response = self.client.get(url)
-        self.assertContains(self.response, "No data.")
+        response = self.client.get(url)
+        self.assertContains(response, "No data.")
 
     def test_upload_gpl_file(self):
         url = reverse("style_create")
         f = os.path.join(STYLE_DIR, "colors.gpl")
         with open(f) as gpl_file:
-            self.client.post(
+            response = self.client.post(
                 url,
                 {
                     "file": gpl_file,
@@ -117,7 +117,7 @@ class TestUploadStyle(TestCase):
                     "tags": "gpl,style,test"
                 },
             )
-        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
         # Should send email to style managers
         self.assertEqual(
@@ -139,21 +139,21 @@ class TestUploadStyle(TestCase):
 
         # style should be in Waiting Review
         url = reverse("style_unapproved")
-        self.response = self.client.get(url)
-        self.assertContains(self.response, "1 record found.")
-        self.assertContains(self.response, "Qgis Palette")
-        self.assertContains(self.response, "Color Palette")
-        self.assertContains(self.response, "Creator")
+        response = self.client.get(url)
+        self.assertContains(response, "1 record found.")
+        self.assertContains(response, "Qgis Palette")
+        self.assertContains(response, "Color Palette")
+        self.assertContains(response, "Creator")
         # style should not be in Requiring Update
         url = reverse("style_require_action")
-        self.response = self.client.get(url)
-        self.assertContains(self.response, "No data.")
+        response = self.client.get(url)
+        self.assertContains(response, "No data.")
 
     def test_upload_gpl_different_encoding(self):
         url = reverse("style_create")
         f = os.path.join(STYLE_DIR, "color-blind_windows1250.gpl")
         with open(f, 'rb') as gpl_file:
-            self.client.post(
+            response = self.client.post(
                 url,
                 {
                     "file": gpl_file,
@@ -162,18 +162,8 @@ class TestUploadStyle(TestCase):
                     "tags": "gpl,style,test"
                 },
             )
-        self.assertEqual(self.response.status_code, 200)
-        # style should be in Waiting Review
-        url = reverse("style_unapproved")
-        self.response = self.client.get(url)
-        self.assertContains(self.response, "1 record found.")
-        self.assertContains(self.response, "Boje Za Daltoniste")
-        self.assertContains(self.response, "Color Palette")
-        self.assertContains(self.response, "Creator")
-        # style should not be in Requiring Update
-        url = reverse("style_require_action")
-        self.response = self.client.get(url)
-        self.assertContains(self.response, "No data.")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again.")
 
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")

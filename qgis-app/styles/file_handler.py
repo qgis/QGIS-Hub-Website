@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-import chardet
 
 
 def _check_name_type_attribute(element):
@@ -90,12 +89,14 @@ def validator(xmlfile):
     return True
 
 
-def detect_encoding(file):
-    raw_data = file.read()
-    result = chardet.detect(raw_data)
-    encoding = result['encoding']
-    file.seek(0)
-    return encoding
+def is_utf8(file):
+    try:
+        file.read().decode('utf-8')
+        return True
+    except UnicodeDecodeError:
+        return False
+    finally:
+        file.seek(0)
 
 # Validator for GPL file
 def gpl_validator(gplfile):
@@ -108,7 +109,8 @@ def gpl_validator(gplfile):
     - Name and Columns information
     - RGB values and color name
     """
-    encoding = detect_encoding(gplfile)
+    if not is_utf8(gplfile):
+        raise ValidationError(_("GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again."))
     try:
         lines = gplfile.readlines()
     except Exception:
@@ -116,15 +118,15 @@ def gpl_validator(gplfile):
 
     if len(lines) == 0:
         raise ValidationError(_("Empty file. Please ensure your file is correct."))
-    if not lines[0].strip().decode(encoding) == "GIMP Palette":
+    if not lines[0].strip().decode() == "GIMP Palette":
         raise ValidationError(_("Invalid GPL file header. Please ensure your file is correct."))
 
-    if not lines[1].strip().decode(encoding).startswith("Name:"):
+    if not lines[1].strip().decode().startswith("Name:"):
         raise ValidationError(_("Missing 'Name' in GPL file. Please ensure your file is correct."))
 
     for line in lines[4:]:
-        if line.strip().decode(encoding) and not line.strip().decode(encoding).startswith("#"):
-            parts = line.decode(encoding).split()
+        if line.strip().decode() and not line.strip().decode().startswith("#"):
+            parts = line.decode().split()
             if len(parts) < 4:
                 raise ValidationError(_("Invalid color definition in GPL file. Please ensure your file is correct."))
             try:
@@ -147,18 +149,19 @@ def get_gpl_name(gplfile):
     - Name and Columns information
     - RGB values and color name
     """
-    encoding = detect_encoding(gplfile)
+    if not is_utf8(gplfile):
+        raise ValidationError(_("GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again."))
     try:
         lines = gplfile.readlines()
     except Exception:
         raise ValidationError(_("Cannot read the GPL file. Please ensure your file is correct."))
-    if not lines[0].strip().decode(encoding) == "GIMP Palette":
+    if not lines[0].strip().decode() == "GIMP Palette":
         raise ValidationError(_("Invalid GPL file header. Please ensure your file is correct."))
 
-    if not lines[1].strip().decode(encoding).startswith("Name:"):
+    if not lines[1].strip().decode().startswith("Name:"):
         raise ValidationError(_("Missing 'Name' in GPL file. Please ensure your file is correct."))
 
-    name = lines[1].decode(encoding).split(":")[1].strip()
+    name = lines[1].decode().split(":")[1].strip()
     gplfile.seek(0)
     return name
 
