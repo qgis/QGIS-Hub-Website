@@ -39,7 +39,9 @@
         <textarea class="textarea" placeholder="{{ field.help_text | safe }}" id="{{ field.html_name }}" name="{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
       </div>
       {% if field.errors %}
-        <p class="help is-danger">{{ field.errors }}</p>
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
       {% endif %}
     </div>
     {% elif field.field.widget|klass == 'TextInput' or field.field.widget|klass == 'URLInput' %}
