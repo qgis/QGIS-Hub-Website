@@ -28,7 +28,7 @@ from urllib.parse import unquote
 
 
 class ResourceMixin:
-    """Mixin class for Geopackage."""
+    """Mixin class for Style."""
 
     model = Style
 
