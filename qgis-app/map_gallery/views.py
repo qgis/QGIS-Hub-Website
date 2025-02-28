@@ -10,12 +10,17 @@ from base.views.processing_view import (
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
     resource_nav_content,
+    resource_notify,
 )
 from urllib.parse import unquote
+from django.contrib import messages
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 
 from map_gallery.models import Review, Map
 from map_gallery.forms import UpdateForm, UploadForm
+from map_gallery.validator import is_valid_image
 
 
 class ResourceMixin:
@@ -39,6 +44,20 @@ class MapCreateView(ResourceMixin, ResourceBaseCreateView):
   """Upload a Map File"""
 
   form_class = UploadForm
+
+  def form_valid(self, form):
+    obj = form.save(commit=False)
+    obj.creator = self.request.user
+    
+    # Check if the uploaded file is a valid image
+    is_valid_image(obj.file)
+
+    obj.save()
+    form.save_m2m()
+    resource_notify(obj, self.resource_name)
+    msg = _("The Map has been successfully created.")
+    messages.success(self.request, msg, "success", fail_silently=True)
+    return HttpResponseRedirect(reverse("map_detail", kwargs={"pk": obj.id}))
 
 
 class MapDetailView(ResourceMixin, ResourceBaseDetailView):

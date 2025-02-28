@@ -52,5 +52,6 @@ class ResourceBaseCleanFileForm(object):
         file = self.cleaned_data["file"]
         file_extension = os.path.splitext(file.name)[1]
         is_gpkg = file_extension == ".gpkg"
-        if filesize_validator(file.file, is_gpkg):
+        is_map = self.is_map
+        if filesize_validator(file.file, is_gpkg, is_map):
             return file

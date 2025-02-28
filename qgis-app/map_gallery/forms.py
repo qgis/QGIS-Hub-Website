@@ -18,6 +18,7 @@ class ResourceFormMixin(forms.ModelForm):
 
 class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Upload Form."""
+    is_map = True
 
 
 class UpdateForm(ResourceFormMixin):
