@@ -24,8 +24,12 @@
                     {% thumbnail object.thumbnail_image "96x96" format="PNG" as im %}
                         <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
+                {% elif resource_name == 'Map' and object.file.file %}
+                    {% thumbnail object.file.file "96x96" crop="center" format="PNG" as im %}
+                        <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
+                {% endthumbnail %}
                 {% else %}
-                    <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                    <img height="32" width="32" class="plugin-icon" src="{% static "images/large-logo.svg" %}" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
                 </td>
                 <td>{{ object.name|title }}</td>

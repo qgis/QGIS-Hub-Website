@@ -45,13 +45,32 @@ ul.as-list {
             <div class="control">
             <label class="checkbox">
                 {% if not is_custom_license_agreement %}
-                <input type="checkbox" required> I confirm that I own these materials and have the rights to share them, including any embedded content, under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.
+                <input id="declaration" type="checkbox" required> I confirm that I own these materials and have the rights to share them, including any embedded content, under the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC-0 license</a>.
                 {% else %}
-                <input type="checkbox" required> I confirm that I own these materials and have the rights to share them, including any embedded content, under the license.
+                <input id="declaration" type="checkbox" required> I confirm that I own these materials and have the rights to share them, including any embedded content, under the license.
                 {% endif %}
             </label>
             </div>
         </div>
+
+        {% if resource_name == 'Map' %}
+            <div class="field">
+                <div class="control">
+                <label class="checkbox">
+                    <input id="declaration" type="checkbox" required> 
+                    I confirm that QGIS was integral to the creation of this map.
+                </label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                <label class="checkbox">
+                    <input id="declaration" type="checkbox" required> 
+                    I declare that QGIS.org may use this image for marketing and promotion as needed to benefit the project.
+                </label>
+                </div>
+            </div>
+        {% endif %}
 
         <div class="field has-text-centered">
             <div class="control">

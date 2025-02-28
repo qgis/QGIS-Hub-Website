@@ -54,8 +54,14 @@
     <div class="style-polaroid">
       {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
         {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
-        <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+          <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
         {% endthumbnail %}
+      {% elif resource_name == 'Map' and object.file.file %}
+      {% thumbnail object.file "420x420" format="PNG" as im %}
+        <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
+      {% endthumbnail %}
+      {% else %}
+        <img src="{% static "images/large-logo.svg" %}" alt="{% trans "Plugin icon" %}" />
       {% endif %}
         {% if is_3d_model %}
           {% include "base/includes/wavefront/detail_3dviewer.html" %}
