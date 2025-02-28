@@ -48,7 +48,7 @@ class MapCreateView(ResourceMixin, ResourceBaseCreateView):
   def form_valid(self, form):
     obj = form.save(commit=False)
     obj.creator = self.request.user
-    
+
     # Check if the uploaded file is a valid image
     is_valid_image(obj.file)
 
