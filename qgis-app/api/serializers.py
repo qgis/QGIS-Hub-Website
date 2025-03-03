@@ -5,6 +5,7 @@ from rest_framework import serializers
 from styles.models import Style, StyleType
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
+from map_gallery.models import Map
 from sorl.thumbnail import get_thumbnail
 from django.conf import settings
 from os.path import exists, join
@@ -21,7 +22,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source="get_creator_name")
     resource_type = serializers.SerializerMethodField()
     resource_subtype = serializers.SerializerMethodField()
-    thumbnail_full = serializers.ImageField(source="thumbnail_image")
+    thumbnail_full = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
 
     class Meta:
@@ -49,11 +50,25 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
             return "3DModel"
         return self.Meta.model.__name__
 
+    def get_thumbnail_full(self, obj):
+        request = self.context.get('request')
+        file_field = getattr(obj, "file", None) if self.Meta.model.__name__ == "Map" else getattr(obj, "thumbnail_image", None)
+
+        if file_field and exists(file_field.path):
+            if request is not None:
+                return request.build_absolute_uri(file_field.url)
+            return file_field.url
+
+        return None
+
     def get_thumbnail(self, obj):
         request = self.context.get('request')
+        thumbnail_field = getattr(obj, "thumbnail_image", None)
+        if self.Meta.model.__name__ == "Map":
+            thumbnail_field = getattr(obj, "file", None)
         try:
-            if obj.thumbnail_image and exists(obj.thumbnail_image.path):
-                thumbnail = get_thumbnail(obj.thumbnail_image, "128x128", crop="center")
+            if thumbnail_field and exists(thumbnail_field.path):
+                thumbnail = get_thumbnail(thumbnail_field, "128x128", crop="center")
                 if request is not None:
                     return request.build_absolute_uri(thumbnail.url)
                 return thumbnail.url
@@ -202,3 +217,11 @@ class WavefrontSerializer(ResourceBaseSerializer):
             valid_3dmodel = WavefrontValidator(file).validate_wavefront()
             self.new_filepath = join(WAVEFRONTS_STORAGE_PATH, valid_3dmodel)
         return attrs
+
+
+class MapSerializer(ResourceBaseSerializer):
+    class Meta(ResourceBaseSerializer.Meta):
+        model = Map
+
+    def get_resource_subtype(self, obj):
+        return None

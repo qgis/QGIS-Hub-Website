@@ -19,19 +19,25 @@ is-one-third-fullhd">
         >
 
         <div class="card-image">
-            <figure class="image is-4by3">
+            <figure class="image m-0 is-4by3">
                 {% if object.thumbnail_image and object.thumbnail_image.file %}
-                    {% thumbnail object.thumbnail_image "420x420" format="PNG" as im %}
+                    {% thumbnail object.thumbnail_image "420x420" crop="center" format="PNG" as im %}
                         <img alt="{% trans "Style icon" %}" src="{{ im.url }}" />
                     {% endthumbnail %}
+                {% elif resource_name == 'Map' and object.file.file %}
+                    {% thumbnail object.file.file "420x420" crop="center" format="PNG" as im %}
+                        <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
+                    {% endthumbnail %}
                 {% else %}
-                    <img height="32" width="32" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                    <img src="{% static "images/large-logo.svg" %}" class="p-3" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
             </figure>
         </div>
         <div class="card-content is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100%;">
             <div class="content mb-0">
-                <p class="title is-5 mb-5">{{ object.name }}</p>
+                <a href="{% url url_detail pk=object.id %}">
+                    {{ object.name }}
+                </a>
                 <p class="subtitle is-7 is-italic">
                     by {{ object.get_creator_name }}, {{ object.upload_date|date:"d F Y" }} 
                 </p>

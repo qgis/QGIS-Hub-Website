@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "drf_multiple_model",
     "drf_yasg",
     "api",
+    "map_gallery",
     # styles:
     "styles",
     # geopackages
@@ -207,6 +208,13 @@ HUB_SUBMENU = [
         'icon': 'fa-layer-group',
         'order': 5,
         'description': 'The QGIS Layer Definition (QLR) format makes it possible to share “complete” QGIS layers with other QGIS users. QLR files contain links to the data sources and all the QGIS style information necessary to style the layer.'
+    },
+    {
+        'name': 'Map Gallery',
+        'url': '/map-gallery/?sort=upload_date&order=desc',
+        'icon': 'fa-map',
+        'order': 6,
+        'description': 'QGIS Map Gallery is a collection of maps created with QGIS. They are a great way to learn how to use QGIS and to get inspiration for your own maps.'
     }
 ]
 

@@ -17,7 +17,8 @@ let enableSubmit = () => {
 // Disable submit button
 disableSubmit()
 
-// Enable submit button
-$("input[type=checkbox]").on("click", function(){
-    $("input[type=checkbox]").is(":checked") ? enableSubmit() : disableSubmit()
+// Enable submit button if all required checkboxes with id='declaration' are checked
+$("input[type=checkbox][required][id='declaration']").on("click", function(){
+    let allChecked = $("input[type=checkbox][required][id='declaration']").length === $("input[type=checkbox][required][id='declaration']:checked").length;
+    allChecked ? enableSubmit() : disableSubmit();
 })

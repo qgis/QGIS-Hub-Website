@@ -26,9 +26,11 @@
 
 .resources-list-grid
   .card:hover
-    background-color: #ECF1F4
+    box-shadow: $shadow-hover
     cursor: pointer
   .card
+    transition: all 0.3s ease
+    border: 1px solid $border
     +tablet
       height: 100%
     .media-content
@@ -39,6 +41,8 @@
       width: 200px
       overflow: hidden
       text-overflow: ellipsis
+    img
+      object-fit: cover
   
   .right-ribbon
     position: absolute
