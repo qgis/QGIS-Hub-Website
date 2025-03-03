@@ -69,7 +69,7 @@ class TestFormValidation(SetUpTest, TestCase):
         file_data = { "file": uploaded_map}
         form = UploadForm(data, file_data)
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors, {"file": ["The submitted file is empty."]})
+        self.assertEqual(form.errors, {"file": ["Upload a valid image. The file you uploaded was either not an image or a corrupted image."]})
 
 
 @override_settings(MEDIA_ROOT="map_gallery/tests/mapfiles/")

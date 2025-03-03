@@ -6,6 +6,7 @@ from taggit.forms import TagField
 
 class ResourceFormMixin(forms.ModelForm):
     tags = TagField(required=False)
+    is_map = True
     class Meta:
         model = Map
         fields = [
@@ -18,7 +19,6 @@ class ResourceFormMixin(forms.ModelForm):
 
 class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Upload Form."""
-    is_map = True
 
 
 class UpdateForm(ResourceFormMixin):
