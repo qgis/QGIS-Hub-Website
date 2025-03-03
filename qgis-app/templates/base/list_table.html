@@ -32,7 +32,11 @@
                     <img height="32" width="32" class="plugin-icon" src="{% static "images/large-logo.svg" %}" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
                 </td>
-                <td>{{ object.name|title }}</td>
+                <td>
+                    <a href="{% url url_detail pk=object.id %}">
+                        {{ object.name }}
+                    </a>
+                </td>
                 {% if object.style_type %}
                     <td class="has-text-centered">
                         <span class="tag is-info is-light">{{ object.style_type.name|title }}</span>

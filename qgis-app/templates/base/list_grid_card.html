@@ -36,7 +36,7 @@ is-one-third-fullhd">
         <div class="card-content is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100%;">
             <div class="content mb-0">
                 <a href="{% url url_detail pk=object.id %}">
-                    {{ object.name|title }}
+                    {{ object.name }}
                 </a>
                 <p class="subtitle is-7 is-italic">
                     by {{ object.get_creator_name }}, {{ object.upload_date|date:"d F Y" }} 
