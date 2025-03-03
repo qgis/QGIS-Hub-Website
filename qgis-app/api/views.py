@@ -1,6 +1,13 @@
 from collections import OrderedDict
 
-from api.serializers import GeopackageSerializer, ModelSerializer, StyleSerializer, LayerDefinitionSerializer, WavefrontSerializer
+from api.serializers import (
+    GeopackageSerializer,
+    ModelSerializer,
+    StyleSerializer,
+    LayerDefinitionSerializer,
+    WavefrontSerializer,
+    MapSerializer
+)
 from base.license import zip_a_file_if_not_zipfile
 from django.contrib.postgres.search import SearchVector
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -33,6 +40,7 @@ from rest_framework.views import APIView
 from styles.models import Style
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
+from map_gallery.models import Map
 from api.models import UserOutstandingToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
@@ -151,6 +159,12 @@ class ResourceAPIList(FlatMultipleModelAPIView):
             "serializer_class": StyleSerializer,
             "filter_fn": filter_general,
         },
+        {
+            "queryset": Map.approved_objects.all(),
+            "serializer_class": MapSerializer,
+            "filter_fn": filter_general,
+        },
+
     ]
 
 
@@ -359,6 +373,8 @@ def _get_resource_serializer(resource_type):
         return LayerDefinitionSerializer
     elif resource_type.lower() == "model":
         return ModelSerializer
+    elif resource_type.lower() == "map":
+        return MapSerializer
     else:
         return None
 
@@ -373,6 +389,8 @@ def _get_resource_object(uuid, resource_type):
         return get_object_or_404(LayerDefinition.approved_objects, uuid=uuid)
     elif resource_type.lower() == "model":
         return get_object_or_404(Model.approved_objects, uuid=uuid)
+    elif resource_type.lower() == "map":
+        return get_object_or_404(Map.approved_objects, uuid=uuid)
     else:
         return None
 
