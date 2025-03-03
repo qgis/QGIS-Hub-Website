@@ -30,7 +30,7 @@ class TagCloudTests(SetUpTest, TestCase):
 
     def test_get_queryset(self):
         queryset = resources_tagcloud.get_queryset('models', 'model')
-        self.assertEqual(list(queryset), [self.tag1, self.tag2])
+        self.assertCountEqual(queryset, [self.tag1, self.tag2])
 
     def test_get_resources_tagcloud(self):
         context = Context({'request': self.factory.get('/')})
