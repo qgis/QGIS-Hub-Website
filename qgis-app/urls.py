@@ -45,6 +45,7 @@ urlpatterns = [
     url(r"^layerdefinitions/", include("layerdefinitions.urls")),
     url(r"^models/", include("models.urls")),
     url(r"^wavefronts/", include("wavefronts.urls")),
+    url(r"^map-gallery/", include("map_gallery.urls")),
 ]
 
 # ABP: temporary home page
