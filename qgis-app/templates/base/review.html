@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block content %}
+{% if resource_name == 'Map' %}
+  {% include "base/includes/image_viewer.html" with image_file=object.file  %}
+{% endif %}
 <div class="box-content">
     
   <div class="columns">
@@ -74,6 +77,18 @@
           {% endif %}
       </div>
     </div>
+
+    {% if resource_name == 'Map' %}
+      <div class="has-text-centered">
+        <button class="button is-light" onclick="openViewer('{{ object.file.url }}');">
+          <span class="icon">
+            <i class="fas fa-map"></i>
+          </span>
+          <span>{% trans "View Full Size Map" %}</span>
+        </button>
+      </div>
+    {% endif %}
+
     {% include "base/includes/detail_object.html" %}
     {% include "base/includes/layerdefinition/review_datasource.html" %}
 

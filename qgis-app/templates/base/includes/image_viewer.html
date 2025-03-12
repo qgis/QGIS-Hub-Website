@@ -1,0 +1,12 @@
+{% load static %}
+<!-- Image Viewer -->
+<div id="imageViewer" class="image-viewer">
+  <img id="viewedImage" src="" alt="Image">
+  <div class="controls">
+    <button id="zoomIn"><i class="fas fa-search-plus"></i></button>
+    <button id="zoomOut"><i class="fas fa-search-minus"></i></button>
+    <button id="resetZoom"><i class="fas fa-expand-arrows-alt"></i></button>
+  </div>
+</div>
+
+<script src="{% static "js/image_viewer.js" %}"></script>
