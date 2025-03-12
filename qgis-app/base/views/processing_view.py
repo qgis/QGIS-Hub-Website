@@ -80,7 +80,7 @@ def resource_notify(
         send_mail_wrapper(
             _("A new %s has been %s by %s.")
             % (resource_type, resource_status, resource.creator),
-            _("\r\n%s name is: %s\r\n%s description is: %s\r\n" "Link: http://%s%s\r\n")
+            _("\r\n%s name is: %s\r\n%s description is: %s\r\n" "Link: https://%s%s\r\n")
             % (
                 resource_type,
                 resource.name,
@@ -131,7 +131,7 @@ def resource_update_notify(
         mail_from = settings.DEFAULT_FROM_EMAIL
         send_mail_wrapper(
             _("%s %s %s notification.") % (resource_type, resource, approval_state),
-            _("\r\n%s %s %s by %s.\r\n%s\r\nLink: http://%s%s\r\n")
+            _("\r\n%s %s %s by %s.\r\n%s\r\nLink: https://%s%s\r\n")
             % (
                 resource_type,
                 resource.name,

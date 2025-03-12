@@ -7,5 +7,23 @@
         "test_*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "files.associations": {
+      "**/templates/**/*.html": "django-html",
+      "**/templates/**/*.htm": "django-html",
+      "**/static/**/*.js": "javascript"
+    },
+    "emmet.includeLanguages": {
+      "django-html": "html"
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "[django-html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
