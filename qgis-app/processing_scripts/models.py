@@ -45,7 +45,7 @@ class ProcessingScript(Resource):
 
   def get_absolute_url(self):
     return reverse("processing_script_detail", args=(self.id,))
-  
+
   def get_file_content(self):
     with open(self.file.path, 'r') as file:
       return file.read()

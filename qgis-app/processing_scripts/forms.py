@@ -21,7 +21,7 @@ class ResourceFormMixin(forms.ModelForm):
 
 class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Upload Form."""
-    
+
     def clean_file(self):
         """
         Cleaning file field data.

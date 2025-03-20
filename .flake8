@@ -1,6 +1,7 @@
 [flake8]
 exclude = */docs/*,*/.tox/*,*/.venv/*,*/.pycharm_helpers/*,*/migrations/*,docs/*,*/__init__.py,
-    */manage.py,*/wsgi.py,*/django.wsgi,
+    */manage.py,*/wsgi.py,*/django.wsgi,*/env/*,
+    qgis-app/processing_scripts/tests/processing_files/*,
     # we don't check this for now, until it's been fixed. otherwise it will throw lot of errors
     qgis-app/lib/templatetags/*,
     vagrant_assets/*,
