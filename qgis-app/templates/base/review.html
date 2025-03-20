@@ -101,8 +101,10 @@
     {% endif %}
 
     {% include "base/includes/detail_object.html" %}
-    {% include "base/includes/layerdefinition/review_datasource.html" %}
-
+    {% if license_template %}
+      <hr />
+      {% include license_template %}
+    {% endif %}
     <hr />
     {% if reviewer %}
         {% with review=object_detail.review_set.last %}
