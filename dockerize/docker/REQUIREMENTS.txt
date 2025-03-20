@@ -55,3 +55,5 @@ sentry-sdk~=2.2
 setuptools~=75.1
 beautifulsoup4~=4.12
 django-webpack-loader~=3.1
+
+bandit~=1.8

@@ -60,6 +60,17 @@ def processing_script_validator(processing_script_file) -> bool:
     raise ValidationError(
       _("Script must implement the following methods: {}").format(", ".join(missing_methods))
     )
+
+  # Check for malware using Bandit
+  try:
+    issues = _scan_for_malware(script_content)
+    if issues:
+      raise ValidationError(
+        _(f"Script contains potential security issues:{', '.join(str(issue) for issue in issues)}")
+      )
+  except ImportError:
+    pass  # Bandit is not installed, skip malware check
+
   return True
 
 def _validate_syntax(script_content: str) -> bool:
@@ -105,3 +116,36 @@ def _validate_method_exists(script_content: str, method_name: str) -> bool:
     return False
   except Exception:
     return False
+
+def _scan_for_malware(script_content: str):
+  """
+  Scan the script for potential security issues using Bandit.
+  """
+  import tempfile
+  from bandit import config, manager
+  try:
+
+    # Create a temporary file to store the script content
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as temp_file:
+      temp_file.write(script_content)
+      temp_file_path = temp_file.name
+
+    # Initialize Bandit configuration
+    bandit_config = config.BanditConfig()
+    bandit_manager = manager.BanditManager(bandit_config, "file")
+
+    # Run Bandit on the temporary file
+    bandit_manager.discover_files([temp_file_path], recursive=False)
+    bandit_manager.run_tests()
+    results = bandit_manager.get_issue_list()
+
+    # Clean up the temporary file
+    os.remove(temp_file_path)
+
+    # Check if any security issues were found
+    if results:
+      return results
+  except Exception as e:
+    if "temp_file_path" in locals():
+      os.remove(temp_file_path)  # Clean up the temporary file in case of an error
+  return []
