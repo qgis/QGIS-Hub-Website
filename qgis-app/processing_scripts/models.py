@@ -40,11 +40,15 @@ class ProcessingScript(Resource):
 
 
   def extension(self):
-      name, extension = os.path.splitext(self.file.name)
-      return extension
+    name, extension = os.path.splitext(self.file.name)
+    return extension
 
   def get_absolute_url(self):
-      return reverse("processing_script_detail", args=(self.id,))
+    return reverse("processing_script_detail", args=(self.id,))
+  
+  def get_file_content(self):
+    with open(self.file.path, 'r') as file:
+      return file.read()
 
 
 class Review(ResourceReview):

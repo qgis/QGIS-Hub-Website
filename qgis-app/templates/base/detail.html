@@ -82,6 +82,15 @@
       <span>{% trans "Open Full-Size Map" %}</span>
     </button>
   </div>
+  {% elif resource_name == 'Processing Script' %}
+  <div class="has-text-centered">
+    <button class="button is-light" onclick="openViewer('{{ object.file.url }}');">
+      <span class="icon">
+        <i class="fas fa-map"></i>
+      </span>
+      <span>{% trans "Preview Script" %}</span>
+    </button>
+  </div>
   {% endif %}
 
   {% include "base/includes/detail_object.html" %}
