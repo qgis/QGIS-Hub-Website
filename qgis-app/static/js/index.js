@@ -1,4 +1,7 @@
 require('../style/scss/style.scss');
+const hljs = require('highlight.js/lib/core');
+hljs.registerLanguage('python', require('highlight.js/lib/languages/python'));
+hljs.highlightAll();
 import $ from 'jquery';
 
 window.$ = $;

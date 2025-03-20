@@ -17,14 +17,18 @@
     {% elif field.field.widget|klass == 'ClearableFileInput' %}
     <div class="file has-name">
       <label class="file-label">
-        <input class="file-input" type="file" id="{{ field.html_name }}" name="{{ field.html_name }}" />
+        <input 
+        class="file-input" 
+        type="file" 
+        id="{{ field.html_name }}" name="{{ field.html_name }}" 
+        onchange="handleFileInputChange(this)" />
         <span class="file-cta">
           <span class="file-icon">
             <i class="fas fa-cloud-upload-alt"></i>
           </span>
           <span class="file-label">{{ field.label }}</span>
         </span>
-        <span class="file-name" id="filename">Choose a file…</span>
+        <span class="file-name" id="{{ field.html_name }}_filename">Choose a file…</span>
       </label>
     </div>
     {% if field.errors %}
@@ -127,8 +131,6 @@
 
 <script>
   $(document).ready(function () {
-    const fileInput = $(".file-input");
-    const fileName = $("#filename");
     const hiddenInput = $('#tags');
     const tagInput = $('#tag-input');
     const suggestionBox = $('#tag-suggestions');
@@ -139,14 +141,6 @@
     initialTags.forEach(tagName => {
       if (tagName.trim() !== '') {
         addTag(tagName.trim());
-      }
-    });
-
-    fileInput.on("change", function () {
-      if (fileInput[0].files.length > 0) {
-        fileName.text(fileInput[0].files[0].name);
-      } else {
-        fileName.text("Choose a file…");
       }
     });
 
@@ -216,4 +210,15 @@
       hiddenInput.val(tags.join(','));
     }
   });
+
+  function handleFileInputChange(input) {
+    const file = input.files[0];
+    const fileName = file.name;
+    const fileNameElement = $(`#${input.id}_filename`);
+    if (fileNameElement.length > 0) {
+      fileNameElement.text(fileName);
+    } else {
+      fileNameElement.text("Choose a file…");
+    }
+  }
 </script>

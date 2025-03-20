@@ -83,7 +83,10 @@ INSTALLED_APPS = [
     "layerdefinitions",
     # models (sharing .model3 file feature)
     "models",
+    # 3D models
     "wavefronts",
+    # Processing algorithms
+    "processing_scripts",
     "matomo",
     # Webpack
     "webpack_loader"
@@ -215,7 +218,14 @@ HUB_SUBMENU = [
         'icon': 'fa-map',
         'order': 6,
         'description': 'QGIS Map Gallery is a collection of maps created with QGIS. They are a great way to learn how to use QGIS and to get inspiration for your own maps.'
-    }
+    },
+    {
+        'name': 'Processing Scripts',
+        'url': '/scripts/?sort=upload_date&order=desc',
+        'icon': 'fa-cogs',
+        'order': 7,
+        'description': 'QGIS Processing Scripts are a set of processing algorithms that can be run in a sequence to automate a task.'
+    },
 ]
 
 API_SUBMENU = [
