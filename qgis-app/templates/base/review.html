@@ -10,6 +10,8 @@
 {% block content %}
 {% if resource_name == 'Map' %}
   {% include "base/includes/image_viewer.html" with image_file=object.file  %}
+{% elif resource_name == 'Processing Script' %}
+  {% include "base/includes/script_viewer.html" with title=object.name script_content=object.get_file_content %}
 {% endif %}
 <div class="box-content">
     
@@ -87,11 +89,22 @@
           <span>{% trans "Open Full-Size Map" %}</span>
         </button>
       </div>
+      {% elif resource_name == 'Processing Script' %}
+      <div class="has-text-centered">
+        <button class="button is-light script-preview-modal-button" data-target="scriptPreviewModal" >
+          <span class="icon">
+            <i class="fas fa-code"></i>
+          </span>
+          <span>{% trans "Preview Script" %}</span>
+        </button>
+      </div>
     {% endif %}
 
     {% include "base/includes/detail_object.html" %}
-    {% include "base/includes/layerdefinition/review_datasource.html" %}
-
+    {% if license_template %}
+      <hr />
+      {% include license_template %}
+    {% endif %}
     <hr />
     {% if reviewer %}
         {% with review=object_detail.review_set.last %}

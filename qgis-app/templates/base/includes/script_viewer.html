@@ -1,0 +1,19 @@
+{% load static %}
+<div id="scriptPreviewModal" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card" style="width: 80%;">
+    <header class="modal-card-head">
+      <p class="modal-card-title">{{ title }}</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <pre style="background-color:unset; padding:0; height: 100%;">
+        <code class="language-python" style="height: 100%;">
+          {{ script_content }}
+        </code>
+      </pre>
+    </section>
+  </div>
+</div>
+
+<script src="{% static "js/script_viewer.js" %}"></script>
