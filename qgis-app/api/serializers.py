@@ -6,6 +6,7 @@ from styles.models import Style, StyleType
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
 from map_gallery.models import Map
+from processing_scripts.models import ProcessingScript
 from sorl.thumbnail import get_thumbnail
 from django.conf import settings
 from os.path import exists, join
@@ -222,6 +223,14 @@ class WavefrontSerializer(ResourceBaseSerializer):
 class MapSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Map
+
+    def get_resource_subtype(self, obj):
+        return None
+
+
+class ProcessingScriptSerializer(ResourceBaseSerializer):
+    class Meta(ResourceBaseSerializer.Meta):
+        model = ProcessingScript
 
     def get_resource_subtype(self, obj):
         return None

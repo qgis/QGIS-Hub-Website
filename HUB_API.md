@@ -6,6 +6,15 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 
 ## Endpoints
 
+### Available resource types (resource_type)
+- `geopackage`
+- `3dmodel`
+- `style`
+- `layerdefinition`
+- `model`
+- `map`
+- `processingscript`
+
 ### Resources
 - **URL:** `/resources/`
 - **Method:** `GET`
