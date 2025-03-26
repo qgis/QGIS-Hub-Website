@@ -28,7 +28,7 @@ urlpatterns = [
         ProcessingScriptRequireActionListView.as_view(),
         name="processing_script_require_action",
     ),
-    path("tags/<processing_script_tag>/", ProcessingScriptByTagView.as_view(), name="processing_script_tag"),
+    path("tags/<processing_script_tag>/", ProcessingScriptByTagView.as_view(), name="processingscript_tag"),
     # JSON
     path("sidebarnav/", processing_script_nav_content, name="processing_script_nav_content"),
 ]
