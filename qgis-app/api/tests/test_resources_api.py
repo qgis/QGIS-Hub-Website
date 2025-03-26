@@ -14,6 +14,8 @@ from django.test import override_settings
 from os.path import dirname, join
 from django.core.files.uploadedfile import SimpleUploadedFile
 from wavefronts.models import Wavefront
+from map_gallery.models import Map
+from processing_scripts.models import ProcessingScript
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from api.models import UserOutstandingToken
@@ -23,6 +25,8 @@ LAYERDEFINITION_DIR = join(dirname(dirname(dirname(__file__))), "layerdefinition
 MODELS_DIR = join(dirname(dirname(dirname(__file__))), "models", "tests", "modelfiles")
 STYLES_DIR = join(dirname(dirname(dirname(__file__))), "styles", "tests", "stylefiles")
 WAVEFRONT_DIR = join(dirname(dirname(dirname(__file__))), "wavefronts", "tests", "wavefrontfiles")
+MAP_DIR = join(dirname(dirname(dirname(__file__))), "map_gallery", "tests", "mapfiles")
+PROCESSING_SCRIPT_DIR = join(dirname(dirname(dirname(__file__))), "processing_scripts", "tests", "processing_files")
 
 
 class SetUpTest:
@@ -45,6 +49,10 @@ class SetUpTest:
         self.stylexml_file_content = open(self.stylexml_file, "rb")
         self.zip3dfile = os.path.join(WAVEFRONT_DIR, "apple-tree.zip")
         self.zip3dfile_content = open(self.zip3dfile, "rb")
+        self.map_file = os.path.join(MAP_DIR, "main-create.webp")
+        self.map_file_content = open(self.map_file, "rb")
+        self.processing_script_file = os.path.join(PROCESSING_SCRIPT_DIR, "example.py")
+        self.processing_script_file_content = open(self.processing_script_file, "rb")
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestResourceCreateView(SetUpTest, TestCase):
@@ -168,6 +176,42 @@ class TestResourceCreateView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Wavefront.objects.count(), 1)
         self.assertEqual(Wavefront.objects.first().name, "Test 3D Model")
+
+    def test_create_map(self):
+        url = reverse('resource-create')
+        uploaded_map = SimpleUploadedFile(
+            self.map_file_content.name, self.map_file_content.read()
+        )
+        data = {
+            "resource_type": "map",
+            "name": "Test Map",
+            "description": "A test map",
+            "file": uploaded_map,
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Map.objects.count(), 1)
+        self.assertEqual(Map.objects.first().name, "Test Map")
+
+    def test_create_processing_script(self):
+        url = reverse('resource-create')
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_processing_script = SimpleUploadedFile(
+            self.processing_script_file_content.name, self.processing_script_file_content.read()
+        )
+        data = {
+            "resource_type": "processingscript",
+            "name": "Test Processing Script",
+            "description": "A test processing script",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": uploaded_processing_script,
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ProcessingScript.objects.count(), 1)
+        self.assertEqual(ProcessingScript.objects.first().name, "Test Processing Script")
 
     def test_create_geopackage_invalid_data(self):
         url = reverse('resource-create')
@@ -298,6 +342,12 @@ class TestResourceDetailView(SetUpTest, TestCase):
         uploaded_wavefront = SimpleUploadedFile(
             self.zip3dfile_content.name, self.zip3dfile_content.read()
         )
+        uploaded_map = SimpleUploadedFile(
+            self.map_file_content.name, self.map_file_content.read()
+        )
+        uploaded_processing_script = SimpleUploadedFile(
+            self.processing_script_file_content.name, self.processing_script_file_content.read()
+        )
 
         self.geopackage = Geopackage.objects.create(
             creator=self.user,
@@ -349,6 +399,25 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.wavefront.approved = True
         self.wavefront.save()
 
+        self.map = Map.objects.create(
+            creator=self.user,
+            name="Test Map",
+            description="A test map",
+            file=uploaded_map,
+        )
+        self.map.approved = True
+        self.map.save()
+
+        self.processing_script = ProcessingScript.objects.create(
+            creator=self.user,
+            name="Test Processing Script",
+            description="A test processing script",
+            thumbnail_image=uploaded_thumbnail,
+            file=uploaded_processing_script,
+        )
+        self.processing_script.approved = True
+        self.processing_script.save()
+
 
     def test_get_geopackage(self):
         url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
@@ -379,6 +448,18 @@ class TestResourceDetailView(SetUpTest, TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test 3D Model")
+
+    def test_get_map(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["name"], "Test Map")
+
+    def test_get_processing_script(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["name"], "Test Processing Script")
 
     def test_update_geopackage(self):
         url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
@@ -445,6 +526,31 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.wavefront.refresh_from_db()
         self.assertEqual(self.wavefront.name, "Updated 3D Model")
 
+    def test_update_map(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"})
+        data = {
+            "name": "Updated Map",
+            "description": "Updated description",
+            "file": self.map.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 200)
+        self.map.refresh_from_db()
+        self.assertEqual(self.map.name, "Updated Map")
+
+    def test_update_processing_script(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
+        data = {
+            "name": "Updated Processing Script",
+            "description": "Updated description",
+            "thumbnail_full": self.wavefront.thumbnail_image,
+            "file": self.processing_script.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 200)
+        self.processing_script.refresh_from_db()
+        self.assertEqual(self.processing_script.name, "Updated Processing Script")
+
     def test_delete_geopackage(self):
         url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
         response = self.client.delete(url)
@@ -474,6 +580,18 @@ class TestResourceDetailView(SetUpTest, TestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Wavefront.objects.filter(uuid=self.wavefront.uuid).exists())
+
+    def test_delete_map(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Map.objects.filter(uuid=self.map.uuid).exists())
+
+    def test_delete_processing_script(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(ProcessingScript.objects.filter(uuid=self.processing_script.uuid).exists())
 
     def test_update_geopackage_with_invalid_token(self):
         url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
