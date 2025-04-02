@@ -10,6 +10,7 @@ from map_gallery.views import (
     MapUnapprovedListView,
     MapUpdateView,
     MapByTagView,
+    MapTooglePublishView,
     map_nav_content,
 )
 
@@ -26,6 +27,12 @@ urlpatterns = [
         MapDownloadView.as_view(),
         name="map_download",
     ),
+    path(
+        "<int:pk>/toogle-publish/",
+        MapTooglePublishView.as_view(),
+        name="map_toogle_publish",
+    ),
+
     path(
         "unapproved/",
         MapUnapprovedListView.as_view(),

@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}{% load i18n %}
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">
+                {% if not object.is_publishable %}
+                    {% trans "Publish" %}
+                {% else %}
+                    {% trans "Unpublish" %}
+                {% endif %}
+                {{ object.name }} on QGIS.org
+            </h2>
+            <form action="" method="post" class="box-content">{% csrf_token %}
+                <div class="notification is-primary3 is-light">
+                    <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                    {% if not object.is_publishable %}
+                        {% trans "Are you sure you want to publish this "%}{{ resource_name }} on QGIS.org?
+                    {% else %}
+                        {% trans "Are you sure you want to unpublish this "%}{{ resource_name }} from QGIS.org?
+                    {% endif %}
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="button {% if not object.is_publishable %}is-success{% else %}is-warning{% endif %}" name="publish_confirm">
+                        <span class="icon">
+                            <i class="fas {% if not object.is_publishable %}fa-check{% else %}fa-times{% endif %}"></i>
+                        </span>
+                        <span>
+                            {% if not object.is_publishable %}
+                                {% trans "Publish" %}
+                            {% else %}
+                                {% trans "Unpublish" %}
+                            {% endif %}
+                        </span>
+                    </button>
+                    <a class="button" href="{% url url_list %}">
+                        <span class="icon"><i class="fas fa-times"></i></span>
+                        <span>{% trans "Cancel" %}</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
