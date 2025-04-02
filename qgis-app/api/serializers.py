@@ -223,6 +223,19 @@ class WavefrontSerializer(ResourceBaseSerializer):
 class MapSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Map
+        fields = [
+            "resource_type",
+            "resource_subtype",
+            "uuid",
+            "name",
+            "creator",
+            "upload_date",
+            "download_count",
+            "description",
+            "file",
+            "thumbnail",
+            "is_publishable"
+        ]
 
     def get_resource_subtype(self, obj):
         return None
