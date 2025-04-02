@@ -217,8 +217,6 @@ class TestTogglePublishMap(SetUpTest, TestCase):
             file=self.file,
             is_publishable=False,
         )
-        self.staff.is_staff = True
-        self.staff.save()
 
     def test_toggle_publish_map(self):
         login = self.client.login(username="staff", password="password")

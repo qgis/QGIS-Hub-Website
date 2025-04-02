@@ -21,21 +21,23 @@
     </div>
     <div class="column is-6 has-text-right">
       <div>
-        {% if user.is_staff and resource_name == 'Map' %}
-          <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
-             href="{% url 'map_toggle_publish' object_detail.id %}" 
-             title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
-            <span class="icon">
-              <i class="fas {% if object_detail.is_publishable %}fa-times{% else %}fa-globe{% endif %}"></i>
-            </span>
-            <span>
-              {% if object_detail.is_publishable %}
-          {% trans "Unpublish" %}
-              {% else %}
-          {% trans "Publish" %}
-              {% endif %}
-            </span>
-          </a>
+        {% if resource_name == 'Map' %}
+          {% if user.is_staff or is_style_manager %}
+            <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
+              href="{% url 'map_toggle_publish' object_detail.id %}" 
+              title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
+              <span class="icon">
+                <i class="fas {% if object_detail.is_publishable %}fa-times{% else %}fa-globe{% endif %}"></i>
+              </span>
+              <span>
+                {% if object_detail.is_publishable %}
+            {% trans "Unpublish" %}
+                {% else %}
+            {% trans "Publish" %}
+                {% endif %}
+              </span>
+            </a>
+          {% endif %}
         {% endif %}
           {% if user == object_detail.creator or user.is_staff %}
             <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
