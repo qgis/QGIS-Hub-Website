@@ -23,7 +23,7 @@
       <div>
         {% if user.is_staff and resource_name == 'Map' %}
           <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
-             href="{% url 'map_toogle_publish' object_detail.id %}" 
+             href="{% url 'map_toggle_publish' object_detail.id %}" 
              title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
             <span class="icon">
               <i class="fas {% if object_detail.is_publishable %}fa-times{% else %}fa-globe{% endif %}"></i>

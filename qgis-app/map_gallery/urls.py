@@ -30,7 +30,7 @@ urlpatterns = [
     path(
         "<int:pk>/toogle-publish/",
         MapTooglePublishView.as_view(),
-        name="map_toogle_publish",
+        name="map_toggle_publish",
     ),
 
     path(

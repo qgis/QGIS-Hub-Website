@@ -203,3 +203,36 @@ class TestReviewMap(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "1 record found.")
         self.assertContains(response, "Homepage Map")
+
+@override_settings(MEDIA_ROOT="map_gallery/tests/mapfiles/")
+class TestTogglePublishMap(SetUpTest, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
+
+    def setUp(self):
+        super(TestTogglePublishMap, self).setUp()
+        self.map_object = Map.objects.create(
+            creator=self.creator,
+            name="Homepage Map",
+            description="A Map for testing purpose",
+            file=self.file,
+            is_publishable=False,
+        )
+        self.staff.is_staff = True
+        self.staff.save()
+
+    def test_toggle_publish_map(self):
+        login = self.client.login(username="staff", password="password")
+        self.assertTrue(login)
+        url = reverse("map_toggle_publish", kwargs={"pk": self.map_object.id})
+        response = self.client.post(url, follow=True)
+        self.assertRedirects(response, reverse("map_detail", kwargs={"pk": self.map_object.id}))
+        self.map_object.refresh_from_db()
+        self.assertTrue(self.map_object.is_publishable)
+        self.client.logout()
+
+        # Toggle back to unpublish
+        self.client.login(username="staff", password="password")
+        response = self.client.post(url, follow=True)
+        self.assertRedirects(response, reverse("map_detail", kwargs={"pk": self.map_object.id}))
+        self.map_object.refresh_from_db()
+        self.assertFalse(self.map_object.is_publishable)
