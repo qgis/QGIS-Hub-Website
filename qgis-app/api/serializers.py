@@ -234,7 +234,7 @@ class MapSerializer(ResourceBaseSerializer):
             "thumbnail",
             "is_publishable"
         ]
-    
+
     def get_thumbnail(self, obj):
         request = self.context.get('request')
         thumbnail_field = getattr(obj, "file", None)
