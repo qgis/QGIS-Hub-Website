@@ -107,10 +107,14 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
         """
 
         obj = form.save(commit=False)
-        xml_parse = read_xml_style(obj.file)
-        if xml_parse:
+        if obj.file.name.lower().endswith(".gpl"):
+            style_type_str = "Color Palette"
+        else:
+            xml_parse = read_xml_style(obj.file)
+            style_type_str = xml_parse["type"]
+        if style_type_str:
             obj.style_type = StyleType.objects.filter(
-                symbol_type=xml_parse["type"]
+                symbol_type=style_type_str
             ).first()
         obj.require_action = False
         obj.save()
