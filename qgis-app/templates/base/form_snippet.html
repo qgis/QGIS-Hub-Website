@@ -28,7 +28,9 @@
           </span>
           <span class="file-label">{{ field.label }}</span>
         </span>
-        <span class="file-name" id="{{ field.html_name }}_filename">Choose a file…</span>
+        <span class="file-name" id="{{ field.html_name }}_filename">
+          {{ field.value|default:"Choose a file…" }}
+        </span>
       </label>
     </div>
     {% if field.errors %}

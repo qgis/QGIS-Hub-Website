@@ -26,7 +26,7 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
         """
         Cleaning file field data.
         """
-        script_file = self.cleaned_data["file"]
+        script_file = super(UploadForm, self).clean_file()
         is_valid = processing_script_validator(script_file.file)
         if not is_valid:
             raise forms.ValidationError(
@@ -35,5 +35,17 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
         return script_file
 
 
-class UpdateForm(ResourceFormMixin):
+class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Script Update Form."""
+
+    def clean_file(self):
+        """
+        Cleaning file field data.
+        """
+        script_file = super(UpdateForm, self).clean_file()
+        is_valid = processing_script_validator(script_file.file)
+        if not is_valid:
+            raise forms.ValidationError(
+                _("Invalid script file. Please ensure your file is correct.")
+            )
+        return script_file
