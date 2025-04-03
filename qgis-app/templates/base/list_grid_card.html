@@ -59,6 +59,16 @@ is-one-third-fullhd">
                         </span>
                         <span>Updated on {{ object.modified_date|date:"d F Y" }}</span>
                     </span>
+                    {% if resource_name == 'Map' and object.is_publishable %}
+                        <span class="icon-text is-size-7 has-text-weight-medium">
+                            <span class="icon">
+                                <i class="fas fa-globe"></i>
+                            </span>
+                            <span>
+                                Also available on <a href="https://qgis.org/project/overview/maps/" target="_blank" rel="noopener noreferrer">QGIS.org</a>
+                            </span>
+                        </span>
+                    {% endif %}
                 </p>
             </div>
         </div>

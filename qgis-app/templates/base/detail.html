@@ -21,6 +21,24 @@
     </div>
     <div class="column is-6 has-text-right">
       <div>
+        {% if resource_name == 'Map' %}
+          {% if user.is_staff or is_style_manager %}
+            <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
+              href="{% url 'map_toggle_publish' object_detail.id %}" 
+              title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
+              <span class="icon">
+                <i class="fas {% if object_detail.is_publishable %}fa-times{% else %}fa-globe{% endif %}"></i>
+              </span>
+              <span>
+                {% if object_detail.is_publishable %}
+            {% trans "Unpublish" %}
+                {% else %}
+            {% trans "Publish" %}
+                {% endif %}
+              </span>
+            </a>
+          {% endif %}
+        {% endif %}
           {% if user == object_detail.creator or user.is_staff %}
             <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
               <span class="icon">
@@ -96,6 +114,15 @@
   {% endif %}
 
   {% include "base/includes/detail_object.html" %}
+  {% if resource_name == 'Map' and object_detail.is_publishable %}
+    <div class="notification is-success is-light">
+      <span class="icon">
+        <i class="fas fa-globe"></i>
+      </span>
+      {% trans "This map is also available on QGIS.org:" %}
+      <a href="https://qgis.org/project/overview/maps/" target="_blank">https://qgis.org/project/overview/maps/</a>
+    </div>
+  {% endif %}
   <hr />
   {% if license_template %}
     {% include license_template %}

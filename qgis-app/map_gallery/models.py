@@ -43,6 +43,11 @@ class Map(Resource):
     null=False,
     blank=False,
   )
+  is_publishable = models.BooleanField(
+    _("Is Publishable"),
+    help_text=_("Is this map eligible to be published on QGIS.org?"),
+    default=False,
+  )
 
   def get_absolute_url(self):
     return reverse("map_detail", args=(self.id,))

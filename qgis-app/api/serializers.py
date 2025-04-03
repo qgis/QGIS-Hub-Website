@@ -65,8 +65,6 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
     def get_thumbnail(self, obj):
         request = self.context.get('request')
         thumbnail_field = getattr(obj, "thumbnail_image", None)
-        if self.Meta.model.__name__ == "Map":
-            thumbnail_field = getattr(obj, "file", None)
         try:
             if thumbnail_field and exists(thumbnail_field.path):
                 thumbnail = get_thumbnail(thumbnail_field, "128x128", crop="center")
@@ -223,6 +221,32 @@ class WavefrontSerializer(ResourceBaseSerializer):
 class MapSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Map
+        fields = [
+            "resource_type",
+            "resource_subtype",
+            "uuid",
+            "name",
+            "creator",
+            "upload_date",
+            "download_count",
+            "description",
+            "file",
+            "thumbnail",
+            "is_publishable"
+        ]
+
+    def get_thumbnail(self, obj):
+        request = self.context.get('request')
+        thumbnail_field = getattr(obj, "file", None)
+        try:
+            if thumbnail_field and exists(thumbnail_field.path):
+                thumbnail = get_thumbnail(thumbnail_field, "1024x1024", format="WEBP")
+                if request is not None:
+                    return request.build_absolute_uri(thumbnail.url)
+                return thumbnail.url
+        except Exception as e:
+            pass
+
 
     def get_resource_subtype(self, obj):
         return None

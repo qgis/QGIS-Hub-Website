@@ -9,6 +9,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseContextMixin,
     resource_nav_content,
     resource_notify,
 )
@@ -17,10 +18,14 @@ from django.contrib import messages
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import View
+from django.shortcuts import render
 
 from map_gallery.models import Review, Map
 from map_gallery.forms import UpdateForm, UploadForm
 from map_gallery.validator import is_valid_image
+
+from base.permissions import ResourceManagerRequiredMixin
 
 
 class ResourceMixin:
@@ -113,6 +118,28 @@ class MapByTagView(MapListView):
         }
     )
     return context
+
+class MapTooglePublishView(ResourceManagerRequiredMixin, ResourceMixin, ResourceBaseContextMixin, View):
+  """Publish/Unpublish a Map on QGIS.org"""
+
+  def get_object(self):
+    """Retrieve the object based on the primary key from the URL."""
+    return self.model.objects.get(pk=self.kwargs["pk"])
+
+  def get(self, request, *args, **kwargs):
+    obj = self.get_object()
+    context = self.get_context_data()
+    context["object"] = obj
+    return render(request, "base/confirm_publish.html", context)
+
+  def post(self, request, *args, **kwargs):
+    obj = self.get_object()
+    obj.is_publishable = not obj.is_publishable  # Toggle the is_publishable value
+    obj.save()
+    msg = _("The Map's publishable status has been successfully updated.")
+    messages.success(self.request, msg, "success", fail_silently=True)
+    return HttpResponseRedirect(reverse("map_detail", kwargs={"pk": obj.id}))
+
 
 def map_nav_content(request):
   model = ResourceMixin.model
