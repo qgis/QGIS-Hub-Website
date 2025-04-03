@@ -74,6 +74,21 @@ class MapUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
   form_class = UpdateForm
 
+  def form_valid(self, form):
+    obj = form.save(commit=False)
+    obj.require_action = False
+    obj.approved = False
+
+    # Check if the uploaded file is a valid image
+    is_valid_image(obj.file)
+
+    obj.save()
+    # Without this next line the tags won't be saved.
+    form.save_m2m()
+    resource_notify(obj, created=False, resource_type=self.resource_name)
+    msg = _("The Map has been successfully updated.")
+    messages.success(self.request, msg, "success", fail_silently=True)
+    return HttpResponseRedirect(reverse("map_detail", kwargs={"pk": obj.id}))
 
 class MapListView(ResourceMixin, ResourceBaseListView):
   """Approved Map ListView"""

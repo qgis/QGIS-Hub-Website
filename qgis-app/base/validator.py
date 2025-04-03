@@ -6,13 +6,15 @@ from django.utils.translation import gettext_lazy as _
 
 RESOURCE_MAX_SIZE = getattr(settings, "RESOURCE_MAX_SIZE", 1000000)  # 1MB
 GPKG_MAX_SIZE = getattr(settings, "GPKG_MAX_SIZE", 5000000)  # 5MB
+MODEL_3D_MAX_SIZE = getattr(settings, "MODEL_3D_MAX_SIZE", 5000000)  # 5MB
 MAP_MAX_SIZE = getattr(settings, "MAP_MAX_UPLOAD_SIZE", 10000000)  # 10 mb
 
 
-def filesize_validator(file, is_gpkg=False, is_map=False) -> bool:
+def filesize_validator(file, is_gpkg=False, is_map=False, is_3d=False) -> bool:
     """File Size Validation"""
     max_size = GPKG_MAX_SIZE if is_gpkg else RESOURCE_MAX_SIZE
     max_size = MAP_MAX_SIZE if is_map else max_size
+    max_size = MODEL_3D_MAX_SIZE if is_3d else max_size
 
     error_filesize_too_big = ValidationError(
         _("File is too big. Max size is %s Megabytes") % (max_size / 1000000)
