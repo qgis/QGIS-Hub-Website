@@ -181,6 +181,7 @@ p {
       display: block;
       position: fixed;
       height: calc(100% - 112px);
+      min-width: 250px;
       overflow: auto;
       left: 0;
       animation: slideInFromLeft 0.3s ease-out forwards;
