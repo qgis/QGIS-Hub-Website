@@ -7,6 +7,7 @@ from taggit.forms import TagField
 
 class ResourceFormMixin(forms.ModelForm):
     tags = TagField(required=False)
+    is_3d = True
     class Meta:
         model = Wavefront
         fields = [
@@ -24,17 +25,17 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     file_path = ""
 
     def clean_file(self):
-        zip_file = self.cleaned_data["file"]
+        zip_file = super(UploadForm, self).clean_file()
         if zip_file:
             self.file_path = WavefrontValidator(zip_file).validate_wavefront()
         return zip_file
 
 
-class UpdateForm(ResourceFormMixin):
+class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Model Update Form."""
 
     def clean_file(self):
-        zip_file = self.cleaned_data["file"]
+        zip_file = super(UpdateForm, self).clean_file()
         if zip_file:
             self.file_path = WavefrontValidator(zip_file).validate_wavefront()
         return zip_file
