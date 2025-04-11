@@ -109,18 +109,19 @@ def filter_general(queryset, request, *args, **kwargs):
 class LimitPagination(MultipleModelLimitOffsetPagination):
     default_limit = 10
 
-    def format_response(self, data):
+    def get_paginated_response(self, data):
         """
-        override the output of pagination
+        Override the output of pagination to include 'total' instead of 'count'
         """
-
-        return OrderedDict(
-            [
-                ("total", self.total),
-                ("next", self.get_next_link()),
-                ("previous", self.get_previous_link()),
-                ("results", data),
-            ]
+        return Response(
+            OrderedDict(
+                [
+                    ("total", self.total),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                ]
+            )
         )
 
 
