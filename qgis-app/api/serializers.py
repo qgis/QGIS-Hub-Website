@@ -255,6 +255,20 @@ class MapSerializer(ResourceBaseSerializer):
 class ProcessingScriptSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = ProcessingScript
+        fields = [
+            "resource_type",
+            "resource_subtype",
+            "uuid",
+            "name",
+            "creator",
+            "upload_date",
+            "download_count",
+            "description",
+            "dependencies",
+            "file",
+            "thumbnail",
+            "thumbnail_full"
+        ]
 
     def get_resource_subtype(self, obj):
         return None
