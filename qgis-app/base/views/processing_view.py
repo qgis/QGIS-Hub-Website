@@ -180,13 +180,13 @@ class ResourceSearchMixin(object):
         q = self.request.GET.get("q")
         if q:
             qs = qs.annotate(
-            search=(
-                SearchVector("name")
-                + SearchVector("description")
-                + SearchVector("creator__username")
-                + SearchVector("creator__first_name")
-                + SearchVector("creator__last_name")
-            )
+                search=(
+                    SearchVector("name")
+                    + SearchVector("description")
+                    + SearchVector("creator__username")
+                    + SearchVector("creator__first_name")
+                    + SearchVector("creator__last_name")
+                )
             ).filter(search__icontains=q)
 
         sort = self.request.GET.get("sort", None)
