@@ -109,18 +109,19 @@ def filter_general(queryset, request, *args, **kwargs):
 class LimitPagination(MultipleModelLimitOffsetPagination):
     default_limit = 10
 
-    def format_response(self, data):
+    def get_paginated_response(self, data):
         """
-        override the output of pagination
+        Override the output of pagination to include 'total' instead of 'count'
         """
-
-        return OrderedDict(
-            [
-                ("total", self.total),
-                ("next", self.get_next_link()),
-                ("previous", self.get_previous_link()),
-                ("results", data),
-            ]
+        return Response(
+            OrderedDict(
+                [
+                    ("total", self.total),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                ]
+            )
         )
 
 
@@ -171,8 +172,28 @@ class ResourceAPIList(FlatMultipleModelAPIView):
             "serializer_class": ProcessingScriptSerializer,
             "filter_fn": filter_general,
         },
-
     ]
+
+    def get_queryset(self):
+        combined_queryset = []
+        for query in self.querylist:
+            filtered_queryset = query["filter_fn"](
+                query["queryset"], self.request, *self.args, **self.kwargs
+            )
+            for obj in filtered_queryset:
+                obj.serializer_class = query["serializer_class"]
+                combined_queryset.append(obj)
+        return combined_queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serialized_data = [
+                obj.serializer_class(obj, context={"request": request}).data for obj in page
+            ]
+            return self.get_paginated_response(serialized_data)
+        return Response([])
 
 
 class ResourceAPIDownload(APIView):
