@@ -504,11 +504,11 @@ class TestSearch(TestCase):
         url = reverse("style_require_action")
         response = self.client.get(url)
         self.assertNotContains(response, 'Keyword: "None"')
-        url = reverse("style_require_action") + "?q=another"
+        url = reverse("style_require_action") + "?q=cube"
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<p>Keyword: "<strong>another</strong>" <br> '
+            '<p>Keyword: "<strong>cube</strong>" <br> '
             "Search result: 1 record found.</p>",
             html=True,
         )
