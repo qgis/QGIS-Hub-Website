@@ -190,7 +190,7 @@ class ResourceAPIList(FlatMultipleModelAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serialized_data = [
-                obj.serializer_class(obj).data for obj in page
+                obj.serializer_class(obj, context={"request": request}).data for obj in page
             ]
             return self.get_paginated_response(serialized_data)
         return Response([])
