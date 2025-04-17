@@ -225,6 +225,7 @@ class MapSerializer(ResourceBaseSerializer):
             "resource_type",
             "resource_subtype",
             "uuid",
+            "id",
             "name",
             "creator",
             "upload_date",
