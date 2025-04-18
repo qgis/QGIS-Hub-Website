@@ -10,6 +10,7 @@ from styles.views import (
     StyleReviewView,
     StyleUnapprovedListView,
     StyleUpdateView,
+    StyleUnapproveView,
     StyleByTagView,
     style_nav_content,
     style_type_list,
@@ -22,6 +23,7 @@ urlpatterns = [
     path("<int:pk>/download/", StyleDownloadView.as_view(), name="style_download"),
     path("<int:pk>/delete/", StyleDeleteView.as_view(), name="style_delete"),
     path("<int:pk>/update/", StyleUpdateView.as_view(), name="style_update"),
+    path("<int:pk>/unapprove/", StyleUnapproveView.as_view(), name="style_unapprove"),
     path("unapproved/", StyleUnapprovedListView.as_view(), name="style_unapproved"),
     path(
         "require_action/",

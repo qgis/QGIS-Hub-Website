@@ -10,6 +10,7 @@ from models.views import (
     ModelUnapprovedListView,
     ModelUpdateView,
     ModelByTagView,
+    ModelUnapproveView,
     model_nav_content,
 )
 
@@ -21,6 +22,7 @@ urlpatterns = [
     path("<int:pk>/update/", ModelUpdateView.as_view(), name="model_update"),
     path("<int:pk>/delete/", ModelDeleteView.as_view(), name="model_delete"),
     path("<int:pk>/review/", ModelReviewView.as_view(), name="model_review"),
+    path("<int:pk>/unapprove/", ModelUnapproveView.as_view(), name="model_unapprove"),
     path("<int:pk>/download/", ModelDownloadView.as_view(), name="model_download"),
     path("unapproved/", ModelUnapprovedListView.as_view(), name="model_unapproved"),
     path(

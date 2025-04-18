@@ -10,6 +10,7 @@ from processing_scripts.views import (
     ProcessingScriptUnapprovedListView,
     ProcessingScriptUpdateView,
     ProcessingScriptByTagView,
+    ProcessingScriptUnapproveView,
     processing_script_nav_content,
 )
 
@@ -21,6 +22,7 @@ urlpatterns = [
     path("<int:pk>/update/", ProcessingScriptUpdateView.as_view(), name="processing_script_update"),
     path("<int:pk>/delete/", ProcessingScriptDeleteView.as_view(), name="processing_script_delete"),
     path("<int:pk>/review/", ProcessingScriptReviewView.as_view(), name="processing_script_review"),
+    path("<int:pk>/unapprove/", ProcessingScriptUnapproveView.as_view(), name="processing_script_unapprove"),
     path("<int:pk>/download/", ProcessingScriptDownloadView.as_view(), name="processing_script_download"),
     path("unapproved/", ProcessingScriptUnapprovedListView.as_view(), name="processing_script_unapproved"),
     path(

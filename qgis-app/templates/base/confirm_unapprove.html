@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}{% load i18n %}
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">{% trans "Unapprove"%} {{ resource_name }}: {{ object.name }}</h2>
+            <form method="post" action="{% url url_review pk=object_detail.id %}" class="box-content">
+                {% csrf_token %}
+                <div class="notification is-warning is-light">
+                    <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                    {% trans "Are you sure you want to unapprove this "%}{{ resource_name }}?
+                </div>
+                <div class="is-hidden">
+                    <label class="label">{% trans "Approval Status" %}</label>
+                    <div class="control">
+                        {% for radio in form.approval %}
+                            <label class="radio">
+                                {{ radio.tag }}
+                                {{ radio.choice_label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Comment:</label>
+                    <div class="control">
+                        {{ form.comment }}
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="button is-warning" name="delete_confirm">
+                        <span class="icon"><i class="fas fa-trash-alt"></i></span>
+                        <span>{% trans "Unapprove" %}</span>
+                    </button>
+                    <a class="button" href="{% url url_list %}">
+                        <span class="icon"><i class="fas fa-times"></i></span>
+                        <span>{% trans "Cancel" %}</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const radios = document.querySelectorAll('input[type="radio"][name="{{ form.approval.name }}"]');
+            if (radios.length > 1) {
+                radios[1].checked = true;
+            }
+        });
+    </script>
+{% endblock %}

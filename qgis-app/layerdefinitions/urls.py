@@ -10,6 +10,7 @@ from layerdefinitions.views import (
     LayerDefinitionUnapprovedListView,
     LayerDefinitionUpdateView,
     LayerDefinitionByTagView,
+    LayerDefinitionUnapproveView,
     layerdefinition_nav_content,
 )
 
@@ -34,6 +35,11 @@ urlpatterns = [
         "<int:pk>/review/",
         LayerDefinitionReviewView.as_view(),
         name="layerdefinition_review",
+    ),
+    path(
+        "<int:pk>/unapprove/",
+        LayerDefinitionUnapproveView.as_view(),
+        name="layerdefinition_unapprove",
     ),
     path(
         "<int:pk>/download/",

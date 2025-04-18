@@ -8,6 +8,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     resource_nav_content,
 )
 from geopackages.forms import UpdateForm, UploadForm
@@ -49,6 +50,8 @@ class GeopackageUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
     form_class = UpdateForm
 
+class GeopackageUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+    """Unapprove a GeoPackage"""
 
 class GeopackageListView(ResourceMixin, ResourceBaseListView):
     """Approved GeoPackage ListView"""

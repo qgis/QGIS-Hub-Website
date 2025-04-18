@@ -9,6 +9,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     ResourceBaseContextMixin,
     resource_nav_content,
     resource_notify,
@@ -73,6 +74,10 @@ class MapUpdateView(ResourceMixin, ResourceBaseUpdateView):
   """Update the Map"""
 
   form_class = UpdateForm
+
+
+class MapUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+  """Unapprove a Map"""
 
 
 class MapListView(ResourceMixin, ResourceBaseListView):

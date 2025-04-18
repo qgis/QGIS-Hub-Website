@@ -9,6 +9,7 @@ from map_gallery.views import (
     MapReviewView,
     MapUnapprovedListView,
     MapUpdateView,
+    MapUnapproveView,
     MapByTagView,
     MapTooglePublishView,
     map_nav_content,
@@ -20,6 +21,7 @@ urlpatterns = [
     path("add/", MapCreateView.as_view(), name="map_create"),
     path("<int:pk>/", MapDetailView.as_view(), name="map_detail"),
     path("<int:pk>/update/", MapUpdateView.as_view(), name="map_update"),
+    path("<int:pk>/unapprove/", MapUnapproveView.as_view(), name="map_unapprove"),
     path("<int:pk>/delete/", MapDeleteView.as_view(), name="map_delete"),
     path("<int:pk>/review/", MapReviewView.as_view(), name="map_review"),
     path(
