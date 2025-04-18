@@ -8,6 +8,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     resource_nav_content,
 )
 from processing_scripts.forms import UpdateForm, UploadForm
@@ -43,6 +44,9 @@ class ProcessingScriptCreateView(ResourceMixin, ResourceBaseCreateView):
 class ProcessingScriptDetailView(ResourceMixin, ResourceBaseDetailView):
     """ProcessingScript Detail View"""
 
+
+class ProcessingScriptUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+    """Unapprove a ProcessingScript"""
 
 class ProcessingScriptUpdateView(ResourceMixin, ResourceBaseUpdateView):
     """Update the ProcessingScript"""

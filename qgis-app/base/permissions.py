@@ -1,6 +1,15 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render, redirect
-from base.views.processing_view import is_resources_manager
+from django.contrib.auth.models import User
+
+
+GROUP_NAME = "Style Managers"
+
+
+def is_resources_manager(user: User) -> bool:
+    """Check if user is the members of Resources Managers group."""
+
+    return user.groups.filter(name=GROUP_NAME).exists()
 
 class ResourceManagerRequiredMixin(UserPassesTestMixin):
     """Mixin to restrict access to staff users only."""

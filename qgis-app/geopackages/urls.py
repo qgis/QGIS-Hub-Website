@@ -10,6 +10,7 @@ from geopackages.views import (
     GeopackageUnapprovedListView,
     GeopackageUpdateView,
     GeopackageByTagView,
+    GeopackageUnapproveView,
     geopackage_nav_content,
 )
 
@@ -21,6 +22,7 @@ urlpatterns = [
     path("<int:pk>/update/", GeopackageUpdateView.as_view(), name="geopackage_update"),
     path("<int:pk>/delete/", GeopackageDeleteView.as_view(), name="geopackage_delete"),
     path("<int:pk>/review/", GeopackageReviewView.as_view(), name="geopackage_review"),
+    path("<int:pk>/unapprove/", GeopackageUnapproveView.as_view(), name="geopackage_unapprove"),
     path(
         "<int:pk>/download/",
         GeopackageDownloadView.as_view(),

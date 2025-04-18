@@ -5,6 +5,7 @@ from base.license import zipped_with_license
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from base.permissions import ResourceManagerRequiredMixin, is_resources_manager, GROUP_NAME
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import SearchVector
@@ -30,14 +31,6 @@ from django.views.generic import (
 from django.views.generic.base import ContextMixin
 from django.utils.encoding import escape_uri_path
 from django.http import Http404
-
-GROUP_NAME = "Style Managers"
-
-
-def is_resources_manager(user: User) -> bool:
-    """Check if user is the members of Resources Managers group."""
-
-    return user.groups.filter(name=GROUP_NAME).exists()
 
 
 def check_resources_access(user: User, resource: models.base) -> bool:
@@ -232,6 +225,7 @@ class ResourceBaseContextMixin(ContextMixin):
         context["url_delete"] = "%s_delete" % self.resource_name_url_base
         context["url_review"] = "%s_review" % self.resource_name_url_base
         context["url_detail"] = "%s_detail" % self.resource_name_url_base
+        context["url_unapprove"] = "%s_unapprove" % self.resource_name_url_base
         context["app_label"] = self.model._meta.app_label
         context["model_name"] = self.model._meta.model_name
         return context
@@ -419,6 +413,13 @@ class ResourceBaseRequireActionListView(
         context = super().get_context_data(**kwargs)
         context["title"] = "Requiring Update"
         return context
+
+
+class ResourceBaseUnapproveView(LoginRequiredMixin, ResourceManagerRequiredMixin, ResourceBaseDetailView):
+
+    def get_template_names(self):
+        object = self.get_object()
+        return "base/confirm_unapprove.html"
 
 
 class ResourceBaseDeleteView(LoginRequiredMixin, ResourceBaseContextMixin, DeleteView):

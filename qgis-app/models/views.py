@@ -8,6 +8,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     resource_nav_content,
 )
 from models.forms import UpdateForm, UploadForm
@@ -49,6 +50,9 @@ class ModelUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
     form_class = UpdateForm
 
+
+class ModelUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+    """Unapprove a Model"""
 
 class ModelListView(ResourceMixin, ResourceBaseListView):
     """Approved Model ListView"""

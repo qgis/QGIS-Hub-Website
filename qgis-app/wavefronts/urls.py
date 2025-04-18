@@ -10,6 +10,7 @@ from wavefronts.views import (
     WavefrontUnapprovedListView,
     WavefrontUpdateView,
     WavefrontByTagView,
+    WavefrontUnapproveView,
     wavefront_nav_content,
 )
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path("<int:pk>/", WavefrontDetailView.as_view(), name="wavefront_detail"),
     path("<int:pk>/update/", WavefrontUpdateView.as_view(), name="wavefront_update"),
     path("<int:pk>/delete/", WavefrontDeleteView.as_view(), name="wavefront_delete"),
+    path("<int:pk>/unapprove/", WavefrontUnapproveView.as_view(), name="wavefront_unapprove"),
     path("<int:pk>/review/", WavefrontReviewView.as_view(), name="wavefront_review"),
     path(
         "<int:pk>/download/", WavefrontDownloadView.as_view(), name="wavefront_download"
