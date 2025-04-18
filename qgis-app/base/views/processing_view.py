@@ -420,7 +420,7 @@ class ResourceBaseUnapproveView(LoginRequiredMixin, ResourceManagerRequiredMixin
     def get_template_names(self):
         object = self.get_object()
         return "base/confirm_unapprove.html"
-    
+
 
 class ResourceBaseDeleteView(LoginRequiredMixin, ResourceBaseContextMixin, DeleteView):
     """
