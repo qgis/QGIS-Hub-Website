@@ -10,6 +10,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     check_resources_access,
     resource_nav_content,
     resource_notify,
@@ -99,6 +100,11 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
         messages.success(self.request, msg, "success", fail_silently=True)
         url_name = "%s_detail" % self.resource_name_url_base
         return HttpResponseRedirect(reverse_lazy(url_name, kwargs={"pk": obj.id}))
+
+
+class WavefrontUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+    """Unapprove a Wavefront"""
+
 
 
 class WavefrontListView(ResourceMixin, ResourceBaseListView):

@@ -10,6 +10,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     resource_nav_content,
     resource_notify,
 )
@@ -124,6 +125,12 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
         msg = _("The Style has been successfully updated.")
         messages.success(self.request, msg, "success", fail_silently=True)
         return HttpResponseRedirect(reverse_lazy("style_detail", kwargs={"pk": obj.id}))
+
+
+class StyleUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+    """
+    Unapprove a style
+    """
 
 
 class StyleListView(ResourceMixin, ResourceBaseListView):

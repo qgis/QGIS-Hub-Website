@@ -10,6 +10,7 @@ from base.views.processing_view import (
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
+    ResourceBaseUnapproveView,
     TemplateResponse,
     _,
     check_resources_access,
@@ -120,6 +121,10 @@ class LayerDefinitionDeleteView(ResourceMixin, ResourceBaseDeleteView):
 
 class LayerDefinitionReviewView(ResourceMixin, ResourceBaseReviewView):
     """Create a review."""
+
+
+class LayerDefinitionUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
+    """Unapprove a GeoPackage"""
 
 class LayerDefinitionByTagView(LayerDefinitionListView):
     """Display LayerDefinitionListView filtered on layerdefinition tag"""
