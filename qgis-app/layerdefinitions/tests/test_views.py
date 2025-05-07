@@ -111,6 +111,48 @@ class TestUploadLayerDefinitionFile(SetUpTest, TestCase):
         )
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateLayerDefinitionFile(SetUpTest, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
+    def setUp(self):
+        super(TestUpdateLayerDefinitionFile, self).setUp()
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        self.qlr_object = LayerDefinition.objects.create(
+            creator=self.creator,
+            name="Test QLR File",
+            description="A QLR file for testing purpose",
+            thumbnail_image=self.thumbnail,
+            file=self.file,
+        )
+
+    def test_update_layerdefinition_file(self):
+        url = reverse("layerdefinition_update", args=[self.qlr_object.id])
+        self.uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        self.uploaded_file = SimpleUploadedFile(
+            self.file_content.name, self.file_content.read()
+        )
+        self.data = {
+            "name": "Test QLR File",
+            "description": "Test update a QLR File",
+            "thumbnail_image": self.uploaded_thumbnail,
+            "file": self.uploaded_file,
+        }
+        response = self.client.post(url, self.data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # should send email notify
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            mail.outbox[0].subject,
+            "A new Layer Definition File has been updated by creator.",
+        )
+        self.assertEqual(
+            LayerDefinition.objects.first().description,
+            self.data["description"],
+        )
+
 @override_settings(MEDIA_ROOT="layerdefinitions/tests/testfiles/")
 class TestReviewLayerDefinition(SetUpTest, TestCase):
     fixtures = ["fixtures/simplemenu.json"]

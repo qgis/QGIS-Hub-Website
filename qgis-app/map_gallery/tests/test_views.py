@@ -144,7 +144,45 @@ class TestUploadMap(SetUpTest, TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateMap(SetUpTest, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
 
+    def setUp(self):
+        super(TestUpdateMap, self).setUp()
+        self.map_object = Map.objects.create(
+            creator=self.creator,
+            name="Homepage Map",
+            description="A Map for testing purpose",
+            file=self.file,
+        )
+
+    def test_update_map(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("map_update", kwargs={"pk": self.map_object.id})
+        uploaded_map = SimpleUploadedFile(
+            self.file_content.name, self.file_content.read()
+        )
+        data = {
+            "name": "Updated Map",
+            "description": "Test update map",
+            "file": uploaded_map,
+            "tags": "map,project,test"
+        }
+        response = self.client.post(url, data, follow=True)
+        # should send email notify
+        self.assertEqual(len(mail.outbox), 1)
+        map = Map.objects.first()
+        self.assertEqual(map.name, "Updated Map")
+        # Check the tags
+        self.assertEqual(
+            map.tags.filter(
+                name__in=['map', 'project', 'test']).count(),
+            3)
+        url = reverse("map_detail", kwargs={"pk": map.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 @override_settings(MEDIA_ROOT="map_gallery/tests/mapfiles/")
 class TestReviewMap(SetUpTest, TestCase):
