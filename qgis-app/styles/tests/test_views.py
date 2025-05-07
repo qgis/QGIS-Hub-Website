@@ -31,8 +31,10 @@ class TestPageUserAnonymous(TestCase):
         response = self.client.get(url)
         self.assertRedirects(response, "/accounts/login/?next=/styles/add/")
 
-
-class TestUploadStyle(TestCase):
+class SetupTest:
+    """
+    SetUp for all Test Class
+    """
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -48,6 +50,13 @@ class TestUploadStyle(TestCase):
         self.staff.save()
         self.group = Group.objects.create(name="Style Managers")
         self.group.user_set.add(self.staff)
+
+class TestUploadStyle(SetupTest, TestCase):
+    fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
+
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+    def setUp(self):
+        super(TestUploadStyle, self).setUp()
         # user is logging in to upload page
         self.client.login(username="creator", password="password")
         url = reverse("style_create")
@@ -156,6 +165,53 @@ class TestUploadStyle(TestCase):
             response = self.client.post(
                 url,
                 {
+                    "file": gpl_file,
+                    "thumbnail_image": self.thumbnail,
+                    "description": "This style is for testing only purpose",
+                    "tags": "gpl,style,test"
+                },
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again.")
+
+class TestUpdateStyle(SetupTest, TestCase):
+    fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json", "fixtures/styles.json"]
+
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+    def setUp(self):
+        super(TestUpdateStyle, self).setUp()
+        # user is logging in to upload page
+        self.client.login(username="creator", password="password")
+        url = reverse("style_update", kwargs={"pk": 1})
+        self.response = self.client.get(url)
+
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+    def test_update_xml(self):
+        url = reverse("style_update", kwargs={"pk": 1})
+        f = os.path.join(STYLE_DIR, "cattrail.xml")
+        with open(f) as xml_file:
+            response = self.client.post(
+                url,
+                {
+                    "name": "Cat Trail",
+                    "file": xml_file,
+                    "thumbnail_image": self.thumbnail,
+                    "description": "This style is for testing only purpose",
+                    "tags": "xml,style,test"
+                },
+            )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Style.objects.get(pk=1).name, "Cat Trail")
+
+
+    def test_update_gpl_different_encoding(self):
+        url = reverse("style_create")
+        f = os.path.join(STYLE_DIR, "color-blind_windows1250.gpl")
+        with open(f, 'rb') as gpl_file:
+            response = self.client.post(
+                url,
+                {
+                    "name": "Qgis Palette",
                     "file": gpl_file,
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",

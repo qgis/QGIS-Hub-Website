@@ -147,6 +147,49 @@ class TestReviewWavefront(SetUpTest, TestCase):
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateWavefront(SetUpTest, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
+
+    def setUp(self):
+        super(TestUpdateWavefront, self).setUp()
+        self.wavefront_object = Wavefront.objects.create(
+            name="odm texturing",
+            description="Test upload a wavefront",
+            thumbnail_image=self.thumbnail,
+            file=self.zipfile,
+            creator=self.creator,
+        )
+
+    def test_update_wavefront(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("wavefront_update", kwargs={"pk": self.wavefront_object.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_file = SimpleUploadedFile(
+            self.zipfile_content.name, self.zipfile_content.read()
+        )
+
+        data = {
+            "name": "odm texturing",
+            "description": "Test update a wavefront",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_file,
+            "tags": "3dmodel,wavefront,test"
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("wavefront_detail", kwargs={"pk": self.wavefront_object.id}))
+        # check the wavefront
+        wavefront = Wavefront.objects.get(id=self.wavefront_object.id)
+        self.assertEqual(wavefront.name, "odm texturing")
+        self.assertEqual(wavefront.description, "Test update a wavefront")
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestDownloadWavefront(SetUpTest, TestCase):
     fixtures = ["fixtures/simplemenu.json"]
 

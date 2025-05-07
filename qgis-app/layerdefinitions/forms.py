@@ -29,5 +29,10 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
         return file
 
 
-class UpdateForm(ResourceFormMixin):
+class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Update Form."""
+
+    def clean_file(self):
+        file = super(UpdateForm, self).clean_file()
+        validator(file)
+        return file

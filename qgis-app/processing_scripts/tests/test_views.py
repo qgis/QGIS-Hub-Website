@@ -104,6 +104,74 @@ class TestFormValidation(SetUpTest, TestCase):
     )
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateScript(SetUpTest, TestCase):
+  """
+  Test the update script view
+  """
+  fixtures = ["fixtures/simplemenu.json"]
+  def setUp(self):
+    super(TestUpdateScript, self).setUp()
+    self.processing_script = ProcessingScript.objects.create(
+      creator=self.creator,
+      name="flooded buildings extractor",
+      description="A ProcessingScript for testing purpose",
+      dependencies="QuickOSM",
+      thumbnail_image=self.thumbnail,
+      file=self.file,
+    )
+    self.processing_script.save()
+
+  def test_update_script(self):
+    self.client.login(username="creator", password="password")
+    url = reverse("processing_script_update", kwargs={"pk": self.processing_script.id})
+    response = self.client.get(url)
+    self.assertEqual(response.status_code, 200)
+    uploaded_thumbnail = SimpleUploadedFile(
+      self.thumbnail_content.name, self.thumbnail_content.read()
+    )
+    uploaded_file = SimpleUploadedFile(
+      self.file_content.name, self.file_content.read()
+    )
+    data = {
+      "name": "Modified Script",
+      "description": "A ProcessingScript for testing purpose",
+      "dependencies": "QuickOSM",
+      "thumbnail_image": uploaded_thumbnail,
+      "file": uploaded_file,
+    }
+    response = self.client.post(url, data, follow=True)
+    self.assertEqual(response.status_code, 200)
+    self.assertRedirects(response, reverse("processing_script_detail", kwargs={"pk": self.processing_script.id}))
+    # check the processing script
+    processing_script = ProcessingScript.objects.get(id=self.processing_script.id)
+    self.assertEqual(processing_script.name, "Modified Script")
+
+  def test_update_script_invalid_file(self):
+    self.client.login(username="creator", password="password")
+    url = reverse("processing_script_update", kwargs={"pk": self.processing_script.id})
+    response = self.client.get(url)
+    self.assertEqual(response.status_code, 200)
+    uploaded_thumbnail = SimpleUploadedFile(
+      self.thumbnail_content.name, self.thumbnail_content.read()
+    )
+    uploaded_file = SimpleUploadedFile(
+      self.invalid_script_content.name, self.invalid_script_content.read()
+    )
+    data = {
+      "name": "Modified Script",
+      "description": "A ProcessingScript for testing purpose",
+      "dependencies": "QuickOSM",
+      "thumbnail_image": uploaded_thumbnail,
+      "file": uploaded_file,
+    }
+    response = self.client.post(url, data, follow=True)
+    self.assertEqual(response.status_code, 200)
+    # check the processing script
+    processing_script = ProcessingScript.objects.get(id=self.processing_script.id)
+    self.assertEqual(processing_script.name, "flooded buildings extractor")
+
+
 @override_settings(MEDIA_ROOT="processing_scripts/tests/processing_files/")
 class TestEmailNotification(SetUpTest, TestCase):
   """

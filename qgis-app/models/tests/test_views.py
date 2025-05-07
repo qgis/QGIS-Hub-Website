@@ -228,6 +228,121 @@ class TestUploadModel(SetUpTest, TestCase):
         model = Model.objects.first()
         self.assertIsNone(model)
 
+class TestUpdateModel(SetUpTest, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
+
+    def setUp(self):
+        super(TestUpdateModel, self).setUp()
+        self.model_object = Model.objects.create(
+            creator=self.creator,
+            name="flooded buildings extractor",
+            description="A Model for testing purpose",
+            thumbnail_image=self.thumbnail,
+            file=self.file,
+        )
+
+    def test_update_model(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("model_update", kwargs={"pk": self.model_object.id})
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_model = SimpleUploadedFile(
+            self.file_content.name, self.file_content.read()
+        )
+        data = {
+            "name": "flooded buildings extractor modified",
+            "description": "Test update model",
+            "dependencies": "QuickOSM",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_model,
+        }
+        response = self.client.post(url, data, follow=True)
+        # should send email notify
+        self.assertEqual(len(mail.outbox), 1)
+        model = Model.objects.first()
+        self.assertEqual(model.name, "flooded buildings extractor modified")
+        url = reverse("model_detail", kwargs={"pk": model.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_acceptable_model3_size_file(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("model_update", kwargs={"pk": self.model_object.id})
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_model = SimpleUploadedFile(
+            self.file_content.name, self.file_content.read()
+        )
+        data = {
+            "name": "flooded buildings extractor modified",
+            "description": "Test update model",
+            "dependencies": "QuickOSM",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_model,
+        }
+        response = self.client.post(url, data, follow=True)
+        # should send email notify
+        self.assertEqual(len(mail.outbox), 1)
+        model = Model.objects.first()
+        self.assertEqual(model.name, "flooded buildings extractor modified")
+        url = reverse("model_detail", kwargs={"pk": model.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_acceptable_zip_size_file(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("model_update", kwargs={"pk": self.model_object.id})
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_model = SimpleUploadedFile(
+            self.modelzip_file_content.name, self.modelzip_file_content.read()
+        )
+        data = {
+            "name": "flooded buildings extractor modified",
+            "description": "Test update .zip model",
+            "dependencies": "QuickOSM",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_model,
+        }
+        response = self.client.post(url, data, follow=True)
+        # should send email notify
+        self.assertEqual(len(mail.outbox), 1)
+        model = Model.objects.first()
+        self.assertEqual(model.name, "flooded buildings extractor modified")
+        url = reverse("model_detail", kwargs={"pk": model.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_invalid_size_file(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("model_update", kwargs={"pk": self.model_object.id})
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_model = SimpleUploadedFile(
+            self.model_oversize_content.name, self.model_oversize_content.read()
+        )
+        data = {
+            "name": "flooded buildings extractor modified",
+            "description": "Test update a model > 1Mb filesize",
+            "dependencies": "QuickOSM",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_model,
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Should not create new object
+        model = Model.objects.first()
+        self.assertEqual(model.name, "flooded buildings extractor")
+        self.assertEqual(model.description, "A Model for testing purpose")
+
 
 @override_settings(MEDIA_ROOT="models/tests/modelfiles/")
 class TestReviewModel(SetUpTest, TestCase):
