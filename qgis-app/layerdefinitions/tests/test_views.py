@@ -139,7 +139,7 @@ class TestReviewLayerDefinition(SetUpTest, TestCase):
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "This should be in qlr approval page.")
+        self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
         self.assertContains(response, "Approved Date")
         self.client.logout()
 
