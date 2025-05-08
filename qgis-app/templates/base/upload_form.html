@@ -41,27 +41,7 @@ ul.as-list {
         {% csrf_token %}
 
         {% if resource_name == 'Map' %}
-        <div class="container rich tips mt-0 mb-3">
-            <div class="icon" style="margin-top: 35px;">⚠️</div>
-            <div class="cont coloring-2">
-            <h2>Important Guidelines for Uploading Your Map</h2>
-            <p>
-                Before proceeding with the upload, please ensure that your map adheres to the following guidelines:
-                <ul>
-                    <li>The map is created using QGIS.</li>
-                    <li>The map includes the "Made with QGIS" logo (included by default in QGIS SVG resources).</li>
-                    <li>The map is in a supported image format (e.g., PNG, JPEG).</li>
-                    <li>The map is not a screenshot.</li>
-                    <li>The map file size does not exceed 10MB.</li>
-                    <li>The map name provided in the form is descriptive and relevant.</li>
-                    <li>
-                        The description provided in the form includes a concise narrative 
-                        explaining how QGIS was utilized to create the map.
-                    </li>
-                </ul>
-            </p>
-            </div>
-        </div>
+            {% include "base/includes/map_guidelines.html" %}
         {% endif %}
         {% include "base/form_snippet.html" %}
 
