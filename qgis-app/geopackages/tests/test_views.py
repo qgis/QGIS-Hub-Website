@@ -257,3 +257,72 @@ class TestReviewGeopackage(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "1 record found.")
         self.assertContains(response, "spiky polygons")
+
+class TestUpdateGeopackage(SetUpTest, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
+
+    def setUp(self):
+        super(TestUpdateGeopackage, self).setUp()
+        self.gpkg_object = Geopackage.objects.create(
+            creator=self.creator,
+            name="spiky polygons",
+            description="A GeoPackage for testing purpose",
+            thumbnail_image=self.thumbnail,
+            file=self.file,
+        )
+
+    def test_update_acceptable_size_file(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("geopackage_update", kwargs={"pk": self.gpkg_object.id})
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_gpkg = SimpleUploadedFile(
+            self.file_content.name, self.file_content.read()
+        )
+        data = {
+            "name": "Modified polygons",
+            "description": "Test upload an acceptable gpkg size",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_gpkg,
+            "tags": "gpkg,project,test"
+        }
+        response = self.client.post(url, data, follow=True)
+        # should send email notify
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            mail.outbox[0].subject, "A new GeoPackage has been updated by creator."
+        )
+        gpkg = Geopackage.objects.first()
+        self.assertEqual(gpkg.name, "Modified polygons")
+        # Check the tags
+        self.assertEqual(
+            gpkg.tags.filter(
+                name__in=['gpkg', 'project', 'test']).count(),
+            3)
+        url = reverse("geopackage_detail", kwargs={"pk": gpkg.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_invalid_size_file(self):
+        login = self.client.login(username="creator", password="password")
+        self.assertTrue(login)
+        url = reverse("geopackage_update", kwargs={"pk": self.gpkg_object.id})
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_gpkg = SimpleUploadedFile(
+            self.gpkg_oversize_content.name, self.gpkg_oversize_content.read()
+        )
+        data = {
+            "name": "Modified polygons",
+            "description": "Test upload a gpkg > 1Mb filesize",
+            "thumbnail_image": uploaded_thumbnail,
+            "file": uploaded_gpkg,
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Should not change the gpkg
+        gpkg = Geopackage.objects.first()
+        self.assertEqual(gpkg.name, "spiky polygons")

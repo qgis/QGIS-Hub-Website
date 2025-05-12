@@ -22,5 +22,5 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Upload Form."""
 
 
-class UpdateForm(ResourceFormMixin):
+class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Model Update Form."""
