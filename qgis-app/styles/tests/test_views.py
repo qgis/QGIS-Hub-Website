@@ -377,7 +377,7 @@ class TestModeration(TestCase):
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "This should be in Approve page.")
+        self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
         self.assertContains(response, "Approved Date")
         self.client.logout()
 
