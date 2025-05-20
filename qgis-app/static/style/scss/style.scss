@@ -360,3 +360,7 @@ a.is-active > span {
 .is-transparent {
   background-color:rgba(0, 0, 0, 0) !important;
 }
+
+a.heading-anchor {
+  visibility: hidden;
+}
