@@ -20,9 +20,10 @@ class Command(BaseCommand):
             section = soup.select_one('section.section')
 
             if section:
+                html_content = section.prettify().replace("Â¶", "¶")
                 template_path = os.path.join(settings.SITE_ROOT, 'templates/flatpages/sustaining_members.html')
                 with open(template_path, 'w') as f:
-                    f.write(section.prettify())
+                    f.write(html_content)
                 print(f"get_sustaining_members: Section saved to {template_path}")
             else:
                 print("get_sustaining_members: Section not found")
