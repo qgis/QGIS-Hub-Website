@@ -240,7 +240,7 @@ class TestReviewMap(SetUpTest, TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")
-        self.assertContains(response, "Reviewed by style_manager now")
+        self.assertContains(response, "Reviewed by Style_Manager now")
         self.client.logout()
         # creator should find the rejected styles in requiring update page
         self.client.login(username="creator", password="password")
