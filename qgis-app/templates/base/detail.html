@@ -22,7 +22,7 @@
     <div class="column is-6">
       <div class="buttons are-small is-justify-content-flex-end">
         {% if user.is_staff or is_style_manager %}
-          {% if resource_name == 'Map' %}
+          {% if resource_name == 'Map' and is_map_publisher %}
             <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
               href="{% url 'map_toggle_publish' object_detail.id %}" 
               title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">

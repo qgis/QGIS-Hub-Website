@@ -26,7 +26,7 @@ from map_gallery.models import Review, Map
 from map_gallery.forms import UpdateForm, UploadForm
 from map_gallery.validator import is_valid_image
 
-from base.permissions import ResourceManagerRequiredMixin
+from base.permissions import MapPublisherRequiredMixin
 
 
 class ResourceMixin:
@@ -139,7 +139,7 @@ class MapByTagView(MapListView):
     )
     return context
 
-class MapTooglePublishView(ResourceManagerRequiredMixin, ResourceMixin, ResourceBaseContextMixin, View):
+class MapTooglePublishView(MapPublisherRequiredMixin, ResourceMixin, ResourceBaseContextMixin, View):
   """Publish/Unpublish a Map on QGIS.org"""
 
   def get_object(self):
