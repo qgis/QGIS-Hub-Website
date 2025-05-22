@@ -31,6 +31,7 @@ from django.views.generic import (
 from django.views.generic.base import ContextMixin
 from django.utils.encoding import escape_uri_path
 from django.http import Http404
+from urllib.parse import urlparse, parse_qs, urlencode
 
 
 def check_resources_access(user: User, resource: models.base) -> bool:
@@ -368,6 +369,8 @@ class ResourceBaseListView(ResourceBaseContextMixin, ResourceSearchMixin, ListVi
         context["queries"] = self.request.GET.get("q", None)
         context["is_gallery"] = self.request.GET.get("is_gallery", None)
         context["description"] = settings.HUB_SUBMENU[self.hub_submenu_index]['description']
+        context["current_sort_query"] = self.get_sortstring()
+        context["current_querystring"] = self.get_querystring()
         return context
 
     def get_queryset(self):
@@ -385,6 +388,25 @@ class ResourceBaseListView(ResourceBaseContextMixin, ResourceSearchMixin, ListVi
         if is_gallery:
             return settings.PAGINATION_DEFAULT_PAGINATION_HUB
         return settings.PAGINATION_DEFAULT_PAGINATION
+
+    def get_sortstring(self):
+        if self.request.GET.get("sort", None):
+            return "sort=%s" % self.request.GET.get("sort")
+        return ""
+
+    def get_querystring(self):
+        """
+        Clean existing query string (GET parameters) by removing
+        arguments that we don't want to preserve (sort parameter, 'page')
+        """
+        to_remove = ["page", "sort"]
+        query_string = urlparse(self.request.get_full_path()).query
+        query_dict = parse_qs(query_string)
+        for arg in to_remove:
+            if arg in query_dict:
+                del query_dict[arg]
+        clean_query_string = urlencode(query_dict, doseq=True)
+        return clean_query_string
 
 
 class ResourceBaseUnapprovedListView(
