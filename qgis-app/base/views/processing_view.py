@@ -5,7 +5,12 @@ from base.license import zipped_with_license
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from base.permissions import ResourceManagerRequiredMixin, is_resources_manager, GROUP_NAME
+from base.permissions import (
+    ResourceManagerRequiredMixin,
+    is_resources_manager,
+    GROUP_NAME,
+    is_map_publisher
+)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import SearchVector
@@ -317,6 +322,8 @@ class ResourceBaseDetailView(ResourceBaseContextMixin, DetailView):
             context["is_style_manager"] = is_resources_manager(user)
         if self.is_3d_model:
             context["url_viewer"] = "%s_viewer" % self.resource_name_url_base
+        if is_map_publisher(user):
+            context["is_map_publisher"] = True
         return context
 
 
