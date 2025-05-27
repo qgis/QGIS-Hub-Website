@@ -41,6 +41,10 @@ ul.as-list {
 
     <form method="post" enctype="multipart/form-data" class="box-content">
         {% csrf_token %}
+
+        {% if resource_name == 'Map' %}
+            {% include "base/includes/map_guidelines.html" %}
+        {% endif %}
         {% include "base/form_snippet.html" %}
         <div class="form-actions has-text-centered">
             <button class="button is-success is-medium" type="submit">
