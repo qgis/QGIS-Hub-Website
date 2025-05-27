@@ -145,7 +145,7 @@ Follow these steps for setting up:
 ---
 ## Setup Map Publishers Group
 
-The members of this group will receive style related emails.
+The members of this group will receive map related emails.
 Follow these steps for setting up:
 - Open admin page: `http://0.0.0.0:62202/admin`, login with superuser account.
 - Create new Group: `Authentication and Authorization > Groups > Add group`
