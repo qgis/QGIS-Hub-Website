@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}{% load i18n static thumbnail resources_custom_tags%}
+{% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
 
 {% block extrajs %}
   {{ block.super }}
@@ -19,8 +19,8 @@
     <div class="column is-6">
       <h3 class="title is-4">{{ object_detail.name }}</h3>
     </div>
-    <div class="column is-6 has-text-right">
-      <div>
+    <div class="column is-6">
+      <div class="buttons are-small is-justify-content-flex-end">
         {% if user.is_staff or is_style_manager %}
           {% if resource_name == 'Map' and is_map_publisher %}
             <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
@@ -121,6 +121,7 @@
   {% endif %}
 
   {% include "base/includes/detail_object.html" %}
+
   {% if resource_name == 'Map' and object_detail.is_publishable %}
     <div class="notification is-success is-light">
       <span class="icon">
@@ -128,6 +129,31 @@
       </span>
       {% trans "This map is also available on QGIS.org:" %}
       <a href="https://qgis.org/project/overview/maps/" target="_blank">https://qgis.org/project/overview/maps/</a>
+    </div>
+  {% endif %}
+
+  <hr />
+  {% if reviewer %}
+    <div class="field">
+      <label class="label">Previous Comments:</label>
+      <div class="control">
+        {% for review in object_detail.review_set.all %}
+        <div class="notification is-primary3 is-light mb-2">
+          <p class="content">{{ review.comment }}</p>
+          <p class="has-text-darker is-size-7">
+            <i><small>Reviewed by {{ review.reviewer }} {{ review.review_date|naturaltime }}</small></i>
+          </p>
+        </div>
+        {% if forloop.last and object_detail.approved %}
+        <div class="notification is-success is-light">
+          <span class="icon">
+            <i class="fas fa-thumbs-up"></i>
+          </span>
+          <span class="content"><strong>{{ review.reviewer }}</strong> approved these changes {{ review.review_date|naturaltime }} </span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
     </div>
   {% endif %}
   <hr />

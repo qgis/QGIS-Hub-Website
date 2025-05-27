@@ -4,6 +4,10 @@
 @import "sustaining_members.scss";
 @import "image-viewer.scss";
 
+html {
+  scroll-padding-top: 120px; /* height of your fixed header */
+}
+
 body {
   color: $text-primary1;
   font-weight: 300;
@@ -359,4 +363,17 @@ a.is-active > span {
 
 .is-transparent {
   background-color:rgba(0, 0, 0, 0) !important;
+}
+
+a.heading-anchor {
+  visibility: hidden;
+}
+
+h1:hover > a.heading-anchor,
+h2:hover > a.heading-anchor,
+h3:hover > a.heading-anchor,
+h4:hover > a.heading-anchor,
+h5:hover > a.heading-anchor,
+h6:hover > a.heading-anchor {
+  visibility: visible;
 }

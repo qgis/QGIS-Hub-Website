@@ -8,7 +8,7 @@
           QGIS styles are a set of properties that can be applied to vector layers. They are used to render the layer in the map canvas.
         </p>
         <p class="mt-3">
-          <a href="{% url 'style_list' %}" class="button is-primary1 is-size-5">Browse Styles</a>
+          <a href="{% url 'style_list' %}?sort=upload_date&order=desc" class="button is-primary1 is-size-5">Browse Styles</a>
         </p>
       </div>
       <div class="column is-7 main-image">
@@ -28,7 +28,7 @@
           Geopackage files that contain a QGIS project file and all the data layers used in the project.
         </p>
         <p class="mt-3">
-          <a href="{% url 'geopackage_list' %}" class="button is-primary1 is-size-5">Browse Projects</a>
+          <a href="{% url 'geopackage_list' %}?sort=upload_date&order=desc" class="button is-primary1 is-size-5">Browse Projects</a>
         </p>
       </div>
       <div class="column is-7 main-image">
@@ -48,7 +48,7 @@
           QGIS models are a set of processing algorithms that can be run in a sequence to automate a task.
         </p>
         <p class="mt-3">
-          <a href="{% url 'model_list' %}" class="button is-primary1 is-size-5">Browse Models</a>
+          <a href="{% url 'model_list' %}?sort=upload_date&order=desc" class="button is-primary1 is-size-5">Browse Models</a>
         </p>
       </div>
       <div class="column is-7 main-image">
@@ -68,7 +68,7 @@
             QGIS 3D models can be used in any 3D software to visualize and analyze spatial data in three dimensions.
         </p>
         <p class="mt-3">
-          <a href="{% url 'wavefront_list' %}" class="button is-primary1 is-size-5">Browse 3D Models</a>
+          <a href="{% url 'wavefront_list' %}?sort=upload_date&order=desc" class="button is-primary1 is-size-5">Browse 3D Models</a>
         </p>
       </div>
       <div class="column is-7 main-image">
@@ -89,7 +89,7 @@
           QLR files contain links to the data sources and all the QGIS style information necessary to style the layer.
         </p>
         <p class="mt-3">
-          <a href="{% url 'layerdefinition_list' %}" class="button is-primary1 is-size-5">Browse QLR</a>
+          <a href="{% url 'layerdefinition_list' %}?sort=upload_date&order=desc" class="button is-primary1 is-size-5">Browse QLR</a>
         </p>
       </div>
       <div class="column is-7 main-image">
