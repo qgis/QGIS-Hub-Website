@@ -143,6 +143,19 @@ Follow these steps for setting up:
     - styles | style type | Can view style type
 
 ---
+## Setup Map Publishers Group
+
+The members of this group will receive map related emails.
+Follow these steps for setting up:
+- Open admin page: `http://0.0.0.0:62202/admin`, login with superuser account.
+- Create new Group: `Authentication and Authorization > Groups > Add group`
+- Set the options:
+  - **Name:** `Map Publishers`
+  - **Permissions:**
+    choose all styles | in **Available permissions** by typing `map` in search input and click `Choose all`
+    - map_gallery | map | Can change map
+
+---
 ## Backup and Restore
 
 - Go to repo directory and run backup.sh

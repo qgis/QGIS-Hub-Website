@@ -33,11 +33,19 @@ class SetUpTest:
         # set creator password to password
         self.creator.set_password("password")
         self.creator.save()
-        self.staff = User.objects.create(username="staff", email="staff@email.com")
-        self.staff.set_password("password")
-        self.staff.save()
+        # Style manager
+        self.style_manager = User.objects.create(username="style_manager", email="style_manager@email.com")
+        self.style_manager.set_password("password")
+        self.style_manager.save()
         self.group = Group.objects.create(name="Style Managers")
-        self.group.user_set.add(self.staff)
+        self.group.user_set.add(self.style_manager)
+
+        # Map Publisher
+        self.map_publisher = User.objects.create(username="map_publisher", email="map_publisher@email.com")
+        self.map_publisher.set_password("password")
+        self.map_publisher.save()
+        self.group = Group.objects.create(name="Map Publishers")
+        self.group.user_set.add(self.map_publisher)
 
     def tearDown(self):
         self.file_content.close()
@@ -91,22 +99,22 @@ class TestEmailNotification(SetUpTest, TestCase):
         map = Map.objects.first()
         resource_notify(map, resource_type="Map")
         Review.objects.create(
-            reviewer=self.staff, resource=map, comment="Rejected for testing purpose"
+            reviewer=self.style_manager, resource=map, comment="Rejected for testing purpose"
         )
         map.require_action = True
         map.save()
         resource_update_notify(
-            map, self.creator, self.staff, resource_type="Map"
+            map, self.creator, self.style_manager, resource_type="Map"
         )
         Review.objects.create(
-            reviewer=self.staff,
+            reviewer=self.style_manager,
             resource=map,
             comment="Approved! This is for testing purpose",
         )
         map.approved = True
         map.save()
         resource_update_notify(
-            map, self.creator, self.staff, resource_type="Map"
+            map, self.creator, self.style_manager, resource_type="Map"
         )
 
 
@@ -198,7 +206,7 @@ class TestReviewMap(SetUpTest, TestCase):
         )
 
     def test_approve_map(self):
-        login = self.client.login(username="staff", password="password")
+        login = self.client.login(username="style_manager", password="password")
         self.assertTrue(login)
         url = reverse("map_review", kwargs={"pk": self.map_object.id})
         response = self.client.post(
@@ -210,12 +218,12 @@ class TestReviewMap(SetUpTest, TestCase):
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
+        self.assertContains(response, "This should be in Approve page.")
         self.assertContains(response, "Approved Date")
         self.client.logout()
 
     def test_reject_map(self):
-        login = self.client.login(username="staff", password="password")
+        login = self.client.login(username="style_manager", password="password")
         self.assertTrue(login)
         url = reverse("map_review", kwargs={"pk": self.map_object.id})
         response = self.client.post(
@@ -232,7 +240,7 @@ class TestReviewMap(SetUpTest, TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")
-        self.assertContains(response, "Reviewed by Staff now")
+        self.assertContains(response, "Reviewed by Style_Manager now")
         self.client.logout()
         # creator should find the rejected styles in requiring update page
         self.client.login(username="creator", password="password")
@@ -257,7 +265,7 @@ class TestTogglePublishMap(SetUpTest, TestCase):
         )
 
     def test_toggle_publish_map(self):
-        login = self.client.login(username="staff", password="password")
+        login = self.client.login(username="map_publisher", password="password")
         self.assertTrue(login)
         url = reverse("map_toggle_publish", kwargs={"pk": self.map_object.id})
         response = self.client.post(url, follow=True)
@@ -267,8 +275,24 @@ class TestTogglePublishMap(SetUpTest, TestCase):
         self.client.logout()
 
         # Toggle back to unpublish
-        self.client.login(username="staff", password="password")
+        self.client.login(username="map_publisher", password="password")
         response = self.client.post(url, follow=True)
         self.assertRedirects(response, reverse("map_detail", kwargs={"pk": self.map_object.id}))
+        self.map_object.refresh_from_db()
+        self.assertFalse(self.map_object.is_publishable)
+
+    def test_toggle_publish_map_no_permission(self):
+        login = self.client.login(username="style_manager", password="password")
+        self.assertTrue(login)
+        url = reverse("map_toggle_publish", kwargs={"pk": self.map_object.id})
+        response = self.client.post(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+        self.map_object.refresh_from_db()
+        self.assertFalse(self.map_object.is_publishable)
+        self.client.logout()
+
+        self.client.login(username="style_manager", password="password")
+        response = self.client.post(url, follow=True)
+        self.assertEqual(response.status_code, 404)
         self.map_object.refresh_from_db()
         self.assertFalse(self.map_object.is_publishable)
