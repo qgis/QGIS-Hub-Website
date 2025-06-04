@@ -126,7 +126,7 @@ class LimitPagination(MultipleModelLimitOffsetPagination):
 
 
 # cache for 2 hours
-# @method_decorator(cache_page(60 * 60 * 2), name="dispatch")
+@method_decorator(cache_page(60 * 60 * 2), name="dispatch")
 class ResourceAPIList(FlatMultipleModelAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = LimitPagination
@@ -204,7 +204,7 @@ class ResourceAPIDownload(APIView):
     """
 
     # Cache page for the requested url
-    # @method_decorator(cache_page(60 * 60 * 2))
+    @method_decorator(cache_page(60 * 60 * 2))
     def get(self, request, *args, **kwargs):
         uuid = kwargs.get("uuid")
         if Geopackage.approved_objects.filter(uuid=uuid).exists():
