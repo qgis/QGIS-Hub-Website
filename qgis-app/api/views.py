@@ -178,7 +178,7 @@ class ResourceAPIList(FlatMultipleModelAPIView):
         combined_queryset = []
         for query in self.querylist:
             filtered_queryset = query["filter_fn"](
-                query["queryset"], self.request, *self.args, **self.kwargs
+                query["queryset"].all(), self.request, *self.args, **self.kwargs
             )
             for obj in filtered_queryset:
                 obj.serializer_class = query["serializer_class"]
