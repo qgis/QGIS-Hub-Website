@@ -24,7 +24,7 @@ from django.shortcuts import render
 
 from map_gallery.models import Review, Map
 from map_gallery.forms import UpdateForm, UploadForm
-from map_gallery.validator import is_valid_image
+from map_gallery.validator import is_valid_image, is_valid_svg
 
 from base.permissions import MapPublisherRequiredMixin
 
@@ -54,9 +54,12 @@ class MapCreateView(ResourceMixin, ResourceBaseCreateView):
   def form_valid(self, form):
     obj = form.save(commit=False)
     obj.creator = self.request.user
-
-    # Check if the uploaded file is a valid image
-    is_valid_image(obj.file)
+  
+    # Check if the uploaded file is a valid image or SVG
+    if obj.file.name.lower().endswith(".svg"):
+      is_valid_svg(obj.file)
+    else:
+      is_valid_image(obj.file)
 
     obj.save()
     form.save_m2m()
@@ -79,9 +82,12 @@ class MapUpdateView(ResourceMixin, ResourceBaseUpdateView):
     obj = form.save(commit=False)
     obj.require_action = False
     obj.approved = False
-
-    # Check if the uploaded file is a valid image
-    is_valid_image(obj.file)
+  
+    # Check if the uploaded file is a valid image or SVG
+    if obj.file.name.lower().endswith(".svg"):
+      is_valid_svg(obj.file)
+    else:
+      is_valid_image(obj.file)
 
     obj.save()
     # Without this next line the tags won't be saved.

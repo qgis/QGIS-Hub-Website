@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
+{% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags resources_utils %}
 
 {% block extrajs %}
     {{ block.super }}
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-{% if resource_name == 'Map' %}
+{% if resource_name == 'Map' or resource_name == 'Screenshot' %}
   {% include "base/includes/image_viewer.html" with image_file=object.file  %}
 {% elif resource_name == 'Processing Script' %}
   {% include "base/includes/script_viewer.html" with title=object.name script_content=object.get_file_content %}
@@ -64,13 +64,21 @@
     <div class="view-resource mb-3">
       <div class="style-polaroid">
         {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
-          {% thumbnail object_detail.thumbnail_image "420x420" format="PNG" as im %}
+          {% thumbnail object_detail.thumbnail_image "1000x500" format="PNG" as im %}
           <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
           {% endthumbnail %}
-        {% elif resource_name == 'Map' and object.file.file %}
-        {% thumbnail object.file "420x420" format="PNG" as im %}
-          <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
-        {% endthumbnail %}
+        {% elif resource_name == 'Map' or resource_name == 'Screenshot' %}
+            {% if object.file.file %}
+                {% with image_extension=object.file.file.name|file_extension %}
+                {% if image_extension == 'svg' or image_extension == 'gif' %}
+                  <img alt="{% trans "Image thumbnail" %}" src="{{ object.file.url }}" style="max-width:1000px; max-height:500px;" />
+                {% else %}
+                    {% thumbnail object.file.file "1000x500" format="PNG" as im %}
+                    <img alt="{% trans "Image thumbnail" %}" src="{{ im.url }}" />
+                    {% endthumbnail %}
+                {% endif %}
+                {% endwith %}
+            {% endif %}
         {% else %}
           <img src="{% static "images/large-logo.svg" %}" alt="{% trans "Plugin icon" %}" />
         {% endif %}
@@ -80,13 +88,13 @@
       </div>
     </div>
 
-    {% if resource_name == 'Map' %}
+    {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
       <div class="has-text-centered">
         <button class="button is-light" onclick="openViewer('{{ object.file.url }}');">
           <span class="icon">
-            <i class="fas fa-map"></i>
+            <i class="fas fa-image"></i>
           </span>
-          <span>{% trans "Open Full-Size Map" %}</span>
+          <span>{% trans "Open Full-Size" %} {{ resource_name }}</span>
         </button>
       </div>
       {% elif resource_name == 'Processing Script' %}

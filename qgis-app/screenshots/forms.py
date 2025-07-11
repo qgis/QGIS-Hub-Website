@@ -1,14 +1,14 @@
 from base.forms.processing_forms import ResourceBaseCleanFileForm
 from django import forms
-from map_gallery.models import Map
+from screenshots.models import Screenshot
 from taggit.forms import TagField
 
 
 class ResourceFormMixin(forms.ModelForm):
     tags = TagField(required=False)
-    is_map = True
+    is_screenshot = True
     class Meta:
-        model = Map
+        model = Screenshot
         fields = [
             "file",
             "name",
@@ -22,4 +22,4 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
 
 
 class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
-    """Map Update Form."""
+    """Screenshot Update Form."""

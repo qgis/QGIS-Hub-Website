@@ -44,6 +44,8 @@ ul.as-list {
 
         {% if resource_name == 'Map' %}
             {% include "base/includes/map_guidelines.html" %}
+        {% elif resource_name == 'Screenshot' %}
+            {% include "base/includes/screenshot_guidelines.html" %}
         {% endif %}
         {% include "base/form_snippet.html" %}
         <div class="form-actions has-text-centered">

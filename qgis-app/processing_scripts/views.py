@@ -32,7 +32,7 @@ class ResourceMixin:
     resource_name_url_base = "processing_script"
 
     # The index of the submenu in the settings variable HUB_SUBMENU
-    hub_submenu_index = 6
+    hub_submenu_index = 7
 
 
 class ProcessingScriptCreateView(ResourceMixin, ResourceBaseCreateView):

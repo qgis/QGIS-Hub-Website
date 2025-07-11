@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags%}
+{% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags resources_utils%}
 
 {% block extrajs %}
   {{ block.super }}
@@ -9,8 +9,8 @@
 
 {% block content %}
 
-{% if resource_name == 'Map' %}
-  {% include "base/includes/image_viewer.html" with image_file=object.file  %}
+{% if resource_name == 'Map' or resource_name == 'Screenshot' %}
+  {% include "base/includes/image_viewer.html" with image_file=object.file %}
 {% elif resource_name == 'Processing Script' %}
   {% include "base/includes/script_viewer.html" with title=object.name script_content=object.get_file_content %}
 {% endif %}
@@ -22,21 +22,23 @@
     <div class="column is-6">
       <div class="buttons are-small is-justify-content-flex-end">
         {% if user.is_staff or is_style_manager %}
-          {% if resource_name == 'Map' and is_map_publisher %}
-            <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
-              href="{% url 'map_toggle_publish' object_detail.id %}" 
-              title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
-              <span class="icon">
+          {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
+            {% if is_map_publisher %}
+              <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
+                href="{% if resource_name == 'Map' %}{% url 'map_toggle_publish' object_detail.id %}{% else %}{% url 'screenshot_toggle_publish' object_detail.id %}{% endif %}" 
+                title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
+                <span class="icon">
                 <i class="fas {% if object_detail.is_publishable %}fa-times{% else %}fa-globe{% endif %}"></i>
-              </span>
-              <span>
+                </span>
+                <span>
                 {% if object_detail.is_publishable %}
-            {% trans "Unpublish" %}
+                  {% trans "Unpublish" %}
                 {% else %}
-            {% trans "Publish" %}
+                  {% trans "Publish" %}
                 {% endif %}
-              </span>
-            </a>
+                </span>
+              </a>
+            {% endif %}
           {% endif %}
           <a class="button is-warning is-outlined" 
             href="{% url url_unapprove object_detail.id %}" 
@@ -87,10 +89,16 @@
         {% thumbnail object_detail.thumbnail_image "1000x500" format="PNG" as im %}
           <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
         {% endthumbnail %}
-      {% elif resource_name == 'Map' and object.file.file %}
-        {% thumbnail object.file "1000x500" format="PNG" as im %}
-          <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
-        {% endthumbnail %}
+      {% elif resource_name == 'Map' or resource_name == 'Screenshot' %}
+        {% with image_extension=object.file.name|file_extension %}
+          {% if image_extension == 'svg' or image_extension == 'gif' %}
+            <img alt="{% trans "Image thumbnail" %}" src="{{ object.file.url }}" style="max-width:1000px; max-height:500px;" />
+          {% else %}
+            {% thumbnail object.file "1000x500" format="PNG" as im %}
+              <img alt="{% trans "Image thumbnail" %}" src="{{ im.url }}" />
+            {% endthumbnail %}
+          {% endif %}
+        {% endwith %}
       {% else %}
         <img src="{% static "images/large-logo.svg" %}" alt="{% trans "Plugin icon" %}" />
       {% endif %}
@@ -100,13 +108,13 @@
     </div>
   </div>
 
-  {% if resource_name == 'Map' %}
+  {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
   <div class="has-text-centered">
     <button class="button is-light" onclick="openViewer('{{ object.file.url }}');">
       <span class="icon">
         <i class="fas fa-map"></i>
       </span>
-      <span>{% trans "Open Full-Size Map" %}</span>
+      <span>{% trans "Open Full-Size" %} {{ resource_name }}</span>
     </button>
   </div>
   {% elif resource_name == 'Processing Script' %}
@@ -122,14 +130,20 @@
 
   {% include "base/includes/detail_object.html" %}
 
-  {% if resource_name == 'Map' and object_detail.is_publishable %}
-    <div class="notification is-success is-light">
-      <span class="icon">
-        <i class="fas fa-globe"></i>
-      </span>
-      {% trans "This map is also available on QGIS.org:" %}
-      <a href="https://qgis.org/project/overview/maps/" target="_blank">https://qgis.org/project/overview/maps/</a>
-    </div>
+  {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
+    {% if object_detail.is_publishable %}
+      <div class="notification is-success is-light">
+        <span class="icon">
+          <i class="fas fa-globe"></i>
+        </span>
+        {% trans "This resource is also available on QGIS.org:" %}
+        {% if resource_name == 'Map' %}
+          <a href="https://qgis.org/project/overview/maps/" target="_blank">https://qgis.org/project/overview/maps/</a>
+        {% elif resource_name == 'Screenshot' %}
+          <a href="https://qgis.org/project/overview/screenshots/" target="_blank">https://qgis.org/project/overview/screenshots/</a>
+        {% endif %}
+      </div>
+    {% endif %}
   {% endif %}
 
   <hr />

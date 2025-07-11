@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "api",
     "map_gallery",
+    "screenshots",
     # styles:
     "styles",
     # geopackages
@@ -220,10 +221,17 @@ HUB_SUBMENU = [
         'description': 'QGIS Map Gallery is a collection of maps created with QGIS. They are a great way to learn how to use QGIS and to get inspiration for your own maps.'
     },
     {
+        'name': 'Screenshots',
+        'url': '/screenshots/?sort=upload_date&order=desc',
+        'icon': 'fa-image',
+        'order': 7,
+        'description': 'QGIS Screenshots showcase visual outputs, layouts, and map renderings created with QGIS.'
+    },
+    {
         'name': 'Processing Scripts',
         'url': '/scripts/?sort=upload_date&order=desc',
         'icon': 'fa-cogs',
-        'order': 7,
+        'order': 8,
         'description': 'QGIS Processing Scripts are a set of processing algorithms that can be run in a sequence to automate a task.'
     },
 ]
