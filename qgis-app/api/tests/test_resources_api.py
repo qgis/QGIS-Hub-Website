@@ -15,6 +15,7 @@ from os.path import dirname, join
 from django.core.files.uploadedfile import SimpleUploadedFile
 from wavefronts.models import Wavefront
 from map_gallery.models import Map
+from screenshots.models import Screenshot
 from processing_scripts.models import ProcessingScript
 
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
@@ -26,6 +27,7 @@ MODELS_DIR = join(dirname(dirname(dirname(__file__))), "models", "tests", "model
 STYLES_DIR = join(dirname(dirname(dirname(__file__))), "styles", "tests", "stylefiles")
 WAVEFRONT_DIR = join(dirname(dirname(dirname(__file__))), "wavefronts", "tests", "wavefrontfiles")
 MAP_DIR = join(dirname(dirname(dirname(__file__))), "map_gallery", "tests", "mapfiles")
+SCREENSHOT_DIR = join(dirname(dirname(dirname(__file__))), "screenshots", "tests", "screenshot_files")
 PROCESSING_SCRIPT_DIR = join(dirname(dirname(dirname(__file__))), "processing_scripts", "tests", "processing_files")
 
 
@@ -51,6 +53,8 @@ class SetUpTest:
         self.zip3dfile_content = open(self.zip3dfile, "rb")
         self.map_file = os.path.join(MAP_DIR, "main-create.webp")
         self.map_file_content = open(self.map_file, "rb")
+        self.screenshot_file = os.path.join(SCREENSHOT_DIR, "main-create.webp")
+        self.screenshot_file_content = open(self.screenshot_file, "rb")
         self.processing_script_file = os.path.join(PROCESSING_SCRIPT_DIR, "example.py")
         self.processing_script_file_content = open(self.processing_script_file, "rb")
 
@@ -192,6 +196,22 @@ class TestResourceCreateView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Map.objects.count(), 1)
         self.assertEqual(Map.objects.first().name, "Test Map")
+
+    def test_create_screenshot(self):
+        url = reverse('resource-create')
+        uploaded_screenshot = SimpleUploadedFile(
+            self.screenshot_file_content.name, self.screenshot_file_content.read()
+        )
+        data = {
+            "resource_type": "screenshot",
+            "name": "Test Screenshot",
+            "description": "A test screenshot",
+            "file": uploaded_screenshot,
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Screenshot.objects.count(), 1)
+        self.assertEqual(Screenshot.objects.first().name, "Test Screenshot")
 
     def test_create_processing_script(self):
         url = reverse('resource-create')
@@ -345,6 +365,9 @@ class TestResourceDetailView(SetUpTest, TestCase):
         uploaded_map = SimpleUploadedFile(
             self.map_file_content.name, self.map_file_content.read()
         )
+        uploaded_screenshot = SimpleUploadedFile(
+            self.screenshot_file_content.name, self.screenshot_file_content.read()
+        )
         uploaded_processing_script = SimpleUploadedFile(
             self.processing_script_file_content.name, self.processing_script_file_content.read()
         )
@@ -408,6 +431,15 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.map.approved = True
         self.map.save()
 
+        self.screenshot = Screenshot.objects.create(
+            creator=self.user,
+            name="Test Screenshot",
+            description="A test screenshot",
+            file=uploaded_screenshot,
+        )
+        self.screenshot.approved = True
+        self.screenshot.save()
+
         self.processing_script = ProcessingScript.objects.create(
             creator=self.user,
             name="Test Processing Script",
@@ -454,6 +486,12 @@ class TestResourceDetailView(SetUpTest, TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Map")
+
+    def test_get_screenshot(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["name"], "Test Screenshot")
 
     def test_get_processing_script(self):
         url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
@@ -538,6 +576,19 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.map.refresh_from_db()
         self.assertEqual(self.map.name, "Updated Map")
 
+
+    def test_update_screenshot(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"})
+        data = {
+            "name": "Updated Screenshot",
+            "description": "Updated description",
+            "file": self.screenshot.file,
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 200)
+        self.screenshot.refresh_from_db()
+        self.assertEqual(self.screenshot.name, "Updated Screenshot")
+
     def test_update_processing_script(self):
         url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
         data = {
@@ -586,6 +637,12 @@ class TestResourceDetailView(SetUpTest, TestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Map.objects.filter(uuid=self.map.uuid).exists())
+
+    def test_delete_screenshot(self):
+        url = reverse("resource-detail", kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Screenshot.objects.filter(uuid=self.screenshot.uuid).exists())
 
     def test_delete_processing_script(self):
         url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})

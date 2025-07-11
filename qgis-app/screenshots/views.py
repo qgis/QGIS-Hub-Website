@@ -46,9 +46,8 @@ class ScreenshotCreateView(ResourceMixin, ResourceBaseCreateView):
   def form_valid(self, form):
     obj = form.save(commit=False)
     obj.creator = self.request.user
-  
+
     # Check if the uploaded file is a valid image or SVG
-    print(obj.file.name.lower(), "##########")
     if obj.file.name.lower().endswith(".svg"):
       is_valid_svg(obj.file)
     else:
@@ -76,7 +75,6 @@ class ScreenshotUpdateView(ResourceMixin, ResourceBaseUpdateView):
     obj.approved = False
 
     # Check if the uploaded file is a valid image or SVG
-    print(obj.file.name.lower())
     if obj.file.name.lower().endswith(".svg"):
       is_valid_svg(obj.file)
     else:

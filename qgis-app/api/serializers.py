@@ -6,6 +6,7 @@ from styles.models import Style, StyleType
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
 from map_gallery.models import Map
+from screenshots.models import Screenshot
 from processing_scripts.models import ProcessingScript
 from sorl.thumbnail import get_thumbnail
 from django.conf import settings
@@ -53,7 +54,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
 
     def get_thumbnail_full(self, obj):
         request = self.context.get('request')
-        file_field = getattr(obj, "file", None) if self.Meta.model.__name__ == "Map" else getattr(obj, "thumbnail_image", None)
+        file_field = getattr(obj, "file", None) if self.Meta.model.__name__ in ["Map", "Screenshot"] else getattr(obj, "thumbnail_image", None)
 
         if file_field and exists(file_field.path):
             if request is not None:
@@ -252,6 +253,14 @@ class MapSerializer(ResourceBaseSerializer):
     def get_resource_subtype(self, obj):
         return None
 
+
+class ScreenshotSerializer(MapSerializer):
+    """
+    Serializer for Screenshot model, inheriting from MapSerializer
+    """
+    class Meta(MapSerializer.Meta):
+        model = Screenshot
+        fields = MapSerializer.Meta.fields
 
 class ProcessingScriptSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):

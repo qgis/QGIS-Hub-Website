@@ -54,7 +54,7 @@ class MapCreateView(ResourceMixin, ResourceBaseCreateView):
   def form_valid(self, form):
     obj = form.save(commit=False)
     obj.creator = self.request.user
-  
+
     # Check if the uploaded file is a valid image or SVG
     if obj.file.name.lower().endswith(".svg"):
       is_valid_svg(obj.file)
@@ -82,7 +82,7 @@ class MapUpdateView(ResourceMixin, ResourceBaseUpdateView):
     obj = form.save(commit=False)
     obj.require_action = False
     obj.approved = False
-  
+
     # Check if the uploaded file is a valid image or SVG
     if obj.file.name.lower().endswith(".svg"):
       is_valid_svg(obj.file)
