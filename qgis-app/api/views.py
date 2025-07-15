@@ -7,6 +7,7 @@ from api.serializers import (
     LayerDefinitionSerializer,
     WavefrontSerializer,
     MapSerializer,
+    ScreenshotSerializer,
     ProcessingScriptSerializer
 )
 from base.license import zip_a_file_if_not_zipfile
@@ -42,6 +43,7 @@ from styles.models import Style
 from layerdefinitions.models import LayerDefinition
 from wavefronts.models import Wavefront
 from map_gallery.models import Map
+from screenshots.models import Screenshot
 from processing_scripts.models import ProcessingScript
 from api.models import UserOutstandingToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
@@ -168,6 +170,11 @@ class ResourceAPIList(FlatMultipleModelAPIView):
             "filter_fn": filter_general,
         },
         {
+            "queryset": Screenshot.approved_objects.all(),
+            "serializer_class": ScreenshotSerializer,
+            "filter_fn": filter_general,
+        },
+        {
             "queryset": ProcessingScript.approved_objects.all(),
             "serializer_class": ProcessingScriptSerializer,
             "filter_fn": filter_general,
@@ -219,6 +226,8 @@ class ResourceAPIDownload(APIView):
             object = Wavefront.approved_objects.get(uuid=uuid)
         elif Map.approved_objects.filter(uuid=uuid).exists():
             object = Map.approved_objects.get(uuid=uuid)
+        elif Screenshot.approved_objects.filter(uuid=uuid).exists():
+            object = Screenshot.approved_objects.get(uuid=uuid)
         elif ProcessingScript.approved_objects.filter(uuid=uuid).exists():
             object = ProcessingScript.approved_objects.get(uuid=uuid)
         else:
@@ -407,6 +416,8 @@ def _get_resource_serializer(resource_type):
         return ModelSerializer
     elif resource_type.lower() == "map":
         return MapSerializer
+    elif resource_type.lower() == "screenshot":
+        return ScreenshotSerializer
     elif resource_type.lower() == "processingscript":
         return ProcessingScriptSerializer
     else:
@@ -425,6 +436,8 @@ def _get_resource_object(uuid, resource_type):
         return get_object_or_404(Model.approved_objects, uuid=uuid)
     elif resource_type.lower() == "map":
         return get_object_or_404(Map.approved_objects, uuid=uuid)
+    elif resource_type.lower() == "screenshot":
+        return get_object_or_404(Screenshot.approved_objects, uuid=uuid)
     elif resource_type.lower() == "processingscript":
         return get_object_or_404(ProcessingScript.approved_objects, uuid=uuid)
     else:

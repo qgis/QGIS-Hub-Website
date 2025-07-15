@@ -53,6 +53,8 @@ class ResourceBaseCleanFileForm(object):
         file_extension = os.path.splitext(file.name)[1]
         is_gpkg = file_extension == ".gpkg"
         is_map = getattr(self, 'is_map', False)
+        is_screenshot = getattr(self, 'is_screenshot', False)
+        is_map_or_screenshot = is_map or is_screenshot
         is_3d = getattr(self, 'is_3d', False)
-        if filesize_validator(file.file, is_gpkg, is_map, is_3d):
+        if filesize_validator(file.file, is_gpkg, is_map_or_screenshot, is_3d):
             return file

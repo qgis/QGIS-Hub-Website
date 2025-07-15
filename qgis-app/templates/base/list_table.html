@@ -1,4 +1,4 @@
-{% load i18n humanize static thumbnail %}
+{% load i18n humanize static thumbnail resources_utils %}
 
 <table id="myTable" class="table is-fullwidth resources-list-table">
     <thead>
@@ -24,10 +24,18 @@
                     {% thumbnail object.thumbnail_image "96x96" format="PNG" as im %}
                         <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                     {% endthumbnail %}
-                {% elif resource_name == 'Map' and object.file.file %}
-                    {% thumbnail object.file.file "96x96" crop="center" format="PNG" as im %}
-                        <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
-                {% endthumbnail %}
+                {% elif resource_name == 'Map' or resource_name == 'Screenshot' %}
+                    {% if object.file.file %}
+                        {% with image_extension=object.file.file.name|file_extension %}
+                        {% if image_extension == 'svg' or image_extension == 'gif' %}
+                            <img alt="{% trans "Image thumbnail" %}" src="{{ object.file.url }}" style="max-width:96px; max-height:96px;" width="96" height="96" />
+                        {% else %}
+                            {% thumbnail object.file.file "96x96" format="PNG" as im %}
+                            <img alt="{% trans "Image thumbnail" %}" src="{{ im.url }}" />
+                            {% endthumbnail %}
+                        {% endif %}
+                        {% endwith %}
+                    {% endif %}
                 {% else %}
                     <img height="32" width="32" class="plugin-icon" src="{% static "images/large-logo.svg" %}" alt="{% trans "Plugin icon" %}" />
                 {% endif %}

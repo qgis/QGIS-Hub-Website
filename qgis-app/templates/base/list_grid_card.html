@@ -1,4 +1,4 @@
-{% load i18n resources_custom_tags thumbnail static%}
+{% load i18n resources_custom_tags thumbnail static resources_utils %}
 {% load humanize %}
 
 <div class="
@@ -24,10 +24,18 @@ is-one-third-fullhd">
                     {% thumbnail object.thumbnail_image "420x420" crop="center" format="PNG" as im %}
                         <img alt="{% trans "Style icon" %}" src="{{ im.url }}" />
                     {% endthumbnail %}
-                {% elif resource_name == 'Map' and object.file.file %}
-                    {% thumbnail object.file.file "420x420" crop="center" format="PNG" as im %}
-                        <img alt="{% trans "Map icon" %}" src="{{ im.url }}" />
-                    {% endthumbnail %}
+                {% elif resource_name == 'Map' or resource_name == 'Screenshot' %}
+                    {% if object.file.file %}
+                        {% with image_extension=object.file.file.name|file_extension %}
+                        {% if image_extension == 'svg' or image_extension == 'gif' %}
+                            <img alt="{% trans "Image thumbnail" %}" src="{{ object.file.url }}" style="max-width:420px; max-height:420px;" />
+                        {% else %}
+                            {% thumbnail object.file.file "420x420" format="PNG" as im %}
+                            <img alt="{% trans "Image thumbnail" %}" src="{{ im.url }}" />
+                            {% endthumbnail %}
+                        {% endif %}
+                        {% endwith %}
+                    {% endif %}
                 {% else %}
                     <img src="{% static "images/large-logo.svg" %}" class="p-3" alt="{% trans "Plugin icon" %}" />
                 {% endif %}
@@ -59,15 +67,22 @@ is-one-third-fullhd">
                         </span>
                         <span>Updated on {{ object.modified_date|date:"d F Y" }}</span>
                     </span>
-                    {% if resource_name == 'Map' and object.is_publishable %}
-                        <span class="icon-text is-size-7 has-text-weight-medium">
-                            <span class="icon">
-                                <i class="fas fa-globe"></i>
+                    {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
+                        {% if object.is_publishable %}
+                            <span class="icon-text is-size-7 has-text-weight-medium">
+                                <span class="icon">
+                                    <i class="fas fa-globe"></i>
+                                </span>
+                                <span>
+                                    Also available on 
+                                    {% if resource_name == 'Map' %}
+                                        <a href="https://qgis.org/project/overview/maps/" target="_blank" rel="noopener noreferrer">QGIS.org</a>
+                                    {% else %}
+                                        <a href="https://qgis.org/en/site/about/screenshots.html" target="_blank" rel="noopener noreferrer">QGIS.org</a>
+                                    {% endif %}
+                                </span>
                             </span>
-                            <span>
-                                Also available on <a href="https://qgis.org/project/overview/maps/" target="_blank" rel="noopener noreferrer">QGIS.org</a>
-                            </span>
-                        </span>
+                        {% endif %}
                     {% endif %}
                 </p>
             </div>

@@ -46,6 +46,7 @@ urlpatterns = [
     url(r"^models/", include("models.urls")),
     url(r"^wavefronts/", include("wavefronts.urls")),
     url(r"^map-gallery/", include("map_gallery.urls")),
+    url(r"^screenshots/", include("screenshots.urls")),
     url(r"^scripts/", include("processing_scripts.urls")),
 ]
 

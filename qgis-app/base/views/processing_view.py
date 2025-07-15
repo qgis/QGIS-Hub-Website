@@ -254,6 +254,8 @@ class ResourceBaseCreateView(
         self.obj = form.save(commit=False)
         self.obj.creator = self.request.user
         self.obj.save()
+
+        print(self.obj.file.name.lower(), "##########")
         # Without this next line the tags won't be saved.
         form.save_m2m()
         resource_notify(self.obj, resource_type=self.resource_name)
