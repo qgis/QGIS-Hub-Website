@@ -225,7 +225,7 @@ HUB_SUBMENU = [
         'url': '/screenshots/?sort=upload_date&order=desc',
         'icon': 'fa-image',
         'order': 7,
-        'description': 'QGIS Screenshots showcase visual outputs and layouts created with QGIS.'
+        'description': 'Showcase screenshots of QGIS in action.'
     },
     {
         'name': 'Processing Scripts',
