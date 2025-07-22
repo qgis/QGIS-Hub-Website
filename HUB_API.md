@@ -1,10 +1,29 @@
-API URL Configuration
 # QGIS Resources Hub API Documentation
+
 
 The `urlpatterns` list routes URLs to views. For more information please see:
 [https://docs.djangoproject.com/en/3.2/topics/http/urls/](https://docs.djangoproject.com/en/3.2/topics/http/urls/)
 
+## Authentication
+
+To perform create, update, or delete operations, you must use token-based authentication.
+
+> **NOTE**: You don't need a Token to perform GET request.
+
+**How to obtain an API token:**
+1. Log in to the QGIS Hub Website using your credentials.
+2. Navigate to **API > Tokens** in the main menu.
+3. Click **Generate New Token**.
+4. Copy your token immediately, as it will only be displayed once.
+
+Include your token in the `Authorization` header of your API requests:
+```
+Authorization: Bearer <your_token>
+```
+
 ## Endpoints
+
+The base URL for the QGIS Hub API is https://hub.qgis.org/api/v1/resources/.
 
 ### Available resource types (resource_type)
 - `geopackage`
@@ -14,15 +33,19 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 - `model`
 - `map`
 - `processingscript`
+- `screenshot`
 
-### Resources
+### List Resources
 - **URL:** `/resources/`
 - **Method:** `GET`
 - **View:** `ResourceAPIList.as_view()`
 - **Name:** `resource-list`
 - **Description:** Retrieves a list of all resources.
+- **Examples:** 
+    - `https://hub.qgis.org/api/v1/resources/`: returns a collection of resources without any filters applied.
+    - `https://hub.qgis.org/api/v1/resources/?resource_type=geopackage`: filters the results to only show resources of the type "geopackage".
 
-### Resource by UUID
+### Download Resource
 - **URL:** `/resource/<uuid:uuid>/`
 - **Method:** `GET`
 - **View:** `ResourceAPIDownload.as_view()`
