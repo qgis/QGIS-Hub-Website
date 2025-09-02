@@ -106,3 +106,4 @@ The base URL for the QGIS Hub API is https://hub.qgis.org/api/v1/contributors/.
 - **Description:** Retrieves the commit counts for a specific author. The author name might have changed over the time (set by `git config user.name`) so it's possible to map a comma-separated list of author names to get all counts from the same contributor.
 - **Examples:** 
     - `https://hub.qgis.org/api/v1/contributors/QGIS-Website/commit-counts/Xpirix,Lova`
+    - `https://hub.qgis.org/api/v1/contributors/QGIS-Website/commit-counts/Xpirix,Lova?since=2024-01-01&until=2024-12-31`: Get commit count for a specific time range

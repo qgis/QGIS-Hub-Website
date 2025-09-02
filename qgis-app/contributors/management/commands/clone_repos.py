@@ -4,17 +4,17 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 REPOS = [
-  "https://github.com/qgis/QGIS-Website",
-  "https://github.com/qgis/QGIS-Plugins-Website",
-  "https://github.com/qgis/QGIS-Hub-Website",
-  "https://github.com/qgis/QGIS-Planet-Website",
-  "https://github.com/qgis/QGIS-Certification-Website",
-  "https://github.com/qgis/QGIS-Changelog-Website",
-  "https://github.com/qgis/QGIS-Members-Website",
-  "https://github.com/qgis/QGIS-UC-Website",
-  "https://github.com/qgis/QGIS-Feed-Website",
-  "https://github.com/qgis/QGIS-Documentation",
-  "https://github.com/qgis/QGIS",
+  "QGIS-Website",
+  "QGIS-Plugins-Website",
+  "QGIS-Hub-Website",
+  "QGIS-Planet-Website",
+  "QGIS-Certification-Website",
+  "QGIS-Changelog-Website",
+  "QGIS-Members-Website",
+  "QGIS-UC-Website",
+  "QGIS-Feed-Website",
+  "QGIS-Documentation",
+  "QGIS",
 ]
 
 class Command(BaseCommand):
@@ -32,8 +32,8 @@ class Command(BaseCommand):
     dest_dir = options['dest']
     os.makedirs(dest_dir, exist_ok=True)
 
-    for repo_url in REPOS:
-      repo_name = repo_url.rstrip('/').split('/')[-1]
+    for repo_name in REPOS:
+      repo_url = f"https://github.com/qgis/{repo_name}.git"
       repo_path = os.path.join(dest_dir, repo_name)
       if os.path.exists(repo_path):
         self.stdout.write(self.style.WARNING(f"{repo_name} already exists, skipping."))
