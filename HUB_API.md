@@ -82,3 +82,27 @@ The base URL for the QGIS Hub API is https://hub.qgis.org/api/v1/resources/.
     GET /resource/style/123e4567-e89b-12d3-a456-426614174000/
     ```
 - **Permissions:** Ensure that the user has the necessary permissions (staff or creator) to view, update, or delete the resource details.
+
+## Contributors API
+
+The contributors stats API is included to the Hub for now because it's a small app and this one already includes the necessary dependencies. Also, it will save us from creating a separated server. However, it's recommended to separate it if the contributors APP grows.
+
+The base URL for the QGIS Hub API is https://hub.qgis.org/api/v1/contributors/.
+
+### Commit counts
+- **URL:** `<BASE_URL>/<REPO-NAME>/commit-counts`
+- **Method:** `GET`
+- **View:** `CommitCountList.as_view()`
+- **Name:** `commit-counts`
+- **Description:** Retrieves the commit counts for all authors.
+- **Examples:** 
+    - `https://hub.qgis.org/api/v1/contributors/QGIS-Website/commit-counts/`
+
+### Commit counts by author
+- **URL:** `<BASE_URL>/<REPO-NAME>/commit-counts/<Author Name>`
+- **Method:** `GET`
+- **View:** `CommitCountByAuthor.as_view()`
+- **Name:** `commit-count-by-author`
+- **Description:** Retrieves the commit counts for a specific author. The author name might have changed over the time (set by `git config user.name`) so it's possible to map a comma-separated list of author names to get all counts from the same contributor.
+- **Examples:** 
+    - `https://hub.qgis.org/api/v1/contributors/QGIS-Website/commit-counts/Xpirix,Lova`

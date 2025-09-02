@@ -77,6 +77,7 @@ urlpatterns += [
 # API
 urlpatterns += [
     url(r"^api/v1/", include("api.urls")),
+    url(r"^api/v1/contributors/", include("contributors.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),

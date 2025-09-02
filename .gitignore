@@ -69,3 +69,6 @@ qgis-app/templates/flatpages/sustaining_members.html
 
 .vscode
 .vscode-extensions
+
+# Contributors
+qgis_repos
