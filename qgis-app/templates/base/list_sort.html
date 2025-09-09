@@ -10,7 +10,6 @@
                 <option value="upload_date" {% if request.GET.sort == 'upload_date' %}selected{% endif %}>{% trans "Upload date" %}</option>
                 <option value="modified_date" {% if request.GET.sort == 'modified_date' %}selected{% endif %}>{% trans "Modified date" %}</option>
                 <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>{{ resource_name }} {% trans "name" %}</option>
-                {% if object_list.first.style_type %}<option value="type" {% if request.GET.sort == 'type' %}selected{% endif %}>{% trans "Style type" %}</option>{% endif %}
             </select>
         </span>
     </p>

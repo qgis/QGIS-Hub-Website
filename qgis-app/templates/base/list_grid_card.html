@@ -54,10 +54,14 @@ is-one-third-fullhd">
             <p style="height: 100%;"></p>
             <div class="content mb-0">
                 <div class="p-1">
-                    {% if object.style_type %}
-                      <span class="tag is-info is-light">{{ object.style_type.name|title }}</span>
-                    {%  else %}
-                      {{ object.description|md_to_html|striptags|truncatewords:15 }}
+                    {% if object.style_types.all %}
+                        {% for stype in object.style_types.all %}
+                            <span class="tag is-info is-light">{{ stype.name|title }}</span>
+                        {% empty %}
+                            {{ object.description|md_to_html|striptags|truncatewords:15 }}
+                        {% endfor %}
+                    {% else %}
+                        {{ object.description|md_to_html|striptags|truncatewords:15 }}
                     {% endif %}
                 </div>
                 <p class="p-1">

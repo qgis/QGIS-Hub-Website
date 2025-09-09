@@ -88,13 +88,26 @@ class Style(Resource):
         db_index=True,
     )
 
+    # Style Types
+    # A style can have multiple types, e.g. both line and marker
+    # We need to migrate existing data from style_type to this new field
+    style_types = models.ManyToManyField(
+        StyleType,
+        related_name="styles",
+        verbose_name=_("Style Types"),
+        help_text=_(
+            "The types of this style, these will automatically be read "
+            "from the XML file."
+        ),
+        blank=True,
+    )
+
     # name and desc
     name = models.CharField(
         _("Name"),
         help_text=_(
-            "A unique name for this style. This will be initially "
-            "automatically taken from the uploaded XML file, but may "
-            "need manual revision if the name is not unique."
+            "A unique name for this style. If a style with the same name already exists, "
+            "a random string will be appended."
         ),
         max_length=256,
         unique=True,

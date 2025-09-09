@@ -29,7 +29,7 @@ def validator(xmlfile):
     Validate a style file for a Form.
 
     The file should be a valid XML file.
-    The file should contains:
+    The file should contain:
     - qgis_style tag in root.
     - attribute name and type in symbol tag.
 
@@ -48,33 +48,30 @@ def validator(xmlfile):
         tree = ET.parse(xmlfile)
     except ET.ParseError:
         raise ValidationError(
-            _("Cannot parse the style file. " "Please ensure your file is correct.")
+            _("Cannot parse the style file. Please ensure your file is correct.")
         )
     root = tree.getroot()
-    if not root or not root.tag == "qgis_style":
+    if not root or root.tag != "qgis_style":
         raise ValidationError(
-            _("Invalid root tag of style file. " "Please ensure your file is correct.")
+            _("Invalid root tag of style file. Please ensure your file is correct.")
         )
-    # find child elements
-    symbol = root.find("./symbols/symbol")
+
+    # Use the same logic as read_xml_style to find valid style elements
+    symbols = root.findall("./symbols/symbol")
     colorramp = root.find("./colorramps/colorramp")
     labelsetting = root.find("./labelsettings/labelsetting")
     legendpatchshape = root.find("./legendpatchshapes/legendpatchshape")
     symbol3d = root.find("./symbols3d/symbol3d")
     textformat = root.find("./textformats/textformat")
-    if (
-        not symbol
-        and not colorramp
-        and not labelsetting
-        and not legendpatchshape
-        and not symbol3d
-        and not textformat
-    ):
+
+    if not (symbols or colorramp or labelsetting or legendpatchshape or symbol3d or textformat):
         raise ValidationError(
-            _("Undefined style type. " "Please register your style type.")
+            _("Undefined style type. Please register your style type.")
         )
-    if symbol:
-        _check_name_type_attribute(symbol)
+
+    if symbols:
+        for symbol in symbols:
+            _check_name_type_attribute(symbol)
     elif colorramp:
         _check_name_type_attribute(colorramp)
     elif labelsetting:
@@ -87,7 +84,6 @@ def validator(xmlfile):
         _check_name_type_attribute(textformat)
     xmlfile.seek(0)
     return True
-
 
 def is_utf8(file):
     try:
@@ -169,42 +165,46 @@ def read_xml_style(xmlfile):
     """
     Parse XML file.
 
-    The file should contains:
+    The file should contain:
     - qgis_style tag in root
     - One of these following elements tag:
-      - symbol
+      - symbol (possibly multiple, with different types)
       - colorramp
       - labelsetting
       - legendpatchshape
       - symbol3d
+      - textformat
+    Returns:
+        dict with "name" and "type" (type is always a list)
     """
-
     try:
         tree = ET.parse(xmlfile)
     except ET.ParseError:
         raise ValidationError(
-            _("Cannot parse the style file. " "Please ensure your file is correct.")
+            _("Cannot parse the style file. Please ensure your file is correct.")
         )
     root = tree.getroot()
     # find child elements
-    symbol = root.find("./symbols/symbol")
+    symbols = root.findall("./symbols/symbol")
     colorramp = root.find("./colorramps/colorramp")
     labelsetting = root.find("./labelsettings/labelsetting")
     legendpatchshape = root.find("./legendpatchshapes/legendpatchshape")
     symbol3d = root.find("./symbols3d/symbol3d")
     textformat = root.find("./textformats/textformat")
 
-    if symbol:
-        return {"name": symbol.get("name"), "type": symbol.get("type")}
-    elif colorramp:
-        return {"name": colorramp.get("name"), "type": "colorramp"}
-    elif labelsetting:
-        return {"name": labelsetting.get("name"), "type": "labelsetting"}
-    elif legendpatchshape:
-        return {"name": legendpatchshape.get("name"), "type": "legendpatchshape"}
-    elif symbol3d:
-        return {"name": symbol3d.get("name"), "type": "symbol3d"}
-    elif textformat:
-        return {"name": textformat.get("name"), "type": "textformat"}
-    else:
-        return {"name": None, "type": None}
+    types = []
+
+    if symbols:
+        types.extend([s.get("type") for s in symbols if s.get("type")])
+    if colorramp is not None:
+        types.append("colorramp")
+    if labelsetting is not None:
+        types.append("labelsetting")
+    if legendpatchshape is not None:
+        types.append("legendpatchshape")
+    if symbol3d is not None:
+        types.append("symbol3d")
+    if textformat is not None:
+        types.append("textformat")
+
+    return {"types": types}
