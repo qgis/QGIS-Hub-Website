@@ -55,10 +55,9 @@ class StyleCreateView(ResourceMixin, ResourceBaseCreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.creator = self.request.user
-        style_name = None
+        style_name = obj.name
         style_types_list = []
         if obj.file.name.lower().endswith(".gpl"):
-            style_name = get_gpl_name(obj.file)
             style_types_list = ["Color Palette"]
         else:
             xml_parse = read_xml_style(obj.file)
@@ -115,15 +114,17 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
         """
 
         obj = form.save(commit=False)
+        style_types_list = []
         if obj.file.name.lower().endswith(".gpl"):
-            style_type_str = "Color Palette"
+            style_types_list = ["Color Palette"]
         else:
             xml_parse = read_xml_style(obj.file)
-            style_type_str = xml_parse["type"]
-        if style_type_str:
-            obj.style_type = StyleType.objects.filter(
-                symbol_type=style_type_str
-            ).first()
+            if xml_parse:
+                style_types_list = xml_parse["types"]
+        if style_types_list:
+            obj.style_types.set(
+                StyleType.objects.filter(symbol_type__in=style_types_list)
+            )
         obj.require_action = False
         obj.save()
         # Without this next line the tags won't be saved.
