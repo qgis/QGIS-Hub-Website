@@ -141,8 +141,8 @@ class Style(Resource):
         return reverse("style_detail", args=(self.id,))
 
     @property
-    def get_style_type(self):
-        return self.style_type.name
+    def get_style_types(self):
+        return ", ".join([stype.name for stype in self.style_types.all()])
 
 
 class Review(ResourceReview):
