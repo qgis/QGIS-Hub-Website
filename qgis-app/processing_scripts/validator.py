@@ -37,29 +37,39 @@ def processing_script_validator(processing_script_file) -> bool:
   if not _validate_syntax(script_content):
     raise ValidationError(_("Invalid Python syntax."))
 
-  # Check if the script contains a class that inherits from QgsProcessingAlgorithm
-  if not _validate_algorithm_class(script_content):
-    raise ValidationError(_("Script must contain a class that inherits from QgsProcessingAlgorithm."))
+  # Check if the script is either a class-based or decorator-based algorithm
+  is_class_based = _validate_algorithm_class(script_content)
+  is_decorator_based = _validate_decorator_algorithm(script_content)
+  
+  if not is_class_based and not is_decorator_based:
+    raise ValidationError(_("Script must contain either a class that inherits from QgsProcessingAlgorithm or use the @alg decorator."))
 
-  # Check if required methods are implemented
-  required_methods = [
-    "initAlgorithm",
-    "processAlgorithm",
-    "name",
-    "displayName",
-    "group",
-    "groupId",
-    "createInstance",
-  ]
-  missing_methods = []
-  for method in required_methods:
-    if not _validate_method_exists(script_content, method):
-      missing_methods.append(method)
+  # Validate based on the algorithm type
+  if is_class_based:
+    # Check if required methods are implemented for class-based algorithms
+    required_methods = [
+      "initAlgorithm",
+      "processAlgorithm",
+      "name",
+      "displayName",
+      "group",
+      "groupId",
+      "createInstance",
+    ]
+    missing_methods = []
+    for method in required_methods:
+      if not _validate_method_exists(script_content, method):
+        missing_methods.append(method)
 
-  if missing_methods:
-    raise ValidationError(
-      _("Script must implement the following methods: {}").format(", ".join(missing_methods))
-    )
+    if missing_methods:
+      raise ValidationError(
+        _("Script must implement the following methods: {}").format(", ".join(missing_methods))
+      )
+  
+  elif is_decorator_based:
+    # Validate decorator-based algorithm requirements
+    if not _validate_decorator_requirements(script_content):
+      raise ValidationError(_("Decorator-based script must have @alg decorator with required parameters and a main function."))
 
   # Check for malware using Bandit
   try:
@@ -114,6 +124,83 @@ def _validate_method_exists(script_content: str, method_name: str) -> bool:
               if isinstance(item, ast.FunctionDef) and item.name == method_name:
                 return True
     return False
+  except Exception:
+    return False
+
+def _validate_decorator_algorithm(script_content: str) -> bool:
+  """
+  Check if the script uses @alg decorator for processing algorithms.
+  """
+  try:
+    tree = ast.parse(script_content)
+    for node in ast.walk(tree):
+      if isinstance(node, ast.FunctionDef):
+        # Check if the function has @alg decorator
+        for decorator in node.decorator_list:
+          if isinstance(decorator, ast.Name) and decorator.id == "alg":
+            return True
+          elif isinstance(decorator, ast.Call):
+            if isinstance(decorator.func, ast.Name) and decorator.func.id == "alg":
+              return True
+            elif isinstance(decorator.func, ast.Attribute) and decorator.func.attr == "alg":
+              return True
+    return False
+  except Exception:
+    return False
+
+def _validate_decorator_requirements(script_content: str) -> bool:
+  """
+  Validate that decorator-based algorithm has required components.
+  """
+  try:
+    tree = ast.parse(script_content)
+    
+    # Check for required imports
+    has_alg_import = False
+    has_processing_import = False
+    
+    for node in ast.walk(tree):
+      if isinstance(node, ast.ImportFrom):
+        if node.module == "qgis.processing" and any(alias.name == "alg" for alias in node.names):
+          has_alg_import = True
+        elif node.module == "qgis" and any(alias.name == "processing" for alias in node.names):
+          has_processing_import = True
+      elif isinstance(node, ast.Import):
+        for alias in node.names:
+          if alias.name == "qgis.processing":
+            has_processing_import = True
+    
+    if not has_alg_import:
+      return False
+    
+    # Find the main algorithm function with @alg decorator
+    algorithm_function = None
+    for node in ast.walk(tree):
+      if isinstance(node, ast.FunctionDef):
+        for decorator in node.decorator_list:
+          if isinstance(decorator, ast.Name) and decorator.id == "alg":
+            algorithm_function = node
+            break
+          elif isinstance(decorator, ast.Call):
+            if isinstance(decorator.func, ast.Name) and decorator.func.id == "alg":
+              algorithm_function = node
+              break
+    
+    if not algorithm_function:
+      return False
+    
+    # Check if the function has required parameters (instance, parameters, context, feedback, inputs)
+    required_params = ["instance", "parameters", "context", "feedback", "inputs"]
+    if len(algorithm_function.args.args) < len(required_params):
+      return False
+    
+    # Check parameter names (allowing for different naming conventions)
+    param_names = [arg.arg for arg in algorithm_function.args.args]
+    if len(param_names) < 5:
+      return False
+    
+    return True
+    
   except Exception:
     return False
 

@@ -27,6 +27,9 @@ class SetUpTest:
     self.file_content = open(self.file, "rb")
     self.invalid_script = os.path.join(SCRIPT_DIR, "invalid_script.py")
     self.invalid_script_content = open(self.invalid_script, "rb")
+    # Add decorator-based script for testing
+    self.alg_decorator_script = os.path.join(SCRIPT_DIR, "alg_decorator_script.py")
+    self.alg_decorator_script_content = open(self.alg_decorator_script, "rb")
 
     self.creator = User.objects.create(
       username="creator", email="creator@email.com"
@@ -44,6 +47,7 @@ class SetUpTest:
     self.thumbnail_content.close()
     self.file_content.close()
     self.invalid_script_content.close()
+    self.alg_decorator_script_content.close()
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -63,6 +67,23 @@ class TestFormValidation(SetUpTest, TestCase):
       "name": "flooded building extractor",
       "description": "Test upload with valid data",
       "dependencies": "QuickOSM"
+    }
+    file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_script}
+    form = UploadForm(data, file_data)
+    self.assertTrue(form.is_valid())
+
+  def test_form_with_valid_decorator_script(self):
+    """Test form validation with @alg decorator-based script"""
+    uploaded_thumbnail = SimpleUploadedFile(
+      self.thumbnail_content.name, self.thumbnail_content.read()
+    )
+    uploaded_script = SimpleUploadedFile(
+      self.alg_decorator_script_content.name, self.alg_decorator_script_content.read()
+    )
+    data = {
+      "name": "buffer raster algorithm",
+      "description": "Test upload with valid decorator script",
+      "dependencies": "processing"
     }
     file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_script}
     form = UploadForm(data, file_data)
@@ -100,7 +121,58 @@ class TestFormValidation(SetUpTest, TestCase):
     form = UploadForm(data, file_data)
     self.assertFalse(form.is_valid())
     self.assertEqual(
-      form.errors, {"file": ["Script must contain a class that inherits from QgsProcessingAlgorithm."]}
+      form.errors, {"file": ["Script must contain either a class that inherits from QgsProcessingAlgorithm or use the @alg decorator."]}
+    )
+
+  def test_form_invalid_decorator_script_missing_imports(self):
+    """Test validation fails for decorator script missing required imports"""
+    invalid_decorator_script = """
+def some_function(instance, parameters, context, feedback, inputs):
+    return {}
+"""
+    uploaded_thumbnail = SimpleUploadedFile(
+      self.thumbnail_content.name, self.thumbnail_content.read()
+    )
+    uploaded_script = SimpleUploadedFile(
+      "invalid_decorator.py", invalid_decorator_script.encode()
+    )
+    data = {
+      "name": "invalid decorator script",
+      "description": "Test upload invalid decorator script",
+      "dependencies": "processing"
+    }
+    file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_script}
+    form = UploadForm(data, file_data)
+    self.assertFalse(form.is_valid())
+    self.assertEqual(
+      form.errors, {"file": ["Script must contain either a class that inherits from QgsProcessingAlgorithm or use the @alg decorator."]}
+    )
+
+  def test_form_invalid_decorator_script_missing_decorator(self):
+    """Test validation fails for script with imports but no @alg decorator"""
+    invalid_decorator_script = """
+from qgis.processing import alg
+from qgis import processing
+
+def some_function(instance, parameters, context, feedback, inputs):
+    return {}
+"""
+    uploaded_thumbnail = SimpleUploadedFile(
+      self.thumbnail_content.name, self.thumbnail_content.read()
+    )
+    uploaded_script = SimpleUploadedFile(
+      "invalid_decorator.py", invalid_decorator_script.encode()
+    )
+    data = {
+      "name": "invalid decorator script",
+      "description": "Test upload invalid decorator script",
+      "dependencies": "processing"
+    }
+    file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_script}
+    form = UploadForm(data, file_data)
+    self.assertFalse(form.is_valid())
+    self.assertEqual(
+      form.errors, {"file": ["Script must contain either a class that inherits from QgsProcessingAlgorithm or use the @alg decorator."]}
     )
 
 
@@ -146,6 +218,32 @@ class TestUpdateScript(SetUpTest, TestCase):
     # check the processing script
     processing_script = ProcessingScript.objects.get(id=self.processing_script.id)
     self.assertEqual(processing_script.name, "Modified Script")
+
+  def test_update_script_with_decorator_algorithm(self):
+    """Test updating script with decorator-based algorithm"""
+    self.client.login(username="creator", password="password")
+    url = reverse("processing_script_update", kwargs={"pk": self.processing_script.id})
+    response = self.client.get(url)
+    self.assertEqual(response.status_code, 200)
+    uploaded_thumbnail = SimpleUploadedFile(
+      self.thumbnail_content.name, self.thumbnail_content.read()
+    )
+    uploaded_file = SimpleUploadedFile(
+      self.alg_decorator_script_content.name, self.alg_decorator_script_content.read()
+    )
+    data = {
+      "name": "Modified Decorator Script",
+      "description": "A ProcessingScript with @alg decorator for testing purpose",
+      "dependencies": "processing",
+      "thumbnail_image": uploaded_thumbnail,
+      "file": uploaded_file,
+    }
+    response = self.client.post(url, data, follow=True)
+    self.assertEqual(response.status_code, 200)
+    self.assertRedirects(response, reverse("processing_script_detail", kwargs={"pk": self.processing_script.id}))
+    # check the processing script
+    processing_script = ProcessingScript.objects.get(id=self.processing_script.id)
+    self.assertEqual(processing_script.name, "Modified Decorator Script")
 
   def test_update_script_invalid_file(self):
     self.client.login(username="creator", password="password")
