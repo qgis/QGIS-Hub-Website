@@ -272,5 +272,15 @@ $ make dbrestore
 
 ![-----------------------------------------------------](./img/green-gradient.png)
 
+## Setup Contributors Stats API
+
+- Clone all repositories (with --bare option) by running:
+```sh
+make shell c=devweb
+python manage.py clone_repos
+```
+
+The contributors API will be accessible afterwards. See [more details here.](./HUB_API.md#contributors-api)
+
 ## Production Environment
 For the production environment, please see the the private repo of the System Administration Documentation.

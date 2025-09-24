@@ -90,7 +90,10 @@ INSTALLED_APPS = [
     "processing_scripts",
     "matomo",
     # Webpack
-    "webpack_loader"
+    "webpack_loader",
+
+    # Contributors Stats
+    "contributors",
 ]
 
 DATABASES = {
