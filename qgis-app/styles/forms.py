@@ -14,6 +14,7 @@ class ResourceFormMixin(forms.ModelForm):
         fields = [
             "file",
             "thumbnail_image",
+            "name",
             "description",
             "tags"
         ]
@@ -42,8 +43,6 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
 
 class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Style Update Form."""
-    class Meta(ResourceFormMixin.Meta):
-        fields = ResourceFormMixin.Meta.fields[:2] + ["name"] + ResourceFormMixin.Meta.fields[2:]
 
     def clean_file(self):
         """

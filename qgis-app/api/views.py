@@ -65,9 +65,9 @@ def filter_resource_type(queryset, request, *args, **kwargs):
 
 
 def filter_resource_subtype(queryset, request, *args, **kwargs):
-    resource_subtype = request.query_params["resource_subtype"]
+    resource_subtypes = request.query_params["resource_subtypes"]
     if queryset.model.__name__ == "Style":
-        return queryset.filter(style_type__name__iexact=resource_subtype)
+        return queryset.filter(style_types__name__iexact=resource_subtypes)
     else:
         return queryset.none()
 
@@ -94,12 +94,12 @@ def filter_keyword(queryset, request, *args, **kwargs):
 
 def filter_general(queryset, request, *args, **kwargs):
     resource_type = request.query_params.get("resource_type", None)
-    resource_subtype = request.query_params.get("resource_subtype", None)
+    resource_subtypes = request.query_params.get("resource_subtypes", None)
     creator = request.query_params.get("creator", None)
     keyword = request.query_params.get("keyword", None)
     if resource_type:
         queryset = filter_resource_type(queryset, request, *args, **kwargs)
-    if resource_subtype:
+    if resource_subtypes:
         queryset = filter_resource_subtype(queryset, request, *args, **kwargs)
     if creator:
         queryset = filter_creator(queryset, request, *args, **kwargs)

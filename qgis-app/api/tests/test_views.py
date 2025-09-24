@@ -56,9 +56,11 @@ class TestResourceAPIList(TestCase):
             creator=self.creator,
             thumbnail_image=self.thumbnail,
             file=self.file,
-            style_type=style_type,
             approved=True,
         )
+        # Set the many-to-many style_types field
+        self.style.style_types.add(style_type)
+
         # create geopackage
         Geopackage.objects.create(
             creator=self.creator,
@@ -126,23 +128,24 @@ class TestResourceAPIList(TestCase):
         self.assertIsNotNone(w_index)
 
         self.assertEqual(result[g_index]["resource_type"], "Geopackage")
-        self.assertEqual(result[g_index]["resource_subtype"], None)
+        self.assertEqual(result[g_index]["resource_subtypes"], None)
         self.assertEqual(result[g_index]["creator"], "creator")
 
         self.assertEqual(result[m_index]["resource_type"], "Model")
-        self.assertEqual(result[m_index]["resource_subtype"], None)
+        self.assertEqual(result[m_index]["resource_subtypes"], None)
         self.assertEqual(result[m_index]["creator"], "creator 0")
 
         self.assertEqual(result[l_index]["resource_type"], "LayerDefinition")
-        self.assertEqual(result[l_index]["resource_subtype"], None)
+        self.assertEqual(result[l_index]["resource_subtypes"], None)
         self.assertEqual(result[l_index]["creator"], "creator 0")
 
         self.assertEqual(result[w_index]["resource_type"], "3DModel")
-        self.assertEqual(result[w_index]["resource_subtype"], None)
+        self.assertEqual(result[w_index]["resource_subtypes"], None)
         self.assertEqual(result[w_index]["creator"], "creator 0")
 
         self.assertEqual(result[s_index]["resource_type"], "Style")
-        self.assertEqual(result[s_index]["resource_subtype"], "Marker")
+        # Now resource_subtypes should be a list or the first type name
+        self.assertIn("Marker", result[s_index]["resource_subtypes"])
         self.assertEqual(result[s_index]["creator"], "creator")
         self.assertIsNotNone(result[s_index]["thumbnail"])
         self.assertIsNotNone(result[s_index]["thumbnail_full"])
@@ -177,7 +180,7 @@ class TestResourceAPIList(TestCase):
         self.assertIsNone(w_index)
 
     def test_get_list_resources_with_filter_resource_subtype(self):
-        param = "resource_subtype=Marker"
+        param = "resource_subtypes=Marker"
         url = "%s?%s" % (reverse("resource-list"), param)
         response = self.client.get(url)
         json_parse = json.loads(response.content)
@@ -204,6 +207,8 @@ class TestResourceAPIList(TestCase):
         self.assertIsNone(l_index)
         self.assertIsNone(w_index)
         self.assertIsNotNone(s_index)
+        # Check that the style_types field is present and contains "Marker"
+        self.assertIn("Marker", result[s_index]["resource_subtypes"])
 
     def test_get_list_resources_with_filter_creator(self):
         param = "creator=creator 0"

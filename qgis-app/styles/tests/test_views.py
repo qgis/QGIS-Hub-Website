@@ -76,6 +76,7 @@ class TestUploadStyle(SetupTest, TestCase):
                 url,
                 {
                     "file": xml_file,
+                    "name": "Cat Trail",
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
                     "tags": "xml,style,test"
@@ -121,6 +122,7 @@ class TestUploadStyle(SetupTest, TestCase):
                 url,
                 {
                     "file": gpl_file,
+                    "name": "Qgis Palette",
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
                     "tags": "gpl,style,test"
@@ -252,6 +254,7 @@ class TestModeration(TestCase):
             c.post(
                 url,
                 {
+                    "name": "Building 3",
                     "file": xml_file,
                     "thumbnail_image": cls.thumbnail,
                     "description": "This style is for testing only purpose",
@@ -396,7 +399,7 @@ class TestDownloadStyles(TestCase):
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
 
     def setUp(self):
-        StyleType.objects.create(
+        style_type = StyleType.objects.create(
             pk=1,
             symbol_type="line",
             name="Line",
@@ -405,7 +408,6 @@ class TestDownloadStyles(TestCase):
         self.newstyle = Style.objects.create(
             pk=1,
             creator=User.objects.get(pk=2),
-            style_type=StyleType.objects.get(pk=1),
             name="Blues",
             description="This file is saved in styles/tests/stylefiles folder",
             thumbnail_image="thumbnail.png",
@@ -413,11 +415,11 @@ class TestDownloadStyles(TestCase):
             download_count=0,
             approved=True,
         )
+        self.newstyle.style_types.add(style_type)
 
         self.newstyle_non_ascii = Style.objects.create(
             pk=2,
             creator=User.objects.get(pk=2),
-            style_type=StyleType.objects.get(pk=1),
             name="三调符号库",
             description="This file is saved in styles/tests/stylefiles folder",
             thumbnail_image="thumbnail.png",
@@ -425,6 +427,7 @@ class TestDownloadStyles(TestCase):
             download_count=0,
             approved=True,
         )
+        self.newstyle_non_ascii.style_types.add(style_type)
 
     @override_settings(MEDIA_ROOT="styles/tests/stylefiles/")
     def test_anonymous_user_download(self):

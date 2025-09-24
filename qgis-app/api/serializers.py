@@ -23,14 +23,14 @@ import tempfile
 class ResourceBaseSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source="get_creator_name")
     resource_type = serializers.SerializerMethodField()
-    resource_subtype = serializers.SerializerMethodField()
+    resource_subtypes = serializers.SerializerMethodField()
     thumbnail_full = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
             "resource_type",
-            "resource_subtype",
+            "resource_subtypes",
             "uuid",
             "name",
             "creator",
@@ -86,7 +86,7 @@ class GeopackageSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Geopackage
 
-    def get_resource_subtype(self, obj):
+    def get_resource_subtypes(self, obj):
         return None
 
 
@@ -95,7 +95,7 @@ class ModelSerializer(ResourceBaseSerializer):
         model = Model
         fields = [
              "resource_type",
-             "resource_subtype",
+             "resource_subtypes",
              "uuid",
              "name",
              "creator",
@@ -108,12 +108,12 @@ class ModelSerializer(ResourceBaseSerializer):
              "thumbnail_full"
          ]
 
-    def get_resource_subtype(self, obj):
+    def get_resource_subtypes(self, obj):
         return None
 
 
 class StyleSerializer(ResourceBaseSerializer):
-    resource_subtype = serializers.ReadOnlyField(source="get_style_type")
+    resource_subtypes = serializers.ReadOnlyField(source="get_style_types")
 
     class Meta(ResourceBaseSerializer.Meta):
         model = Style
@@ -142,15 +142,16 @@ class StyleSerializer(ResourceBaseSerializer):
                 with open(temp_file.name, 'rb') as xml_file:
                     style = style_validator(xml_file)
                     xml_parse = read_xml_style(xml_file)
-                    if xml_parse:
-                        self.style_type, created = StyleType.objects.get_or_create(
-                            symbol_type=xml_parse["type"],
-                            defaults={
-                                "name": xml_parse["type"].title(),
-                                "description": "Automatically created from '"
-                                "'an uploaded Style file",
-                            }
-                        )
+                    style_types_list = xml_parse.get("types", []) if xml_parse else []
+                    for type_str in style_types_list:
+                        stype = StyleType.objects.filter(symbol_type=type_str).first()
+                        if not stype:
+                            stype = StyleType.objects.create(
+                                symbol_type=type_str,
+                                name=type_str.title(),
+                                description="Automatically created from an uploaded Style file",
+                            )
+                        attrs.setdefault("style_types", []).append(stype.id)
 
                     if not style:
                         raise ValidationError(
@@ -167,7 +168,7 @@ class LayerDefinitionSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = LayerDefinition
 
-    def get_resource_subtype(self, obj):
+    def get_resource_subtypes(self, obj):
         return None
 
     def validate(self, attrs):
@@ -207,7 +208,7 @@ class WavefrontSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Wavefront
 
-    def get_resource_subtype(self, obj):
+    def get_resource_subtypes(self, obj):
         return None
 
     def validate(self, attrs):
@@ -224,7 +225,7 @@ class MapSerializer(ResourceBaseSerializer):
         model = Map
         fields = [
             "resource_type",
-            "resource_subtype",
+            "resource_subtypes",
             "uuid",
             "id",
             "name",
@@ -250,7 +251,7 @@ class MapSerializer(ResourceBaseSerializer):
             pass
 
 
-    def get_resource_subtype(self, obj):
+    def get_resource_subtypes(self, obj):
         return None
 
 
@@ -267,7 +268,7 @@ class ProcessingScriptSerializer(ResourceBaseSerializer):
         model = ProcessingScript
         fields = [
             "resource_type",
-            "resource_subtype",
+            "resource_subtypes",
             "uuid",
             "name",
             "creator",
@@ -280,5 +281,5 @@ class ProcessingScriptSerializer(ResourceBaseSerializer):
             "thumbnail_full"
         ]
 
-    def get_resource_subtype(self, obj):
+    def get_resource_subtypes(self, obj):
         return None

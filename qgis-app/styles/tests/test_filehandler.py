@@ -38,59 +38,43 @@ class XMLFileReadTest(TestCase):
 
     def test_read_label_setting_file(self):
         read_file = read_xml_style(self.label_setting_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "labelsetting")
-        self.assertEqual(style_name, "Basic Label Setting")
+        style_types = read_file["types"]
+        self.assertIn("labelsetting", style_types)
 
     def test_read_legend_patch_file(self):
         read_file = read_xml_style(self.legend_patch_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "legendpatchshape")
-        self.assertEqual(style_name, "Building 3")
+        style_types = read_file["types"]
+        self.assertIn("legendpatchshape", style_types)
 
     def test_read_color_ramp_file(self):
         read_file = read_xml_style(self.color_ramp_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "colorramp")
-        self.assertEqual(style_name, "Blues")
+        style_types = read_file["types"]
+        self.assertIn("colorramp", style_types)
 
     def test_read_symbol3d_file(self):
         read_file = read_xml_style(self.symbol3d_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "symbol3d")
-        self.assertEqual(style_name, "Cube")
+        style_types = read_file["types"]
+        self.assertIn("symbol3d", style_types)
 
     def test_read_text_format_file(self):
         read_file = read_xml_style(self.text_format_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "textformat")
-        self.assertEqual(style_name, "Basic Label")
+        style_types = read_file["types"]
+        self.assertIn("textformat", style_types)
 
     def test_read_symbol_line_file(self):
         read_file = read_xml_style(self.symbol_line_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "line")
-        self.assertEqual(style_name, "cat trail")
+        style_types = read_file["types"]
+        self.assertIn("line", style_types)
 
     def test_read_symbol_fill_file(self):
         read_file = read_xml_style(self.symbol_fill_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "fill")
-        self.assertEqual(style_name, "topo swamp")
+        style_types = read_file["types"]
+        self.assertIn("fill", style_types)
 
     def test_read_symbol_marker_file(self):
         read_file = read_xml_style(self.symbol_marker_file)
-        style_type = read_file["type"]
-        style_name = read_file["name"]
-        self.assertEqual(style_type, "marker")
-        self.assertEqual(style_name, "dot  black")
+        style_types = read_file["types"]
+        self.assertIn("marker", style_types)
 
 
 class TestXMLValidator(TestCase):

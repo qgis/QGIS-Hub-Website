@@ -45,9 +45,13 @@
                         {{ object.name }}
                     </a>
                 </td>
-                {% if object.style_type %}
+                {% if object.style_types.all %}
                     <td class="has-text-centered">
-                        <span class="tag is-info is-light">{{ object.style_type.name|title }}</span>
+                        {% for stype in object.style_types.all %}
+                            <span class="tag is-info is-light">{{ stype.name|title }}</span>
+                        {% empty %}
+                            -
+                        {% endfor %}
                     </td>
                 {% endif %}
                 <td>{{ object.download_count|intcomma }}</td>

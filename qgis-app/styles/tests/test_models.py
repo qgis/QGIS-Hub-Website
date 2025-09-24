@@ -14,7 +14,6 @@ class TestCRUD(TestCase):
         """
         Sets up before each test
         """
-        # https://stackoverflow.com/a/32814129/10268058
         self.image_temp = tempfile.NamedTemporaryFile(suffix=".png").name
         self.xml_temp = tempfile.NamedTemporaryFile(suffix=".xml").name
         self.marker_type = StyleType.objects.create(
@@ -45,8 +44,8 @@ class TestCRUD(TestCase):
             creator=self.user_staff,
             thumbnail_image=self.image_temp,
             file=self.xml_temp,
-            style_type=self.marker_type,
         )
+        self.style_zero.style_types.add(self.marker_type)
 
     def test_create_style_type(self):
         fill_type = StyleType.objects.create(
@@ -64,13 +63,15 @@ class TestCRUD(TestCase):
             creator=self.user_staff,
             thumbnail_image=self.image_temp,
             file=self.xml_temp,
-            style_type=self.line_type,
         )
+        style_one.style_types.add(self.line_type)
         self.assertEqual(style_one.name, "style_one")
         self.assertEqual(style_one.creator.first_name, "first_name_staff")
-        self.assertEqual(style_one.style_type.name, "Line")
+        self.assertIn(self.line_type, style_one.style_types.all())
 
     def test_update_style(self):
-        self.assertEqual(self.style_zero.style_type.name, "Marker")
-        self.style_zero.style_type = self.line_type
-        self.assertEqual(self.style_zero.style_type.name, "Line")
+        self.assertIn(self.marker_type, self.style_zero.style_types.all())
+        self.style_zero.style_types.remove(self.marker_type)
+        self.style_zero.style_types.add(self.line_type)
+        self.assertNotIn(self.marker_type, self.style_zero.style_types.all())
+        self.assertIn(self.line_type, self.style_zero.style_types.all())
