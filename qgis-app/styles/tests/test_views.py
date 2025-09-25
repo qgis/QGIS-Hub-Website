@@ -7,10 +7,9 @@ from django.contrib.auth.models import Group, User
 from django.core import mail
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from styles.models import Style, StyleType
-from django.utils.text import slugify
 from django.utils.encoding import escape_uri_path
-
+from django.utils.text import slugify
+from styles.models import Style, StyleType
 
 STYLE_DIR = os.path.join(os.path.dirname(__file__), "stylefiles")
 
@@ -31,10 +30,12 @@ class TestPageUserAnonymous(TestCase):
         response = self.client.get(url)
         self.assertRedirects(response, "/accounts/login/?next=/styles/add/")
 
+
 class SetupTest:
     """
     SetUp for all Test Class
     """
+
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
@@ -50,6 +51,7 @@ class SetupTest:
         self.staff.save()
         self.group = Group.objects.create(name="Style Managers")
         self.group.user_set.add(self.staff)
+
 
 class TestUploadStyle(SetupTest, TestCase):
     fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json"]
@@ -79,28 +81,24 @@ class TestUploadStyle(SetupTest, TestCase):
                     "name": "Cat Trail",
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "tags": "xml,style,test"
+                    "tags": "xml,style,test",
                 },
             )
         self.assertEqual(response.status_code, 302)
 
         # Should send email to style managers
-        self.assertEqual(
-            mail.outbox[0].recipients(),
-            ['staff@email.com']
-        )
+        self.assertEqual(mail.outbox[0].recipients(), ["staff@email.com"])
 
         # Should use the new email
-        self.assertEqual(
-            mail.outbox[0].from_email,
-            settings.EMAIL_HOST_USER
-        )
+        self.assertEqual(mail.outbox[0].from_email, settings.DEFAULT_FROM_EMAIL)
 
         # Check the tags
         self.assertEqual(
-            Style.objects.get(name='Cat Trail').tags.filter(
-                name__in=['xml', 'style', 'test']).count(),
-            3)
+            Style.objects.get(name="Cat Trail")
+            .tags.filter(name__in=["xml", "style", "test"])
+            .count(),
+            3,
+        )
 
         # style should be in Waiting Review
         url = reverse("style_unapproved")
@@ -125,28 +123,24 @@ class TestUploadStyle(SetupTest, TestCase):
                     "name": "Qgis Palette",
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "tags": "gpl,style,test"
+                    "tags": "gpl,style,test",
                 },
             )
         self.assertEqual(response.status_code, 302)
 
         # Should send email to style managers
-        self.assertEqual(
-            mail.outbox[0].recipients(),
-            ['staff@email.com']
-        )
+        self.assertEqual(mail.outbox[0].recipients(), ["staff@email.com"])
 
         # Should use the new email
-        self.assertEqual(
-            mail.outbox[0].from_email,
-            settings.EMAIL_HOST_USER
-        )
+        self.assertEqual(mail.outbox[0].from_email, settings.DEFAULT_FROM_EMAIL)
 
         # Check the tags
         self.assertEqual(
-            Style.objects.get(name='Qgis Palette').tags.filter(
-                name__in=['gpl', 'style', 'test']).count(),
-            3)
+            Style.objects.get(name="Qgis Palette")
+            .tags.filter(name__in=["gpl", "style", "test"])
+            .count(),
+            3,
+        )
 
         # style should be in Waiting Review
         url = reverse("style_unapproved")
@@ -163,21 +157,29 @@ class TestUploadStyle(SetupTest, TestCase):
     def test_upload_gpl_different_encoding(self):
         url = reverse("style_create")
         f = os.path.join(STYLE_DIR, "color-blind_windows1250.gpl")
-        with open(f, 'rb') as gpl_file:
+        with open(f, "rb") as gpl_file:
             response = self.client.post(
                 url,
                 {
                     "file": gpl_file,
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "tags": "gpl,style,test"
+                    "tags": "gpl,style,test",
                 },
             )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again.")
+        self.assertContains(
+            response,
+            "GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again.",
+        )
+
 
 class TestUpdateStyle(SetupTest, TestCase):
-    fixtures = ["fixtures/auth.json", "fixtures/simplemenu.json", "fixtures/styles.json"]
+    fixtures = [
+        "fixtures/auth.json",
+        "fixtures/simplemenu.json",
+        "fixtures/styles.json",
+    ]
 
     @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def setUp(self):
@@ -199,17 +201,16 @@ class TestUpdateStyle(SetupTest, TestCase):
                     "file": xml_file,
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "tags": "xml,style,test"
+                    "tags": "xml,style,test",
                 },
             )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Style.objects.get(pk=1).name, "Cat Trail")
 
-
     def test_update_gpl_different_encoding(self):
         url = reverse("style_create")
         f = os.path.join(STYLE_DIR, "color-blind_windows1250.gpl")
-        with open(f, 'rb') as gpl_file:
+        with open(f, "rb") as gpl_file:
             response = self.client.post(
                 url,
                 {
@@ -217,11 +218,14 @@ class TestUpdateStyle(SetupTest, TestCase):
                     "file": gpl_file,
                     "thumbnail_image": self.thumbnail,
                     "description": "This style is for testing only purpose",
-                    "tags": "gpl,style,test"
+                    "tags": "gpl,style,test",
                 },
             )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again.")
+        self.assertContains(
+            response,
+            "GPL file must be UTF-8 encoded. Please fix the encoding and try uploading again.",
+        )
 
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")
@@ -380,7 +384,9 @@ class TestModeration(TestCase):
         self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
+        self.assertContains(
+            response, "<strong>staff</strong> approved these changes now </span>"
+        )
         self.assertContains(response, "Approved Date")
         self.client.logout()
 
@@ -451,13 +457,13 @@ class TestDownloadStyles(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check if the Content-Disposition header is present in the response
-        self.assertTrue('Content-Disposition' in response)
+        self.assertTrue("Content-Disposition" in response)
 
         style_name = escape_uri_path(slugify(style.name, allow_unicode=True))
         # Extract the filename from the Content-Disposition header
-        content_disposition = response['Content-Disposition']
-        _, params = content_disposition.split(';')
-        downloaded_filename = params.split('=')[1].strip(' "').split("utf-8''")[1]
+        content_disposition = response["Content-Disposition"]
+        _, params = content_disposition.split(";")
+        downloaded_filename = params.split("=")[1].strip(' "').split("utf-8''")[1]
 
         # Check if the downloaded filename matches the original filename
         self.assertEqual(downloaded_filename, f"{style_name}.zip")
