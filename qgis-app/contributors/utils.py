@@ -1,4 +1,3 @@
-import hashlib
 import subprocess
 from pathlib import Path
 
@@ -6,51 +5,33 @@ from django.conf import settings
 
 REPO_BASE = Path(settings.SITE_ROOT) / "qgis_repos"  # where you mirror repos
 
+REPOS = [
+    "QGIS-Website",
+    "QGIS-Plugins-Website",
+    "QGIS-Hub-Website",
+    "QGIS-Planet-Website",
+    "QGIS-Certification-Website",
+    "QGIS-Changelog-Website",
+    "QGIS-Members-Website",
+    "QGIS-UC-Website",
+    "QGIS-Feed-Website",
+    "QGIS-Documentation",
+    "QGIS",
+]
+
+
+def fetch_all_repos():
+    for repo in REPOS:
+        fetch_repo(repo)
+
 
 def fetch_repo(repo_name: str):
     repo_path = REPO_BASE / repo_name
     subprocess.run(["git", "-C", str(repo_path), "fetch", "--all"], check=True)
 
 
-# Get all commit counts for repo
-def get_all_commit_counts(repo_name: str, since=None, until=None):
-    """
-    Retrieves the commit counts for all authors in a given Git repository within an optional date range.
-    Parameters:
-      repo_name (str): The name of the repository to analyze.
-      since (str, optional): The start date (inclusive) for filtering commits (e.g., '2023-01-01'). Defaults to None.
-      until (str, optional): The end date (inclusive) for filtering commits (e.g., '2023-12-31'). Defaults to None.
-    Returns:
-      list: A list of commit counts for each author found in the repository within the specified date range.
-    """
-
-    repo_path = REPO_BASE / repo_name
-    fetch_repo(repo_name)
-    # Get all authors
-    cmd_authors = ["git", "-C", str(repo_path), "log", "--pretty=format:%an"]
-    if since:
-        cmd_authors.append(f"--since={since}")
-    if until:
-        cmd_authors.append(f"--until={until}")
-    result = subprocess.run(cmd_authors, capture_output=True, text=True, check=True)
-    authors = set(result.stdout.splitlines())
-    # Remove empty author names
-    authors = {a for a in authors if a}
-    # Get commit count for each author
-    counts = []
-    for author in authors:
-        author_counts = get_commit_count_by_author(
-            repo_name, author, since, until, fetch_all=False
-        )
-        if author_counts["commits"] > 0:
-            counts.append(author_counts)
-    return counts
-
-
 # Get commit count by author using git rev-list
-def get_commit_count_by_author(
-    repo_name: str, author: str, since=None, until=None, fetch_all=True
-):
+def get_commit_count_by_author(repo_name: str, author: str, since=None, until=None):
     """
     Retrieves the number of commits made by a specific author (or authors) in a given Git repository,
     optionally within a specified date range, and returns the date of the most recent commit.
@@ -68,8 +49,6 @@ def get_commit_count_by_author(
         - "last_commit_date" (str or None): The date of the most recent commit by the author(s) in ISO format, or None if no commits found.
     """
     repo_path = REPO_BASE / repo_name
-    if fetch_all:
-        fetch_repo(repo_name)
     # Use committer to exclude bots
     if "," in author:
         authors = author.split(",")
@@ -114,26 +93,10 @@ def get_commit_count_by_author(
             date_cmd, capture_output=True, text=True, check=True
         )
         last_commit_date = date_result.stdout.strip()
-    # Get avatar using GitLens method (Gravatar based on email)
-    email_cmd = [
-        "git",
-        "-C",
-        str(repo_path),
-        "log",
-        "-1",
-        "--pretty=format:%ae",
-        author_arg,
-    ]
-    email_result = subprocess.run(email_cmd, capture_output=True, text=True, check=True)
-    author_email = email_result.stdout.strip()
-    avatar_url = None
-    if author_email:
-        gravatar_hash = hashlib.md5(author_email.lower().encode("utf-8")).hexdigest()
-        avatar_url = f"https://www.gravatar.com/avatar/{gravatar_hash}?s=64&d=identicon"
+
     return {
         "repo": repo_name,
         "author": author,
         "commits": commits,
         "last_commit_date": last_commit_date,
-        "avatar_url": avatar_url,
     }
