@@ -303,6 +303,7 @@ USE_X_FORWARDED_HOST = True
 
 
 # auth overrids
+from settings_auth import *
 
 # Local settings overrides
 # Must be the last!
