@@ -234,6 +234,9 @@ p {
       border: none;
     }
   }
+  .container {
+    max-width: unset;
+  }
 }
 
 a.is-active > span {
@@ -306,11 +309,11 @@ a.is-active > span {
   }
 }
 
-@media screen and (min-width: 1024px) {
-  :root {
-    --qg-nav-max-width: 960px;
-  }
-}
+// @media screen and (min-width: 1024px) {
+//   :root {
+//     --qg-nav-max-width: 960px;
+//   }
+// }
 @media screen and (min-width: 1408px) {
   :root {
     --qg-nav-max-width: 1344px;

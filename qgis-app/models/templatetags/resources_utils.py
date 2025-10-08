@@ -1,11 +1,9 @@
-from django import template
-from PIL import Image, UnidentifiedImageError
-import xml.etree.ElementTree as ET
 import os.path
+import xml.etree.ElementTree as ET
+
+from django import template
 from django.conf import settings
-from bs4 import BeautifulSoup
-import requests
-import datetime
+from PIL import Image, UnidentifiedImageError
 
 register = template.Library()
 
@@ -32,16 +30,18 @@ def plugin_title(context):
         title = context["page_title"]
     return title
 
+
 @register.filter
 def file_extension(value):
-    return value.split('.')[-1].lower()
+    return value.split(".")[-1].lower()
+
 
 @register.filter
 def is_image_valid(image):
     if not image:
         return False
     # Check if the file is an SVG by extension
-    if image.path.lower().endswith('.svg'):
+    if image.path.lower().endswith(".svg"):
         return _validate_svg(image.path)
     return _validate_image(image.path)
 
@@ -53,6 +53,7 @@ def _validate_svg(file_path):
         return True
     except (ET.ParseError, FileNotFoundError):
         return False
+
 
 def _validate_image(file_path):
     try:
@@ -76,14 +77,17 @@ def version_tag(context):
         context["version"] = "Unknown"
     return context["version"]
 
+
 @register.simple_tag
 def get_sustaining_members_section():
     """
     Get the Sustaining members HTML from the template file
     """
-    template_path = os.path.join(settings.SITE_ROOT, 'templates/flatpages/sustaining_members.html')
+    template_path = os.path.join(
+        settings.SITE_ROOT, "templates/flatpages/sustaining_members.html"
+    )
     try:
-        with open(template_path, 'r') as f:
+        with open(template_path, "r") as f:
             return f.read()
     except FileNotFoundError:
         return ""
@@ -96,12 +100,14 @@ def get_navigation_menu():
     """
     return settings.NAVIGATION_MENU
 
+
 @register.simple_tag
 def get_hub_submenu():
     """
     Get the Hub submenu from the settings
     """
     return settings.HUB_SUBMENU
+
 
 @register.filter
 def get_string_tags(tags):
@@ -111,5 +117,23 @@ def get_string_tags(tags):
     if isinstance(tags, str):
         return tags
     if not tags:
-        return ''
-    return ', '.join([tag.name for tag in tags])
+        return ""
+    return ", ".join([tag.name for tag in tags])
+
+
+@register.simple_tag()
+def get_site_url():
+    """
+    Get the site domain from the settings
+    """
+    return settings.DEFAULT_HUB_SITE.rstrip("/")
+
+
+@register.simple_tag()
+def get_navigation_config_url():
+    """
+    Get the navigation config URL from the settings
+    """
+    return os.path.join(
+        settings.DEFAULT_HUB_SITE, "static", "config", "navigation.json"
+    )
