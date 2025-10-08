@@ -24,9 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
-
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -49,6 +46,9 @@ jobs:
         working-directory: dockerize
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
 
       - name: Generate the .env file
         run: cp .env.template .env
