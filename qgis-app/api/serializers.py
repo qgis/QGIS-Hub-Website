@@ -76,7 +76,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
             pass
 
         # Return a full URL to a default image if no thumbnail exists or if there's an error
-        default_url = static("images/qgis-icon-32x32.png")
+        default_url = static("theme/images/qgis-icon-32x32.png")
         if request is not None:
             return request.build_absolute_uri(default_url)
         return default_url
