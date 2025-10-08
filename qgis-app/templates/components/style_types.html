@@ -7,7 +7,7 @@
     </span>
     {% trans "Style Type" %}
   </h3>
-  <div class="tags" id="styleList"></div>
+  <div class="tags" id="styleTypesList"></div>
 
 </div>
 
@@ -38,7 +38,7 @@
         listItem += `<span class="icon"><img src="${icon_url}${icon}" width="12" height="12"></span>`;
       }
       listItem += `<span>${name}</span></a>`;
-      $("#styleList").append(listItem);
+      $("#styleTypesList").append(listItem);
       });
       }
       });
