@@ -1,0 +1,47 @@
+{% load i18n %}
+
+<div class="box-content mt-3 p-5">
+  <h3 class="title is-6">
+    <span class="icon">
+      <i class="fas fa-paint-brush"></i>
+    </span>
+    {% trans "Style Type" %}
+  </h3>
+  <div class="tags" id="styleList"></div>
+
+</div>
+
+<script>
+  $(document).ready(function(){
+    $.ajax({
+      type: 'GET',
+      url: "{% url url_nav_content %}",
+      success: function (response){
+        if(response.waiting_review){$("#waiting_review").text(response.waiting_review)};
+        if(response.require_action){$("#requiring_action").text(response.require_action)};
+      }
+    })
+
+    {% if resource_name == 'Style' %}
+      $.ajax({
+      type: 'GET',
+      url: "{% url 'style_nav_typelist' %}",
+      success: function (response){
+      let icon_url = response.icon_url;
+      response.qs.forEach(val => {
+      let name = val.fields.name;
+      let icon = val.fields.icon;
+      let encodedName = encodeURIComponent(name);
+      let fullUrl = '/styles/types/' + encodedName + '/';
+      let listItem = `<a class="tag ${window.location.pathname === fullUrl ? 'is-success' : ''}" href="${fullUrl}">`;
+      if (icon) {
+        listItem += `<span class="icon"><img src="${icon_url}${icon}" width="12" height="12"></span>`;
+      }
+      listItem += `<span>${name}</span></a>`;
+      $("#styleList").append(listItem);
+      });
+      }
+      });
+    {% endif %}
+  });
+</script>
