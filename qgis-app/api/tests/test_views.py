@@ -324,6 +324,6 @@ class TestResourceAPIList(TestCase):
                 w_index = i
         # Not sure why this is failing, commenting this for now.
         # However, the feature is working as expected.
-        # expected_url = 'http://testserver/static/images/qgis-icon-32x32.png'
+        # expected_url = 'http://testserver/static/theme/images/qgis-icon-32x32.png'
         # print(result[s_index]['thumbnail'])
         # self.assertTrue(str(result[s_index]['thumbnail']).startswith(expected_url))

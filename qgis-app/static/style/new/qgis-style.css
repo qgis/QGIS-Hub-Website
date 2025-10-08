@@ -144,7 +144,7 @@
 }
 select#languages {
     -moz-appearance: none;
-    background: url("images/down-arrow.png") no-repeat scroll 95% 50% #1C2028;
+    background: url("theme/images/down-arrow.png") no-repeat scroll 95% 50% #1C2028;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 3px 3px 3px 3px;
     color: #FFFFFF;
@@ -197,19 +197,19 @@ select#languages option {
     width: 30px;
 }
 .footer #twitter {
-    background: url("images/footer-twitter.png") no-repeat scroll 0 0 transparent;
+    background: url("theme/images/footer-twitter.png") no-repeat scroll 0 0 transparent;
 }
 .footer #facebook {
-    background: url("images/footer-facebook.png") no-repeat scroll 0 0 transparent;
+    background: url("theme/images/footer-facebook.png") no-repeat scroll 0 0 transparent;
 }
 .footer #github {
-    background: url("images/footer-github.png") no-repeat scroll 0 0 transparent;
+    background: url("theme/images/footer-github.png") no-repeat scroll 0 0 transparent;
 } */
 .current.reference.internal {
     background-color: #D3D3D3;
 }
 .reference.external {
-    background: url("images/link-icon_external.png") no-repeat scroll right center transparent;
+    background: url("theme/images/link-icon_external.png") no-repeat scroll right center transparent;
     padding-right: 15px;
 }
 section {
@@ -303,13 +303,13 @@ section.highlights .info-box .highlights-icon {
     width: 200px;
 }
 section.highlights .info-box #get-started {
-    background: url("images/get-started.png") no-repeat scroll center center #CCCCCC;
+    background: url("theme/images/get-started.png") no-repeat scroll center center #CCCCCC;
 }
 section.highlights .info-box #get-involved {
-    background: url("images/get-involved.png") no-repeat scroll center center #CCCCCC;
+    background: url("theme/images/get-involved.png") no-repeat scroll center center #CCCCCC;
 }
 section.highlights .info-box #learn-more {
-    background: url("images/learn-more.png") no-repeat scroll center center #CCCCCC;
+    background: url("theme/images/learn-more.png") no-repeat scroll center center #CCCCCC;
 }
 section.highlights .info-box:hover h4, section.highlights .info-box:active h4, section.highlights .info-box:hover p, section.highlights .info-box:active p {
     color: #FFFFFF;
@@ -371,7 +371,7 @@ section.latest-news p.intro {
     margin: 0 40px 30px;
 }
 section.sponsors {
-    background: url("images/paper-texture.png") repeat scroll 0 0 #333333;
+    background: url("theme/images/paper-texture.png") repeat scroll 0 0 #333333;
     padding: 30px 0;
     text-align: center;
 }
@@ -505,10 +505,10 @@ body {
     width: 60px;
 }
 #downloads .accordion-inner .qgis-download {
-    background: url("images/qgis-logo.png") no-repeat scroll left center transparent;
+    background: url("theme/images/qgis-logo.png") no-repeat scroll left center transparent;
 }
 #downloads .accordion-inner .osgeo-download {
-    background: url("images/osgeo-logo.png") no-repeat scroll left center transparent;
+    background: url("theme/images/osgeo-logo.png") no-repeat scroll left center transparent;
 }
 #downloads .accordion-inner .download-text {
     font-weight: bold;
@@ -633,17 +633,17 @@ img.overflow-img, #processing {
     margin-left: 44px !important;
 }
 .warning {
-    background-image: url("images/warning.png");
+    background-image: url("theme/images/warning.png");
     background-position: 15px 8px;
     background-repeat: no-repeat;
 }
 .note {
-    background-image: url("images/note.png");
+    background-image: url("theme/images/note.png");
     background-position: 15px 8px;
     background-repeat: no-repeat;
 }
 .tip {
-    background-image: url("images/tip.png");
+    background-image: url("theme/images/tip.png");
     background-position: 15px 8px;
     background-repeat: no-repeat;
 }
@@ -687,13 +687,13 @@ img.overflow-img, #processing {
 section.sponsors {
     padding: 30px 0;
     text-align: center;
-    background: #333333 url('//www.qgis.org/en/_static/images/paper-texture.png') repeat;
+    background: #333333 url('//www.qgis.org/en/_static/theme/images/paper-texture.png') repeat;
 }
 
 /* votes in plugin listing */
 .star-ratings
 {
-    background  : url("../../images/empty_star_16.png") repeat-x;
+    background  : url("../../theme/images/empty_star_16.png") repeat-x;
     height      : 16px;
     line-height : 0;
     width       : 80px;
@@ -701,7 +701,7 @@ section.sponsors {
 
 }
 .rating {
-    background: url("../../images/star_16.png") repeat-x;
+    background: url("../../theme/images/star_16.png") repeat-x;
     float: left;
     height: 16px;
     display:block;

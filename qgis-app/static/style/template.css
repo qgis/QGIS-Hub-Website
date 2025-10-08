@@ -113,7 +113,7 @@ div#user4{
 	width:auto;
 	border:0px;
 	height:45px;
-	background: url(../images/bg_menu.png) top  repeat-x;
+	background: url(../theme/images/bg_menu.png) top  repeat-x;
 }
 #pillmenu {
 	text-align:left;
@@ -172,7 +172,7 @@ div#user4{
 	padding-left:3px;
 	width: 199px;
 	float:left;
-	/*background:url(../images/left_shadow.png) top right no-repeat;*/
+	/*background:url(../theme/images/left_shadow.png) top right no-repeat;*/
 }
 
 
@@ -182,7 +182,7 @@ div#user4{
 	padding-left:5px;
 	width: 191px;
 	float:right;
-	/*background:url(../images/right_shadow.png) top left no-repeat;*/
+	/*background:url(../theme/images/right_shadow.png) top left no-repeat;*/
 }
 
 /*change to 2-column layout*/
@@ -257,7 +257,7 @@ div.bannergroup_text {
 }
 #leftcolumn div.module_menu  div div div, #leftcolumn div.module div div div,
 #rightcolumn div.moduletable_menu, #rightcolumn div.moduletable, #rightcolumn div.moduletable_text{
-	background: url(../images/rub_bottom.png) left bottom no-repeat;
+	background: url(../theme/images/rub_bottom.png) left bottom no-repeat;
 
 }
 #leftcolumn div.module_menu  div div div, #leftcolumn div.module div div{
@@ -393,7 +393,7 @@ td.contentheading, td.buttonheading{
 	color:#2a5075;
 	font-size:14px;
 	height:33px;
-	background: url(../images/contentheading_line.png) bottom repeat-x;
+	background: url(../theme/images/contentheading_line.png) bottom repeat-x;
 }
 table.contentpaneopen{
 	border-collapse: collapse;
@@ -436,7 +436,7 @@ div#f_area{
 /* System Standard Messages */
 #system-message { margin-bottom: 20px; }
 
-#system-message dd.message ul { background: #C3D2E5 url(../images/notice-info.png) 4px center no-repeat;}
+#system-message dd.message ul { background: #C3D2E5 url(../theme/images/notice-info.png) 4px center no-repeat;}
 
 ul.errorlist li {
     list-style-type: none;
@@ -444,13 +444,13 @@ ul.errorlist li {
 
 /* System Error Messages */
 #system-message dd.error u
-l, ul.errorlist, li.error { color: #c00; background: #E6C0C0 url(../images/notice-alert.png) 4px center no-repeat; border-top: 3px solid #DE7A7B; border-bottom: 3px solid #DE7A7B; margin:0px; padding-left: 40px; text-indent:0px; padding-top: 6px; padding-bottom: 6px;}
+l, ul.errorlist, li.error { color: #c00; background: #E6C0C0 url(../theme/images/notice-alert.png) 4px center no-repeat; border-top: 3px solid #DE7A7B; border-bottom: 3px solid #DE7A7B; margin:0px; padding-left: 40px; text-indent:0px; padding-top: 6px; padding-bottom: 6px;}
 
 /* System Notice Messages */
 
-#system-message dd.notice ul, li.warning, p.warning { color: #c00; background: #EFE7B8 url(../images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E; padding-top: 6px; padding-bottom: 6px;}
+#system-message dd.notice ul, li.warning, p.warning { color: #c00; background: #EFE7B8 url(../theme/images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E; padding-top: 6px; padding-bottom: 6px;}
 p.warning { padding-left: 40px;}
-ul.messages > li.success { color: #000; background: #E7EBFF url(../images/notice-info.png) 4px center no-repeat; border-top: 3px solid #003983; border-bottom: 3px solid #003983; padding-top: 6px; padding-bottom: 6px;}
+ul.messages > li.success { color: #000; background: #E7EBFF url(../theme/images/notice-info.png) 4px center no-repeat; border-top: 3px solid #003983; border-bottom: 3px solid #003983; padding-top: 6px; padding-bottom: 6px;}
 
 #syndicate{
 	float:left;
