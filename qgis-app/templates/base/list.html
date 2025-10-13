@@ -92,7 +92,7 @@
                             <img class="style-icon" alt="{% trans "Style icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
                         {% endthumbnail %}
                     {% else %}
-                        <img height="32" width="32" class="plugin-icon" src="{% static "images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
+                        <img height="32" width="32" class="plugin-icon" src="{% static "theme/images/qgis-icon-32x32.png" %}" alt="{% trans "Plugin icon" %}" />
                     {% endif %}
                     </td>
                     <td><a href="{% url url_detail pk=object.id %}">{{ object.name}}</a></td>

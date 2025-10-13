@@ -47,16 +47,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
+
       - name: Generate the .env file
         run: cp .env.template .env
 
 
       - name: Run the containers
         run: docker compose up -d db devweb
-    
+
 
       - name: Wait for the containers to start
-        run: sleep 15 
+        run: sleep 15
 
       - name: Run test
         run: |

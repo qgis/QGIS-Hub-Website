@@ -9,8 +9,8 @@ ensure a smooth contribution process.
 
 
 ## 🏃Before you start
- 
-This project requires [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) to run the development and production environments.  
+
+This project requires [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) to run the development and production environments.
 Please ensure both are installed on your system before proceeding.
 
 ![Docker logo](https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png)
@@ -25,7 +25,7 @@ docker-compose --version
 
 ## 🛒 Getting the Code
 
-- Clone git repo `git clone https://github.com/qgis/QGIS-Hub-Website.git`
+- Clone git repo `git clone --recurse-submodules https://github.com/qgis/QGIS-Hub-Website.git`
 - Run `$ pwd` in order to get your current directory
 - Path to your repo should be `<your current directory>/QGIS-Hub-Website `
 - Go to dockerize directory `cd QGIS-Hub-Website/dockerize`
@@ -37,6 +37,7 @@ docker-compose --version
 ## 🧑💻 Development
 
 
+### Environment file (`.env`)
 - Create .env file
 ```bash
 $ cp .env.template .env
@@ -44,6 +45,21 @@ $ cp .env.template .env
 
 - Edit .env file and set your environment variables
 - Enable debug mode by setting `DEBUG=True`.
+
+**IMPORTANT NOTE**: For new Django variables, please use the `settings_local.py` as the `.env` file is not supported by the new production infrastructure.
+
+### Django Local Settings (`settings_local.py`)
+
+- Create settings_local.py file
+```bash
+$ cp settings_local.py.templ settings_local.py
+```
+
+- Edit settings_local.py file and set your environment variables
+
+**IMPORTANT NOTE**: As we are migrating to a declarative based infrastructure, it is preferable to use the `settings_local.py` file for all new Django variables. This file is ignored when commiting so please make sure you define your new variables with an example value (**NOT THE REAL ONE FOR SECRETS AND PASSWORDS**) inside the `settings_local.py.templ` file.
+
+### Spin up the development environment
 
 - Build and spin container
 ```bash
