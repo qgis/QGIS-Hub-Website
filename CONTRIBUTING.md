@@ -25,7 +25,7 @@ docker-compose --version
 
 ## 🛒 Getting the Code
 
-- Clone git repo `git clone https://github.com/qgis/QGIS-Hub-Website.git`
+- Clone git repo `git clone --recurse-submodules https://github.com/qgis/QGIS-Hub-Website.git`
 - Run `$ pwd` in order to get your current directory
 - Path to your repo should be `<your current directory>/QGIS-Hub-Website `
 - Go to dockerize directory `cd QGIS-Hub-Website/dockerize`

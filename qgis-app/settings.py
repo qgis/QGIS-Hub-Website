@@ -260,10 +260,10 @@ DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
 USER_MAP = {
     "project_name": "QGIS",
-    "favicon_file": "/static/images/qgis-icon-32x32.png",
+    "favicon_file": "/static/theme/images/qgis-icon-32x32.png",
     "login_view": "login",
     "marker": {
-        "iconUrl": "/static/images/qgis-icon-32x32.png",
+        "iconUrl": "/static/theme/images/qgis-icon-32x32.png",
         "iconSize": [32, 32],
         "popupAnchor": [0, -15],
     },

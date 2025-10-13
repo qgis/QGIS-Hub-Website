@@ -1,0 +1,3 @@
+[submodule "qgis-app/static/theme"]
+	path = qgis-app/static/theme
+	url = https://github.com/qgis/QGIS-Website-Theme.git
