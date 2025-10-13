@@ -305,14 +305,6 @@ USE_X_FORWARDED_HOST = True
 # auth overrids
 from settings_auth import *
 
-# Local settings overrides
-# Must be the last!
-try:
-    pass
-except ImportError:
-    pass
-
-
 # Local settings might have enabled DEBUG, load additional modules here
 
 if DEBUG:

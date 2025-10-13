@@ -1,4 +1,3 @@
-from settings import *
 import ast
 import os
 
@@ -6,6 +5,7 @@ from settings import *
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 from datetime import timedelta
+
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 
 DEBUG = ast.literal_eval(os.environ.get("DEBUG", "True"))
@@ -33,7 +33,7 @@ STATIC_ROOT = os.environ.get("STATIC_ROOT", "/home/web/static/")
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = "/static/"
 
-# Manage static files storage ensuring that their 
+# Manage static files storage ensuring that their
 # filenames contain a hash of their content for cache busting
 # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
@@ -67,9 +67,9 @@ INSTALLED_APPS = [
     "rpc4django",
     "preferences",
     "rest_framework",
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "sorl_thumbnail_serializer",  # serialize image
     "drf_multiple_model",
     "drf_yasg",
@@ -91,7 +91,6 @@ INSTALLED_APPS = [
     "matomo",
     # Webpack
     "webpack_loader",
-
     # Contributors Stats
     "contributors",
 ]
@@ -139,23 +138,20 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
-GEOIP_PATH='/var/opt/maxmind/'
-METABASE_DOWNLOAD_STATS_URL = os.environ.get(
-    "METABASE_DOWNLOAD_STATS_URL", 
-    "/metabase"
-)
+GEOIP_PATH = "/var/opt/maxmind/"
+METABASE_DOWNLOAD_STATS_URL = os.environ.get("METABASE_DOWNLOAD_STATS_URL", "/metabase")
 
 # Set plugin token access and refresh validity to a very long duration
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365*1000),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=365*1000)
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=365 * 1000),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=365 * 1000),
 }
 
-MATOMO_SITE_ID="1"
-MATOMO_URL="//matomo.qgis.org/"
+MATOMO_SITE_ID = "1"
+MATOMO_URL = "//matomo.qgis.org/"
 
 # Default primary key type
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
 # Sentry
@@ -173,123 +169,144 @@ if SENTRY_DSN and SENTRY_DSN != "":
     )
 # Webpack
 WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles',
-        'STATS_FILE': os.path.join(SITE_ROOT, 'webpack-stats.json'),
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "bundles",
+        "STATS_FILE": os.path.join(SITE_ROOT, "webpack-stats.json"),
     }
 }
 
 
 HUB_SUBMENU = [
     {
-        'name': 'Styles',
-        'url': '/styles/?sort=upload_date&order=desc',
-        'icon': 'fa-paint-brush',
-        'order': 1,
-        'description': 'QGIS styles are a set of properties that can be applied to vector layers. They are used to render the layer in the map canvas.'
+        "name": "Styles",
+        "url": "/styles/?sort=upload_date&order=desc",
+        "icon": "fa-paint-brush",
+        "order": 1,
+        "description": "QGIS styles are a set of properties that can be applied to vector layers. They are used to render the layer in the map canvas.",
     },
     {
-        'name': 'Projects',
-        'url': '/geopackages/?sort=upload_date&order=desc',
-        'icon': 'fa-folder-open',
-        'order': 2,
-        'description': 'Geopackage files that contain a QGIS project file and all the data layers used in the project.'
+        "name": "Projects",
+        "url": "/geopackages/?sort=upload_date&order=desc",
+        "icon": "fa-folder-open",
+        "order": 2,
+        "description": "Geopackage files that contain a QGIS project file and all the data layers used in the project.",
     },
     {
-        'name': 'Models',
-        'url': '/models/?sort=upload_date&order=desc',
-        'icon': 'fa-cogs',
-        'order': 3,
-        'description': 'QGIS models are a set of processing algorithms that can be run in a sequence to automate a task.'
+        "name": "Models",
+        "url": "/models/?sort=upload_date&order=desc",
+        "icon": "fa-cogs",
+        "order": 3,
+        "description": "QGIS models are a set of processing algorithms that can be run in a sequence to automate a task.",
     },
     {
-        'name': '3D Models',
-        'url': '/wavefronts/?sort=upload_date&order=desc',
-        'icon': 'fa-cube',
-        'order': 4,
-        'description': 'QGIS 3D models can be used in any 3D software to visualize and analyze spatial data in three dimensions.'
+        "name": "3D Models",
+        "url": "/wavefronts/?sort=upload_date&order=desc",
+        "icon": "fa-cube",
+        "order": 4,
+        "description": "QGIS 3D models can be used in any 3D software to visualize and analyze spatial data in three dimensions.",
     },
     {
-        'name': 'QLR',
-        'url': '/layerdefinitions/?sort=upload_date&order=desc',
-        'icon': 'fa-layer-group',
-        'order': 5,
-        'description': 'The QGIS Layer Definition (QLR) format makes it possible to share “complete” QGIS layers with other QGIS users. QLR files contain links to the data sources and all the QGIS style information necessary to style the layer.'
+        "name": "QLR",
+        "url": "/layerdefinitions/?sort=upload_date&order=desc",
+        "icon": "fa-layer-group",
+        "order": 5,
+        "description": "The QGIS Layer Definition (QLR) format makes it possible to share “complete” QGIS layers with other QGIS users. QLR files contain links to the data sources and all the QGIS style information necessary to style the layer.",
     },
     {
-        'name': 'Map Gallery',
-        'url': '/map-gallery/?sort=upload_date&order=desc',
-        'icon': 'fa-map',
-        'order': 6,
-        'description': 'QGIS Map Gallery is a collection of maps created with QGIS. They are a great way to learn how to use QGIS and to get inspiration for your own maps.'
+        "name": "Map Gallery",
+        "url": "/map-gallery/?sort=upload_date&order=desc",
+        "icon": "fa-map",
+        "order": 6,
+        "description": "QGIS Map Gallery is a collection of maps created with QGIS. They are a great way to learn how to use QGIS and to get inspiration for your own maps.",
     },
     {
-        'name': 'Screenshots',
-        'url': '/screenshots/?sort=upload_date&order=desc',
-        'icon': 'fa-image',
-        'order': 7,
-        'description': 'Showcase screenshots of QGIS in action.'
+        "name": "Screenshots",
+        "url": "/screenshots/?sort=upload_date&order=desc",
+        "icon": "fa-image",
+        "order": 7,
+        "description": "Showcase screenshots of QGIS in action.",
     },
     {
-        'name': 'Processing Scripts',
-        'url': '/scripts/?sort=upload_date&order=desc',
-        'icon': 'fa-cogs',
-        'order': 8,
-        'description': 'QGIS Processing Scripts are a set of processing algorithms that can be run in a sequence to automate a task.'
+        "name": "Processing Scripts",
+        "url": "/scripts/?sort=upload_date&order=desc",
+        "icon": "fa-cogs",
+        "order": 8,
+        "description": "QGIS Processing Scripts are a set of processing algorithms that can be run in a sequence to automate a task.",
     },
 ]
 
 API_SUBMENU = [
     {
-        'name': 'Tokens',
-        'url': '/api/v1/tokens/',
-        'icon': 'fa-key',
-        'order': 0,
+        "name": "Tokens",
+        "url": "/api/v1/tokens/",
+        "icon": "fa-key",
+        "order": 0,
     },
     {
-        'name': 'Swagger',
-        'url': '/swagger/',
-        'icon': 'fa-book',
-        'order': 1,
+        "name": "Swagger",
+        "url": "/swagger/",
+        "icon": "fa-book",
+        "order": 1,
     },
     {
-        'name': 'Resources RAW',
-        'url': '/api/v1/resources/',
-        'icon': 'fa-database',
-        'order': 2,
+        "name": "Resources RAW",
+        "url": "/api/v1/resources/",
+        "icon": "fa-database",
+        "order": 2,
     },
 ]
 
 # Set the navigation menu
 NAVIGATION_MENU = [
     {
-        'name': 'QGIS Hub Home',
-        'url': '/',
-        'icon': 'fa-house',
-        'order': 0,
+        "name": "QGIS Hub Home",
+        "url": "/",
+        "icon": "fa-house",
+        "order": 0,
+    },
+    {"name": "Hub", "url": "#", "icon": "fa-cubes", "order": 1, "submenu": HUB_SUBMENU},
+    {
+        "name": "API",
+        "url": "/api/v1/tokens/",
+        "icon": "fa-code",
+        "order": 2,
+        "submenu": API_SUBMENU,
     },
     {
-        'name': 'Hub',
-        'url': '#',
-        'icon': 'fa-cubes',
-        'order': 1,
-        'submenu': HUB_SUBMENU
+        "name": "Metrics",
+        "url": METABASE_DOWNLOAD_STATS_URL,
+        "icon": "fa-chart-bar",
+        "order": 4,
     },
-    {
-        'name': 'API',
-        'url': '/api/v1/tokens/',
-        'icon': 'fa-code',
-        'order': 2,
-        'submenu': API_SUBMENU
-    },
-    {
-        'name': 'Metrics',
-        'url': METABASE_DOWNLOAD_STATS_URL,
-        'icon': 'fa-chart-bar',
-        'order': 4,
-    }
 ]
 
 # Set the default timezone
 USE_TZ = False
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
+
+
+# Local settings overrides
+# Must be the last!
+DJANGO_LOCAL_SETTINGS = os.environ.get("DJANGO_LOCAL_SETTINGS", "settings_local.py")
+
+try:
+    from pathlib import Path
+
+    local_settings_path = Path(__file__).parent / DJANGO_LOCAL_SETTINGS
+    if local_settings_path.exists():
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "settings_local", local_settings_path
+        )
+        settings_local = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(settings_local)
+        for setting in dir(settings_local):
+            if setting.isupper():
+                globals()[setting] = getattr(settings_local, setting)
+    else:
+        raise ImportError(
+            f"Local settings file {DJANGO_LOCAL_SETTINGS} does not exist."
+        )
+except ImportError:
+    pass
