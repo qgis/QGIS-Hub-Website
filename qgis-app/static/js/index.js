@@ -1,4 +1,6 @@
 require('../theme/scss/style.scss');
+require('../style/custom.style.scss');
+
 const hljs = require('highlight.js/lib/core');
 hljs.registerLanguage('python', require('highlight.js/lib/languages/python'));
 hljs.highlightAll();

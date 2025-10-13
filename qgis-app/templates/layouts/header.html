@@ -2,14 +2,11 @@
 <div class="box mb-0 context-container" id="context">
     <div class="container">
         <nav class="navbar" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand is-align-items-center is-justify-content-space-between">
-                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="pluginsNavbar">
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                </a>
+            <div class="navbar-start buttons are-small is-hidden-desktop mb-0 ml-4 is-align-items-center is-justify-content-space-between is-flex-direction-row-reverse" style="height: 3rem;">
+                {% include 'components/login_logout_buttons.html' %}
+                {% include 'components/search.html' %}
             </div>
-            
+
             <div id="pluginsNavbar" class="navbar-menu">
                 <!-- Breadcrumbs - initially hidden -->
                 <nav class="breadcrumb is-hidden-desktop" aria-label="breadcrumbs" id="breadcrumb-nav" style="display: none;">
@@ -32,80 +29,12 @@
                     </ul>
                 </nav>
 
-                <!-- First navbar-start - shown when resource_name exists -->
-                {% if resource_name %}
-                    <div class="navbar-start is-hidden-desktop" id="first-navbar-start">
-                        <div class="navbar-item ">
-                            <div class="control has-icons-right search-control">
-                                <form action="" method="get" style="margin:0;">
-                                    <input class="input is-small" id="id_q" name="q" type="text" placeholder="Search {{resource_name}}">
-                                    <span class="icon is-right"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="navbar-item">
-                            <a class="button is-success is-fullwidth" href="{% url url_create %}">
-                                <span class="icon">
-                                    <i class="fas fa-upload"></i>
-                                </span>
-                                <span class="">
-                                    {% trans "Upload" %}
-                                </span>
-                            </a>
-                        </div>
-                        <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link has-text-weight-semibold is-size-7">
-                                <span class="icon">
-                                    <i class="fas fa-folder"></i>
-                                </span>
-                                {{ resource_name }}
-                            </a>
-                            <div class="navbar-dropdown">
-                                {% url url_list as url_list %}
-                                <a href="{{ url_list }}" class="navbar-item has-text-weight-semibold is-size-7">
-                                    <span class="icon">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                    {% trans "Approved" %}
-                                </a>
-                                {% if user.is_authenticated %}
-                                {% url url_unapproved as url_unapproved %}
-                                <a href="{{ url_unapproved }}" class="navbar-item has-text-weight-semibold is-size-7">
-                                    <span class="icon">
-                                        <i class="fas fa-hourglass-half"></i>
-                                    </span>
-                                    {% trans "Waiting Review" %}
-                                </a>
-                                {% url url_require_action as url_require_action %}
-                                <a href="{{ url_require_action }}" class="navbar-item has-text-weight-semibold is-size-7">
-                                    <span class="icon">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </span>
-                                    {% trans "Requiring Update" %}
-                                </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% if resource_name == 'Style' %}
-                        <div class="navbar-item has-dropdown is-hoverabl">
-                            <a class="navbar-link has-text-weight-semibold is-size-7">
-                                <span class="icon">
-                                    <i class="fas fa-paint-brush"></i>
-                                </span>
-                                {% trans "Style Type" %}
-                            </a>
-                            <div class="navbar-dropdown" id="styleListMobile"></div>
-                        </div>
-                        {% endif %}
-                    </div>
-                {% endif %}
-
                 <!-- Second navbar-start - full menu -->
-                <div class="navbar-start" id="second-navbar-start">
+                <div class="navbar-start">
                     {% get_navigation_menu as NAVIGATION_MENU %}
                     {% for item in NAVIGATION_MENU %}
                         {% if item.submenu %}
-                            <div class="navbar-item has-dropdown is-hoverable">
+                            <div class="navbar-item has-dropdown is-hoverable p-0">
                                 <a class="navbar-link has-text-weight-semibold is-size-7">
                                     <span class="icon">
                                         <i class="fas {{ item.icon }}"></i>
@@ -114,7 +43,7 @@
                                 </a>
                                 <div class="navbar-dropdown">
                                     {% for subitem in item.submenu %}
-                                        <a class="navbar-item has-text-weight-semibold is-size-7" href="{{ subitem.url }}">
+                                        <a class="navbar-item has-text-weight-semibold is-size-7 ml-1 mr-1" href="{{ subitem.url }}">
                                             <span class="icon">
                                                 <i class="fas {{ subitem.icon }}"></i>
                                             </span>
@@ -124,7 +53,7 @@
                                 </div>
                             </div>
                         {% else %}
-                            <a class="navbar-item has-text-weight-semibold is-size-7" href="{{ item.url }}">
+                            <a class="navbar-item has-text-weight-semibold is-size-7 ml-1 mr-1" href="{{ item.url }}">
                                 <span class="icon">
                                     <i class="fas {{ item.icon }}"></i>
                                 </span>
@@ -133,7 +62,7 @@
                         {% endif %}
                     {% endfor %}
                     {% if user.is_authenticated and user.is_staff %}
-                    <a class="navbar-item has-text-weight-semibold is-size-7" href="/admin">
+                    <a class="navbar-item has-text-weight-semibold is-size-7 ml-1 mr-1" href="/admin">
                         <span class="icon mr-2">
                             <i class="fas fa-tools"></i>
                         </span>
@@ -145,36 +74,9 @@
                 </div>
 
                 <div class="navbar-end">
-                    {% if resource_name %}
-                        <div class="navbar-item is-hidden-touch">
-                            <div class="control has-icons-right search-control">
-                                <form action="" method="get" style="margin:0;">
-                                    <input class="input is-small" id="id_q" name="q" type="text" placeholder="Search {{resource_name}}">
-                                    <span class="icon is-right"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                </form>
-                            </div>
-                        </div>
-                    {% endif %}
+                        {% include 'components/search.html' %}
                     <div class="navbar-item">
-                        {% if user.is_authenticated %}
-                        <a class="button is-warning is-small is-fullwidth" href="{% url "logout" %}">
-                            <span class="icon">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </span>
-                            <span>
-                                {% trans "Logout" %}
-                            </span>
-                        </a>
-                        {% else %}
-                        <a class="button is-info is-small" href="{% url "login" %}">
-                            <span class="icon">
-                                <i class="fas fa-sign-in-alt"></i>
-                            </span>
-                            <span>
-                                {% trans "Login" %}
-                            </span>
-                        </a>
-                        {% endif %}
+                        {% include 'components/login_logout_buttons.html' %}
                         {% block navigation_extra %}
                         {% endblock %}
                     </div>
@@ -183,72 +85,3 @@
         </nav>
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-        if ($(window).width() <= 1024) { // Mobile devices only
-            // Get elements
-            const $breadcrumbNav = $('#breadcrumb-nav');
-            const $firstNavbarStart = $('#first-navbar-start');
-            const $secondNavbarStart = $('#second-navbar-start');
-            const $breadcrumbHome = $('.breadcrumb-home');
-            const $breadcrumbResource = $('.breadcrumb-resource');
-            
-            // Check if resource_name exists
-            const hasResource = {% if resource_name %}true{% else %}false{% endif %};
-            
-            // Initial setup
-            if (hasResource) {
-                $breadcrumbNav.show();
-                $firstNavbarStart.show();
-                $secondNavbarStart.hide();
-                $breadcrumbResource.addClass('has-text-weight-semibold');
-            } else {
-                $breadcrumbNav.hide();
-                $firstNavbarStart.hide();
-                $secondNavbarStart.show();
-            }
-            
-            // Breadcrumb click handlers
-            $breadcrumbHome.on('click', function(e) {
-                e.preventDefault();
-                $firstNavbarStart.hide();
-                $secondNavbarStart.show();
-                $breadcrumbHome.addClass('has-text-weight-semibold');
-                $breadcrumbResource.removeClass('has-text-weight-semibold');
-
-            });
-            
-            $breadcrumbResource.on('click', function(e) {
-                e.preventDefault();
-                $breadcrumbNav.show();
-                $firstNavbarStart.show();
-                $secondNavbarStart.hide();
-                $breadcrumbResource.addClass('has-text-weight-semibold');
-                $breadcrumbHome.removeClass('has-text-weight-semibold');
-            });
-
-            {% if resource_name == 'Style' %}
-                $.ajax({
-                    type: 'GET',
-                    url: "{% url 'style_nav_typelist' %}",
-                    success: function (response){
-                        let icon_url = response.icon_url;
-                        response.qs.forEach(val => {
-                            let name = val.fields.name;
-                            let icon = val.fields.icon;
-                            let encodedName = encodeURIComponent(name);
-                            let fullUrl = '/styles/types/' + encodedName + '/';
-                            let listItem = `<a class="navbar-item has-text-weight-semibold is-size-7" href="${fullUrl}">`;
-                            if (icon) {
-                                listItem += `<img src="${icon_url}${icon}" width="12" height="12">&nbsp;`;
-                            }
-                            listItem += `${name}</a>`;
-                            $("#styleListMobile").append(listItem);
-                        });
-                    }
-                });
-            {% endif %}
-        }
-    });
-</script>

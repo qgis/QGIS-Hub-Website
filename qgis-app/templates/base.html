@@ -32,19 +32,25 @@
 
 </head>
 <body {% block onload %}{% endblock %}>
+
+    {% get_site_url as site_url %}
+    {% get_navigation_config_url as navigation_config_url %}
+
     <qg-top-nav
         breakpoint="1024"
         class="is-highest navbar is-fixed-top"
         location-prefix="https://qgis.org"
+        second-menu-prefix="{{ site_url }}"
+        secondary-menu-config="{{ navigation_config_url }}"
     ></qg-top-nav>
     {% include 'layouts/header.html' %}
     {% block pagetitle %}{% endblock %}
-    <section class="section">
+    <section class="section" style="margin-top: 7rem;">
         <div class="container content">
             <div class="columns is-multiline is-centered">
                 <div class="column is-3">
                     {% block leftbar %}
-                        {% block menu %}&nbsp;{% endblock %}
+                        {% block menu %}{% endblock %}
                     {% endblock %}
                 </div>
                 <div class="content column is-9">
@@ -69,7 +75,7 @@
     {% include 'layouts/footer.html' %}
 
     {% include 'base/includes/resources_tags_modal.html' %}
-    
+
 <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/local_timezone-1.0.js' %}"></script>
 <style>
