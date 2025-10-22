@@ -2,17 +2,10 @@
 
 <div id="hamburger-btn" onclick="toggleMenu()" class="is-hidden-touch"><span id="ham-title">{{resource_name}}</span></div>
 
-<nav id="sidebar" class="sidebar">
-    <ul class="content-wrapper">
+<nav id="sidebar" class="sidebar is-hidden-touch">
+    <ul class="content-wrapper mt-0">
         <li>
-          <a class="button is-success is-medium has-text-weight-medium" href="{% url url_create %}">
-              <span class="icon">
-              <i class="fas fa-upload"></i>
-              </span>
-              <span class="">
-              {% trans "Upload" %}
-              </span>
-          </a>
+          {% include "components/upload_button.html" %}
         </li>
         <hr/>
         <li>
@@ -76,8 +69,8 @@
     </li>
     </ul>
 </nav>
-  
-  
+
+
 <script>
     $(document).ready(function(){
         $.ajax({

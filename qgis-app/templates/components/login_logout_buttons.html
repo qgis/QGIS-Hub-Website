@@ -1,0 +1,20 @@
+{% load i18n %}
+{% if user.is_authenticated %}
+<a class="button is-warning is-small mb-0" href="{% url "logout" %}">
+    <span class="mr-2">
+        <i class="fas fa-sign-out-alt"></i>
+    </span>
+    <span>
+        {% trans "Logout" %}
+    </span>
+</a>
+{% else %}
+<a class="button is-info is-small mb-0" href="{% url "login" %}">
+    <span class="mr-2">
+        <i class="fas fa-sign-in-alt"></i>
+    </span>
+    <span>
+        {% trans "Login" %}
+    </span>
+</a>
+{% endif %}

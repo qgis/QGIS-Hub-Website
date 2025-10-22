@@ -1,0 +1,111 @@
+{
+  "navigation": [
+    {
+      "type": "menu",
+      "settings": {
+        "name": "Hub",
+        "children": [
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Home",
+              "href": "/"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Styles",
+              "href": "/styles/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Projects",
+              "href": "/geopackages/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Models",
+              "href": "/models/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "3D Models",
+              "href": "/wavefronts/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "QLR",
+              "href": "/layerdefinitions/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Map Gallery",
+              "href": "/map-gallery/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Screenshots",
+              "href": "/screenshots/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Processing Scripts",
+              "href": "/scripts/?sort=upload_date&order=desc"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Metrics",
+              "href": "/metabase/public/dashboard/7ecd345f-7321-423d-9844-71e526a454a9"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "menu",
+      "settings": {
+        "name": "Hub API",
+        "children": [
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Tokens",
+              "href": "/api/v1/tokens/"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Swagger",
+              "href": "/swagger/"
+            }
+          },
+          {
+            "type": "second-menu",
+            "settings": {
+              "name": "Resources RAW",
+              "href": "/api/v1/resources/"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

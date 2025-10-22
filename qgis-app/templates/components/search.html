@@ -1,0 +1,11 @@
+
+{% if resource_name %}
+    <div class="navbar-item pl-0">
+        <div class="control has-icons-right search-control">
+            <form action="" method="get" style="margin:0;">
+                <input class="input is-small" id="id_q" name="q" type="text" placeholder="Search {{resource_name}}">
+                <span class="icon is-right"><i class="fa-solid fa-magnifying-glass"></i></span>
+            </form>
+        </div>
+    </div>
+{% endif %}
