@@ -52,12 +52,15 @@ def get_commit_count_by_author(repo_name: str, author: str, since=None, until=No
     # Use committer to exclude bots
     if "," in author:
         authors = author.split(",")
-        author_regex = "\\|".join([a.strip() for a in authors if a.strip()])
+        escaped_authors = [re.escape(a.strip()) for a in authors if a.strip()]
+        author_regex = "\\|".join(escaped_authors)
         author_arg = f"--author={author_regex}"
         committer_arg = f"--committer=GitHub\\|{author_regex}"
     else:
-        author_arg = f"--author={author}"
-        committer_arg = f"--committer=GitHub\\|{author}"
+        escaped_author = re.escape(author)
+        author_arg = f"--author={escaped_author}"
+        committer_arg = f"--committer=GitHub\\|{escaped_author}"
+
     cmd = [
         "git",
         "-C",
@@ -99,7 +102,12 @@ def get_commit_count_by_author(repo_name: str, author: str, since=None, until=No
             sha,
         ]
         date_result = subprocess.run(
-            date_cmd, capture_output=True, text=True, check=True
+            date_cmd, 
+            capture_output=True, 
+            text=True, 
+            check=True,
+            encoding='utf-8',
+            errors='replace'
         )
         last_commit_date = date_result.stdout.strip()
 
