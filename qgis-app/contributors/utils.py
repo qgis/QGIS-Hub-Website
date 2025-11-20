@@ -71,7 +71,7 @@ def get_commit_count_by_author(repo_name: str, author: str, since=None, until=No
         author_arg,
         committer_arg,
         "--no-merges",
-        "HEAD",
+        "origin/HEAD",
     ]
     if since:
         cmd.append(f"--since={since}")
@@ -80,12 +80,12 @@ def get_commit_count_by_author(repo_name: str, author: str, since=None, until=No
 
     # Run with proper encoding for special characters
     result = subprocess.run(
-        cmd, 
-        capture_output=True, 
-        text=True, 
-        check=True, 
-        encoding='utf-8', 
-        errors='replace'
+        cmd,
+        capture_output=True,
+        text=True,
+        check=True,
+        encoding="utf-8",
+        errors="replace",
     )
     lines = result.stdout.splitlines()
     commits = len(lines)
@@ -104,12 +104,12 @@ def get_commit_count_by_author(repo_name: str, author: str, since=None, until=No
             sha,
         ]
         date_result = subprocess.run(
-            date_cmd, 
-            capture_output=True, 
-            text=True, 
+            date_cmd,
+            capture_output=True,
+            text=True,
             check=True,
-            encoding='utf-8',
-            errors='replace'
+            encoding="utf-8",
+            errors="replace",
         )
         last_commit_date = date_result.stdout.strip()
 
