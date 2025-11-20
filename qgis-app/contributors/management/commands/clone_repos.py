@@ -42,6 +42,9 @@ class Command(BaseCommand):
             check=True,
         )
         subprocess.run(
+            ["git", "fetch", "--all"], cwd=repo_path, check=True
+        )
+        subprocess.run(
             ["git", "remote", "set-head", "origin", "-a"], cwd=repo_path, check=True
         )
 
