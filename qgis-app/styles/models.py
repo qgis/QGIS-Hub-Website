@@ -121,7 +121,7 @@ class Style(Resource):
         _("Thumbnail"),
         help_text=_(
             "Please upload an image that represents this style. "
-            "The image should be square when uploaded."
+            "The image should be square when uploaded. Max size is 2MB."
         ),
         blank=True,
         null=True,
@@ -131,7 +131,9 @@ class Style(Resource):
     # file
     file = models.FileField(
         _("Style file"),
-        help_text=_("Upload a QGIS Style (.xml) or a Color Palette (.gpl) file."),
+        help_text=_(
+            "Upload a QGIS Style (.xml) or a Color Palette (.gpl) file. The filesize must be less than 1MB."
+        ),
         upload_to=STYLES_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["xml", "gpl"])],
         null=False,

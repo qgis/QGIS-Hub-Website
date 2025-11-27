@@ -21,7 +21,9 @@ class Wavefront(Resource):
     # thumbnail
     thumbnail_image = models.ImageField(
         _("Thumbnail"),
-        help_text=_("Please upload an image that demonstrate this 3D Model"),
+        help_text=_(
+            "Please upload an image that demonstrate this 3D Model. Max size is 2MB."
+        ),
         blank=False,
         null=False,
         upload_to=WAVEFRONTS_STORAGE_PATH,
@@ -31,7 +33,7 @@ class Wavefront(Resource):
     file = models.FileField(
         _("3D Model file"),
         help_text=_(
-            "A 3D model zip file. The zip file must contains obj and mtl files"
+            "A 3D model zip file. The zip file must contains obj and mtl files. The filesize must be less than 1MB."
         ),
         upload_to=WAVEFRONTS_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["zip"])],
