@@ -14,7 +14,7 @@
 #25 11 * * * /bin/bash /home/web/QGIS-Hub-Website/dockerize/scripts/renew_ssl.sh > /tmp/ssl-renewal-logs.txt
 
 # Set common variables
-COMPOSE_FILE="/home/web/QGIS-Hub-Website/dockerize/docker-compose.yml"
+COMPOSE_FILE="/home/QGIS-Hub-Website/dockerize/docker-compose.yml"
 PROJECT_NAME="qgis-hub"
 
 # Renew SSL certificates
