@@ -1,24 +1,27 @@
-from base.validator import filesize_validator
-from geopackages.models import Geopackage
-from models.models import Model
-from rest_framework import serializers
-from styles.models import Style, StyleType
-from layerdefinitions.models import LayerDefinition
-from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
-from map_gallery.models import Map
-from screenshots.models import Screenshot
-from processing_scripts.models import ProcessingScript
-from sorl.thumbnail import get_thumbnail
-from django.conf import settings
+import tempfile
 from os.path import exists, join
+
+from base.validator import filesize_validator
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.templatetags.static import static
+from django.utils.translation import gettext_lazy as _
+from geopackages.models import Geopackage
+from layerdefinitions.file_handler import get_provider, get_url_datasource
+from layerdefinitions.file_handler import validator as layer_validator
+from layerdefinitions.models import LayerDefinition
+from map_gallery.models import Map
+from models.models import Model
+from processing_scripts.models import ProcessingScript
+from rest_framework import serializers
+from screenshots.models import Screenshot
+from sorl.thumbnail import get_thumbnail
+from styles.file_handler import read_xml_style
+from styles.file_handler import validator as style_validator
+from styles.models import Style, StyleType
+from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Wavefront
 from wavefronts.validator import WavefrontValidator
 
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
-from styles.file_handler import read_xml_style, validator as style_validator
-from layerdefinitions.file_handler import get_provider, get_url_datasource, validator as layer_validator
-import tempfile
 
 class ResourceBaseSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source="get_creator_name")
@@ -39,12 +42,15 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
             "description",
             "file",
             "thumbnail",
-            "thumbnail_full"
+            "thumbnail_full",
         ]
 
     def validate(self, attrs):
         file = attrs.get("file")
         filesize_validator(file)
+        thumbnail = attrs.get("thumbnail_image")
+        if thumbnail:
+            filesize_validator(thumbnail, is_thumbnail=True)
         return attrs
 
     def get_resource_type(self, obj):
@@ -53,8 +59,12 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
         return self.Meta.model.__name__
 
     def get_thumbnail_full(self, obj):
-        request = self.context.get('request')
-        file_field = getattr(obj, "file", None) if self.Meta.model.__name__ in ["Map", "Screenshot"] else getattr(obj, "thumbnail_image", None)
+        request = self.context.get("request")
+        file_field = (
+            getattr(obj, "file", None)
+            if self.Meta.model.__name__ in ["Map", "Screenshot"]
+            else getattr(obj, "thumbnail_image", None)
+        )
 
         if file_field and exists(file_field.path):
             if request is not None:
@@ -64,7 +74,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
         return None
 
     def get_thumbnail(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         thumbnail_field = getattr(obj, "thumbnail_image", None)
         try:
             if thumbnail_field and exists(thumbnail_field.path):
@@ -72,7 +82,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
                 if request is not None:
                     return request.build_absolute_uri(thumbnail.url)
                 return thumbnail.url
-        except Exception as e:
+        except Exception:
             pass
 
         # Return a full URL to a default image if no thumbnail exists or if there's an error
@@ -94,19 +104,19 @@ class ModelSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
         model = Model
         fields = [
-             "resource_type",
-             "resource_subtypes",
-             "uuid",
-             "name",
-             "creator",
-             "upload_date",
-             "download_count",
-             "description",
-             "dependencies",
-             "file",
-             "thumbnail",
-             "thumbnail_full"
-         ]
+            "resource_type",
+            "resource_subtypes",
+            "uuid",
+            "name",
+            "creator",
+            "upload_date",
+            "download_count",
+            "description",
+            "dependencies",
+            "file",
+            "thumbnail",
+            "thumbnail_full",
+        ]
 
     def get_resource_subtypes(self, obj):
         return None
@@ -139,7 +149,7 @@ class StyleSerializer(ResourceBaseSerializer):
                     temp_file.write(chunk)
                 temp_file.flush()
 
-                with open(temp_file.name, 'rb') as xml_file:
+                with open(temp_file.name, "rb") as xml_file:
                     style = style_validator(xml_file)
                     xml_parse = read_xml_style(xml_file)
                     style_types_list = xml_parse.get("types", []) if xml_parse else []
@@ -159,10 +169,12 @@ class StyleSerializer(ResourceBaseSerializer):
                         )
         finally:
             import os
+
             if temp_file and os.path.exists(temp_file.name):
                 os.remove(temp_file.name)
 
         return attrs
+
 
 class LayerDefinitionSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
@@ -191,18 +203,19 @@ class LayerDefinitionSerializer(ResourceBaseSerializer):
                     temp_file.write(chunk)
                 temp_file.flush()
 
-                with open(temp_file.name, 'rb') as qlr_file:
+                with open(temp_file.name, "rb") as qlr_file:
                     layer_validator(qlr_file)
                     self.url_datasource = get_url_datasource(qlr_file)
                     self.provider = get_provider(qlr_file)
 
-
         finally:
             import os
+
             if temp_file and os.path.exists(temp_file.name):
                 os.remove(temp_file.name)
 
         return attrs
+
 
 class WavefrontSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
@@ -214,7 +227,7 @@ class WavefrontSerializer(ResourceBaseSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         file = attrs.get("file")
-        if file and file.name.endswith('.zip'):
+        if file and file.name.endswith(".zip"):
             valid_3dmodel = WavefrontValidator(file).validate_wavefront()
             self.new_filepath = join(WAVEFRONTS_STORAGE_PATH, valid_3dmodel)
         return attrs
@@ -235,11 +248,11 @@ class MapSerializer(ResourceBaseSerializer):
             "description",
             "file",
             "thumbnail",
-            "is_publishable"
+            "is_publishable",
         ]
 
     def get_thumbnail(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         thumbnail_field = getattr(obj, "file", None)
         try:
             if thumbnail_field and exists(thumbnail_field.path):
@@ -247,9 +260,8 @@ class MapSerializer(ResourceBaseSerializer):
                 if request is not None:
                     return request.build_absolute_uri(thumbnail.url)
                 return thumbnail.url
-        except Exception as e:
+        except Exception:
             pass
-
 
     def get_resource_subtypes(self, obj):
         return None
@@ -259,9 +271,11 @@ class ScreenshotSerializer(MapSerializer):
     """
     Serializer for Screenshot model, inheriting from MapSerializer
     """
+
     class Meta(MapSerializer.Meta):
         model = Screenshot
         fields = MapSerializer.Meta.fields
+
 
 class ProcessingScriptSerializer(ResourceBaseSerializer):
     class Meta(ResourceBaseSerializer.Meta):
@@ -278,7 +292,7 @@ class ProcessingScriptSerializer(ResourceBaseSerializer):
             "dependencies",
             "file",
             "thumbnail",
-            "thumbnail_full"
+            "thumbnail_full",
         ]
 
     def get_resource_subtypes(self, obj):

@@ -18,7 +18,7 @@ class LayerDefinition(Resource):
     # file
     file = models.FileField(
         _("Layer Definition file"),
-        help_text=_("A Layer Definition file. " "The filesize must less than 1MB"),
+        help_text=_("A Layer Definition file. " "The filesize must be less than 1MB."),
         upload_to=LAYERDEFINITIONS_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["qlr"])],
         null=False,
@@ -27,7 +27,9 @@ class LayerDefinition(Resource):
     # thumbnail
     thumbnail_image = models.ImageField(
         _("Thumbnail"),
-        help_text=_("Please upload an image that demonstrate this resource."),
+        help_text=_(
+            "Please upload an image that demonstrate this resource. Max size is 2MB."
+        ),
         blank=False,
         null=False,
         upload_to=LAYERDEFINITIONS_STORAGE_PATH,

@@ -19,7 +19,9 @@ class Model(Resource):
     # thumbnail
     thumbnail_image = models.ImageField(
         _("Thumbnail"),
-        help_text=_("Please upload an image that demonstrate this Model"),
+        help_text=_(
+            "Please upload an image that demonstrate this Model. Max size is 2MB."
+        ),
         blank=False,
         null=False,
         upload_to=MODELS_STORAGE_PATH,
@@ -28,7 +30,7 @@ class Model(Resource):
     # file
     file = models.FileField(
         _("Model file"),
-        help_text=_("A Model file. The filesize must less than 1MB "),
+        help_text=_("A Model file. The filesize must be less than 1MB."),
         upload_to=MODELS_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["model3", "zip"])],
         null=False,
@@ -41,7 +43,6 @@ class Model(Resource):
         blank=True,
         null=True,
     )
-
 
     def extension(self):
         name, extension = os.path.splitext(self.file.name)

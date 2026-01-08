@@ -17,7 +17,7 @@ class Geopackage(Resource):
     # file
     file = models.FileField(
         _("GeoPackage file"),
-        help_text=_("A GeoPackage file. The filesize must less than 5MB "),
+        help_text=_("A GeoPackage file. The filesize must be less than 5MB."),
         upload_to=GEOPACKAGES_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["gpkg", "zip"])],
         null=False,
@@ -26,7 +26,9 @@ class Geopackage(Resource):
     # thumbnail
     thumbnail_image = models.ImageField(
         _("Thumbnail"),
-        help_text=_("Please upload an image that demonstrate this resource."),
+        help_text=_(
+            "Please upload an image that demonstrate this resource. Max size is 2MB."
+        ),
         blank=False,
         null=False,
         upload_to=GEOPACKAGES_STORAGE_PATH,
