@@ -18,7 +18,7 @@ class LayerDefinition(Resource):
     # file
     file = models.FileField(
         _("Layer Definition file"),
-        help_text=_("A Layer Definition file. " "The filesize must be less than 1MB."),
+        help_text=_("A Layer Definition file. " "The filesize must be less than 5MB."),
         upload_to=LAYERDEFINITIONS_STORAGE_PATH,
         validators=[FileExtensionValidator(allowed_extensions=["qlr"])],
         null=False,

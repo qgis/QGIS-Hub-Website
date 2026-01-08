@@ -7,6 +7,8 @@ from taggit.forms import TagField
 
 class ResourceFormMixin(forms.ModelForm):
     tags = TagField(required=False)
+    is_layerdefinition = True
+
     class Meta:
         model = LayerDefinition
         fields = [
@@ -16,7 +18,7 @@ class ResourceFormMixin(forms.ModelForm):
             "url_metadata",
             "description",
             "license",
-            "tags"
+            "tags",
         ]
 
 
