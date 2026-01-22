@@ -58,8 +58,16 @@ class ResourceBaseCleanFileForm(object):
         is_map_or_screenshot = is_map or is_screenshot
         is_3d = getattr(self, "is_3d", False)
         is_thumbnail = getattr(self, "is_thumbnail", False)
+        is_layerdefinition = getattr(self, "is_layerdefinition", False)
+        is_style = getattr(self, "is_style", False)
 
         if filesize_validator(
-            file.file, is_gpkg, is_map_or_screenshot, is_3d, is_thumbnail=is_thumbnail
+            file.file,
+            is_gpkg,
+            is_map_or_screenshot,
+            is_3d,
+            is_thumbnail=is_thumbnail,
+            is_layerdefinition=is_layerdefinition,
+            is_style=is_style,
         ):
             return file
