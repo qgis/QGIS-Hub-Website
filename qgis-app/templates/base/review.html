@@ -14,7 +14,7 @@
   {% include "base/includes/script_viewer.html" with title=object.name script_content=object.get_file_content %}
 {% endif %}
 <div class="box-content">
-    
+
   <div class="columns">
     <div class="column is-6">
         <h3 class="title is-4">{{ object_detail.name }}
@@ -23,10 +23,10 @@
             </span>
         </h3>
       </div>
-    
+
     <div class="column is-6 has-text-right">
-        {% if user == object_detail.creator or user.is_staff %}
-        <div class="buttons are-small is-justify-content-flex-end">
+      <div class="buttons are-small is-justify-content-flex-end">
+          {% if user == object_detail.creator or user.is_staff %}
             <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
               <span class="icon">
                 <i class="fas fa-pencil-alt"></i>
@@ -36,10 +36,12 @@
               <span class="icon">
                 <i class="fas fa-trash-alt"></i>
               </span>
-              </a>
+            </a>
+          {% endif %}
+          {% if user == object_detail.creator or user.is_staff or is_style_manager %}
               {% if object_detail.file and object_detail.file.file %}
-              <button class="button is-success" 
-                 onclick="location.href='{% url url_download object_detail.id %}'" 
+              <button class="button is-success"
+                 onclick="location.href='{% url url_download object_detail.id %}'"
                  title="{% trans "Download" %}">
                 <span class="icon">
                 <i class="fas fa-download"></i>
@@ -47,8 +49,8 @@
                 <span>{% trans "Download" %}</span>
               </button>
               {% else %}
-              <button class="button" 
-                 title="{% trans "File missing: The resource file couldn't be located." %}" 
+              <button class="button"
+                 title="{% trans "File missing: The resource file couldn't be located." %}"
                  disabled>
                 <span class="icon">
                 <i class="fas fa-exclamation-triangle"></i>
@@ -56,8 +58,8 @@
                 <span>{% trans "File missing" %}</span>
               </button>
               {% endif %}
+          {% endif %}
         </div>
-        {% endif %}
     </div>
     </div>
     <hr />
