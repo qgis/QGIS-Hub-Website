@@ -3,19 +3,36 @@
 
 <div class="
 column
-is-medium     
+is-medium
 is-half-tablet
 is-half-desktop
 is-one-quarter-widescreen
-is-one-third-fullhd">
-    <div 
+is-one-third-fullhd"
+{% if resource_name == 'Map' or resource_name == 'Screenshot' %}
+{% if object.file and object.file.file %}
+data-resource-id="{{ object.id }}"
+data-resource-name="{{ object.name }}"
+data-resource-creator="{{ object.get_creator_name }}"
+data-resource-upload-date="{{ object.upload_date|date:"d F Y" }}"
+data-resource-download-count="{{ object.download_count|intcomma }}"
+data-resource-description="{{ object.description|md_to_html|force_escape }}"
+data-resource-image-url="{{ object.file.url }}"
+data-resource-download-url="{% url url_download pk=object.id %}"
+data-resource-detail-url="{% url url_detail pk=object.id %}"
+data-resource-publishable="{% if object.is_publishable %}true{% else %}false{% endif %}"
+data-resource-type="{{ resource_name }}"
+{% endif %}
+{% endif %}
+>
+    <div
         class="
-            card 
-            is-flex 
-            is-flex-direction-column 
+            card
+            is-flex
+            is-flex-direction-column
             is-justify-content-space-between
         "
-        onclick="window.location.href='{% url url_detail pk=object.id %}';"
+        style="cursor: pointer;"
+        onclick="if (this.closest('[data-resource-id]')) { event.preventDefault(); event.stopPropagation(); const id = this.closest('[data-resource-id]').getAttribute('data-resource-id'); if (window.openPreview) window.openPreview(id); }"
         >
 
         <div class="card-image">
@@ -47,7 +64,7 @@ is-one-third-fullhd">
                     {{ object.name }}
                 </a>
                 <p class="subtitle is-7 is-italic">
-                    by {{ object.get_creator_name }}, {{ object.upload_date|date:"d F Y" }} 
+                    by {{ object.get_creator_name }}, {{ object.upload_date|date:"d F Y" }}
                 </p>
 
             </div>
@@ -78,7 +95,7 @@ is-one-third-fullhd">
                                     <i class="fas fa-globe"></i>
                                 </span>
                                 <span>
-                                    Also available on 
+                                    Also available on
                                     {% if resource_name == 'Map' %}
                                         <a href="https://qgis.org/project/overview/maps/" target="_blank" rel="noopener noreferrer">QGIS.org</a>
                                     {% else %}
@@ -93,7 +110,7 @@ is-one-third-fullhd">
         </div>
 
         <footer class="card-footer">
-            <a href="{% url url_download pk=object.id %}" class="card-footer-item">
+            <a href="{% url url_download pk=object.id %}" class="card-footer-item" onclick="event.stopPropagation();">
                 <span class="icon">
                     <i class="fas fa-download"></i>
                 </span>

@@ -1,4 +1,4 @@
-{% load i18n humanize static thumbnail resources_utils %}
+{% load i18n humanize static thumbnail resources_utils resources_custom_tags %}
 
 <table id="myTable" class="table is-fullwidth resources-list-table">
     <thead>
@@ -18,8 +18,23 @@
     </thead>
     <tbody>
         {% for object in object_list %}
-            <tr onclick="window.location.href='{% url url_detail pk=object.id %}';">
-                <td class="object-thumbnail">
+            <tr style="cursor: pointer;" onclick="if (this.hasAttribute('data-resource-id')) { event.preventDefault(); event.stopPropagation(); const id = this.getAttribute('data-resource-id'); if (window.openPreview) window.openPreview(id); }"
+                {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
+                {% if object.file and object.file.file %}
+                data-resource-id="{{ object.id }}"
+                data-resource-name="{{ object.name }}"
+                data-resource-creator="{{ object.get_creator_name }}"
+                data-resource-upload-date="{{ object.upload_date|date:"d F Y" }}"
+                data-resource-download-count="{{ object.download_count|intcomma }}"
+                data-resource-description="{{ object.description|md_to_html|force_escape }}"
+                data-resource-image-url="{{ object.file.url }}"
+                data-resource-download-url="{% url url_download pk=object.id %}"
+                data-resource-detail-url="{% url url_detail pk=object.id %}"
+                data-resource-publishable="{% if object.is_publishable %}true{% else %}false{% endif %}"
+                data-resource-type="{{ resource_name }}"
+                {% endif %}
+                {% endif %}
+            >                <td class="object-thumbnail">
                 {% if object.thumbnail_image and object.thumbnail_image.file %}
                     {% thumbnail object.thumbnail_image "96x96" format="PNG" as im %}
                         <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
@@ -59,10 +74,10 @@
                 <td>{{ object.upload_date|date:"d M. Y" }}</td>
                 <td>
                     {% if user.is_staff or user == object.creator %}
-                    <a class="button is-small is-success is-outlined" href="{% url url_update pk=object.id %}" title="{% trans "Edit" %}"><i class="fas fa-pencil-alt"></i></a>
-                    <a class="button is-small is-danger is-outlined" href="{% url url_delete pk=object.id %}" title="{% trans "Delete" %}"><i class="fas fa-trash-alt"></i></a>
+                    <a class="button is-small is-success is-outlined" href="{% url url_update pk=object.id %}" title="{% trans "Edit" %}" onclick="event.stopPropagation();"><i class="fas fa-pencil-alt"></i></a>
+                    <a class="button is-small is-danger is-outlined" href="{% url url_delete pk=object.id %}" title="{% trans "Delete" %}" onclick="event.stopPropagation();"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
-                    <a class="button is-small is-success is-outlined" href="{% url url_download pk=object.id %}" title="{% trans "Download" %}"><i class="fas fa-download"></i></a>
+                    <a class="button is-small is-success is-outlined" href="{% url url_download pk=object.id %}" title="{% trans "Download" %}" onclick="event.stopPropagation();"><i class="fas fa-download"></i></a>
                 </td>
             </tr>
         {% endfor %}
