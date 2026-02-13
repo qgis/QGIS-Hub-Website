@@ -25,8 +25,8 @@
       </div>
 
     <div class="column is-6 has-text-right">
-        {% if user == object_detail.creator or user.is_staff %}
-        <div class="buttons are-small is-justify-content-flex-end">
+      <div class="buttons are-small is-justify-content-flex-end">
+          {% if user == object_detail.creator or user.is_staff %}
             <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
               <span class="icon">
                 <i class="fas fa-pencil-alt"></i>
@@ -36,7 +36,9 @@
               <span class="icon">
                 <i class="fas fa-trash-alt"></i>
               </span>
-              </a>
+            </a>
+          {% endif %}
+          {% if user == object_detail.creator or user.is_staff or is_style_manager %}
               {% if object_detail.file and object_detail.file.file %}
               <button class="button is-success"
                  onclick="location.href='{% url url_download object_detail.id %}'"
@@ -56,8 +58,8 @@
                 <span>{% trans "File missing" %}</span>
               </button>
               {% endif %}
+          {% endif %}
         </div>
-        {% endif %}
     </div>
     </div>
     <hr />
