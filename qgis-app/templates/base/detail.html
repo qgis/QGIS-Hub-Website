@@ -24,8 +24,8 @@
         {% if user.is_staff or is_style_manager %}
           {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
             {% if is_map_publisher %}
-              <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined" 
-                href="{% if resource_name == 'Map' %}{% url 'map_toggle_publish' object_detail.id %}{% else %}{% url 'screenshot_toggle_publish' object_detail.id %}{% endif %}" 
+              <a class="button {% if object_detail.is_publishable %}is-warning{% else %}is-success{% endif %} is-outlined"
+                href="{% if resource_name == 'Map' %}{% url 'map_toggle_publish' object_detail.id %}{% else %}{% url 'screenshot_toggle_publish' object_detail.id %}{% endif %}"
                 title="{% if object_detail.is_publishable %}{% trans "Unpublish from QGIS.org" %}{% else %}{% trans "Publish on QGIS.org" %}{% endif %}">
                 <span class="icon">
                 <i class="fas {% if object_detail.is_publishable %}fa-times{% else %}fa-globe{% endif %}"></i>
@@ -40,8 +40,8 @@
               </a>
             {% endif %}
           {% endif %}
-          <a class="button is-warning is-outlined" 
-            href="{% url url_unapprove object_detail.id %}" 
+          <a class="button is-warning is-outlined"
+            href="{% url url_unapprove object_detail.id %}"
             title="{% trans "Unapprove this resource" %}">
             <span class="icon">
              <i class="fas fa-thumbs-down"></i>
@@ -61,8 +61,8 @@
             </a>
           {% endif %}
             {% if object_detail.file and object_detail.file.file %}
-            <button class="button is-success" 
-               onclick="location.href='{% url url_download object_detail.id %}'" 
+            <button class="button is-success"
+               onclick="location.href='{% url url_download object_detail.id %}'"
                title="{% trans "Download" %}">
               <span class="icon">
               <i class="fas fa-download"></i>
@@ -70,8 +70,8 @@
               <span>{% trans "Download" %}</span>
             </button>
             {% else %}
-            <button class="button" 
-               title="{% trans "File missing: The resource file couldn't be located." %}" 
+            <button class="button"
+               title="{% trans "File missing: The resource file couldn't be located." %}"
                disabled>
               <span class="icon">
               <i class="fas fa-exclamation-triangle"></i>
@@ -86,9 +86,15 @@
   <div class="view-resource mb-3">
     <div class="style-polaroid">
       {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
-        {% thumbnail object_detail.thumbnail_image "1000x500" format="PNG" as im %}
-          <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
-        {% endthumbnail %}
+        {% with image_extension=object_detail.thumbnail_image.name|file_extension %}
+          {% if image_extension == 'gif' %}
+            <img class="image-resource" alt="{% trans "image" %}" src="{{ object_detail.thumbnail_image.url }}" style="max-width:1000px; max-height:500px;" />
+          {% else %}
+            {% thumbnail object_detail.thumbnail_image "1000x500" format="PNG" as im %}
+              <img class="image-resource" alt="{% trans "image" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
+            {% endthumbnail %}
+          {% endif %}
+        {% endwith %}
       {% elif resource_name == 'Map' or resource_name == 'Screenshot' %}
         {% with image_extension=object.file.name|file_extension %}
           {% if image_extension == 'svg' or image_extension == 'gif' %}
