@@ -168,7 +168,24 @@ services:
       - ./certbot-etc:/etc/letsencrypt
     depends_on:
       - web
-    command: certonly --webroot --webroot-path=/var/www/webroot --email admin@qgis.org --agree-tos --no-eff-email --force-renewal -d ${DOMAIN_NAME:-hub.qgis.org} -d hub-analytics.qgis.org -d styles.qgis.org -d projects.qgis.org -d models.qgis.org -d 3d-models.qgis.org -d qlr.qgis.org -d maps.qgis.org
+    command: >
+      certonly
+      --webroot
+      --webroot-path=/var/www/webroot
+      --email admin@qgis.org
+      --agree-tos
+      --no-eff-email
+      --force-renewal
+      -d ${DOMAIN_NAME:-hub.qgis.org}
+      -d hub-analytics.qgis.org
+      -d styles.qgis.org
+      -d projects.qgis.org
+      -d models.qgis.org
+      -d 3d-models.qgis.org
+      -d qlr.qgis.org
+      -d maps.qgis.org
+      -d scripts.qgis.org
+      -d screenshots.qgis.org
     networks:
       internal:
 
