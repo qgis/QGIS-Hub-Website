@@ -1,0 +1,143 @@
+{% load static i18n humanize resources_utils thumbnail %}
+
+<!-- Resource Preview Modal -->
+<div id="resourcePreviewModal" class="modal resource-preview-modal">
+  <div class="modal-background"></div>
+  <div class="modal-content resource-preview-container">
+
+    <!-- Close Button -->
+    <button class="button is-dark resource-preview-close" id="closePreviewModalTop" title="{% trans "Close" %}">
+      <span class="icon">
+        <i class="fas fa-times"></i>
+      </span>
+    </button>
+
+    <div class="columns resource-preview-content">
+        <!-- Image Container -->
+        <div class="column is-flex is-12-mobile is-12-tablet is-8-desktop resource-preview-image-column">
+
+        <!-- Top Navigation Bar -->
+        <div class="resource-preview-header">
+          <!-- Left Navigation -->
+          <button class="button is-ghost resource-preview-nav-top" id="prevResourceBtn" title="{% trans "Previous Resource" %}">
+            <span class="icon">
+              <i class="fas fa-chevron-left fa-2x"></i>
+            </span>
+          </button>
+
+          <!-- Resource Title (Truncated) -->
+          <div class="resource-preview-title" id="previewHeaderTitle"></div>
+
+          <!-- Right Navigation -->
+          <button class="button is-ghost resource-preview-nav-top" id="nextResourceBtn" title="{% trans "Next Resource" %}">
+            <span class="icon">
+              <i class="fas fa-chevron-right fa-2x"></i>
+            </span>
+          </button>
+        </div>
+          <div class="resource-preview-image-container">
+            <img id="previewImage" src="" alt="{% trans "Preview" %}" class="resource-preview-image">
+          </div>
+          <!-- Zoom Controls at Bottom -->
+          <div class="resource-preview-zoom-controls">
+            <button class="button is-white" id="previewZoomIn" title="{% trans "Zoom In" %}">
+              <span class="icon">
+                <i class="fas fa-search-plus"></i>
+              </span>
+            </button>
+            <button class="button is-white" id="previewZoomOut" title="{% trans "Zoom Out" %}">
+              <span class="icon">
+                <i class="fas fa-search-minus"></i>
+              </span>
+            </button>
+            <button class="button is-white" id="previewZoomReset" title="{% trans "Reset Zoom" %}">
+              <span class="icon">
+                <i class="fas fa-expand-arrows-alt"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Resource Details (Desktop Only) -->
+        <div class="column is-12-mobile is-12-tablet is-4-desktop is-hidden-mobile">
+          <div class="resource-preview-details">
+            <h3 class="title is-4 pt-5" id="previewName"></h3>
+
+            <div class="content">
+              <p class="subtitle is-6">
+                <span class="icon-text">
+                  <span class="icon">
+                    <i class="fas fa-user"></i>
+                  </span>
+                  <span><strong>{% trans "Creator:" %}</strong> <span id="previewCreator"></span></span>
+                </span>
+              </p>
+
+              <p class="subtitle is-6">
+                <span class="icon-text">
+                  <span class="icon">
+                    <i class="fas fa-calendar-alt"></i>
+                  </span>
+                  <span><strong>{% trans "Uploaded:" %}</strong> <span id="previewUploadDate"></span></span>
+                </span>
+              </p>
+
+              <p class="subtitle is-6">
+                <span class="icon-text">
+                  <span class="icon">
+                    <i class="fas fa-download"></i>
+                  </span>
+                  <span><strong>{% trans "Downloads:" %}</strong> <span id="previewDownloadCount"></span></span>
+                </span>
+              </p>
+
+              <div id="previewPublishableInfo" class="notification is-success is-light is-hidden mb-3">
+                <span class="icon">
+                  <i class="fas fa-globe"></i>
+                </span>
+                <span id="previewPublishableText"></span>
+              </div>
+
+              <div class="mb-3">
+                <p class="has-text-weight-semibold mb-2">{% trans "Description:" %}</p>
+                <div id="previewDescription" class="content"></div>
+              </div>
+            </div>
+
+            <div class="buttons">
+              <button class="button is-success" id="previewDownloadBtn">
+                <span class="icon">
+                  <i class="fas fa-download"></i>
+                </span>
+                <span>{% trans "Download" %}</span>
+              </button>
+              <a class="button is-info is-outlined" id="previewViewDetailBtn">
+                <span class="icon">
+                  <i class="fas fa-info-circle"></i>
+                </span>
+                <span>{% trans "View Details" %}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Action Footer -->
+      <div class="resource-preview-mobile-footer">
+        <button class="button is-success is-fullwidth" id="previewDownloadBtnMobile">
+          <span class="icon">
+            <i class="fas fa-download"></i>
+          </span>
+          <span>{% trans "Download" %}</span>
+        </button>
+        <a class="button is-info is-outlined is-fullwidth" id="previewViewDetailBtnMobile">
+          <span class="icon">
+            <i class="fas fa-info-circle"></i>
+          </span>
+          <span>{% trans "View Details" %}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close" id="closePreviewModal"></button>
+</div>
