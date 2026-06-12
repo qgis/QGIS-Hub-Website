@@ -17,10 +17,10 @@
     {% elif field.field.widget|klass == 'ClearableFileInput' %}
     <div class="file has-name">
       <label class="file-label">
-        <input 
-        class="file-input" 
-        type="file" 
-        id="{{ field.html_name }}" name="{{ field.html_name }}" 
+        <input
+        class="file-input"
+        type="file"
+        id="{{ field.html_name }}" name="{{ field.html_name }}"
         onchange="handleFileInputChange(this)" />
         <span class="file-cta">
           <span class="file-icon">
@@ -101,17 +101,29 @@
       <div class="control input is-block" style="height: fit-content;">
         <div id="selected-tags" class="tags mb-0"></div>
         <input type="hidden" name="{{ field.html_name }}" id="{{ field.html_name }}" value="{{ field.value|get_string_tags }}">
-        <input 
-          id="tag-input" 
-          type="text" 
-          class="input p-0" 
+        <input
+          id="tag-input"
+          type="text"
+          class="input p-0"
           style="border: none; box-shadow: none;"
-          placeholder="Type to search for tags..." 
+          placeholder="Type to search for tags..."
           />
       </div>
       <div class="control">
         <div id="tag-suggestions" class="dropdown-content is-hidden"></div>
       </div>
+    </div>
+    {% elif field.field.widget|klass == 'CheckboxSelectMultiple' or field.field.widget|klass == 'PyQtVersionMultiSelectWidget' %}
+    <div class="field">
+      <label class="label">{{ field.label_tag }}</label>
+      <div class="control">
+        {{ field }}
+      </div>
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <p class="help is-danger has-text-weight-medium">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
     </div>
     {% else %}
     <div class="field">

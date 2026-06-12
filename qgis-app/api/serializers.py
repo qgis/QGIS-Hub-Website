@@ -12,7 +12,7 @@ from layerdefinitions.file_handler import validator as layer_validator
 from layerdefinitions.models import LayerDefinition
 from map_gallery.models import Map
 from models.models import Model
-from processing_scripts.models import ProcessingScript
+from processing_scripts.models import ProcessingScript, PyQtVersion
 from rest_framework import serializers
 from screenshots.models import Screenshot
 from sorl.thumbnail import get_thumbnail
@@ -278,6 +278,10 @@ class ScreenshotSerializer(MapSerializer):
 
 
 class ProcessingScriptSerializer(ResourceBaseSerializer):
+    pyqt_versions = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=PyQtVersion.objects.all(), required=False, allow_empty=True
+    )
+
     class Meta(ResourceBaseSerializer.Meta):
         model = ProcessingScript
         fields = [
@@ -290,10 +294,19 @@ class ProcessingScriptSerializer(ResourceBaseSerializer):
             "download_count",
             "description",
             "dependencies",
+            "pyqt_versions",
             "file",
             "thumbnail",
             "thumbnail_full",
         ]
+
+    def to_representation(self, instance):
+        """Return PyQt version names instead of IDs in responses"""
+        representation = super().to_representation(instance)
+        representation["pyqt_versions"] = [
+            version.name for version in instance.pyqt_versions.all()
+        ]
+        return representation
 
     def get_resource_subtypes(self, obj):
         return None

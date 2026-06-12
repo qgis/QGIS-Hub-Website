@@ -22,6 +22,21 @@
     </div>
   </div>
   {% endif %}
+  {% if object_detail.pyqt_versions.all %}
+  <div class="column is-6">
+    <div class="field">
+      <label class="label">
+        <span class="icon"><i class="fas fa-code-branch"></i></span>
+        {% trans "PyQt Versions" %}:
+      </label>
+      <div class="control">
+        {% for version in object_detail.pyqt_versions.all %}
+          <span class="tag is-info mt-1">{{ version.name }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <div class="column is-6">
     <div class="field">
       <label class="label">

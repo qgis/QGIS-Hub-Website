@@ -1,34 +1,45 @@
-
-from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
-from geopackages.models import Geopackage
-from layerdefinitions.models import LayerDefinition
-from django.urls import reverse
-from models.models import Model
-from styles.models import Style
 import os
 import tempfile
-from django.test import override_settings
 from os.path import dirname, join
-from django.core.files.uploadedfile import SimpleUploadedFile
-from wavefronts.models import Wavefront
-from map_gallery.models import Map
-from screenshots.models import Screenshot
-from processing_scripts.models import ProcessingScript
 
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from api.models import UserOutstandingToken
+from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
+from django.urls import reverse
+from geopackages.models import Geopackage
+from layerdefinitions.models import LayerDefinition
+from map_gallery.models import Map
+from models.models import Model
+from processing_scripts.models import ProcessingScript, PyQtVersion
+from rest_framework.test import APIClient
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from screenshots.models import Screenshot
+from styles.models import Style
+from wavefronts.models import Wavefront
 
-GPKG_DIR = join(dirname(dirname(dirname(__file__))), "geopackages", "tests", "gpkgfiles")
-LAYERDEFINITION_DIR = join(dirname(dirname(dirname(__file__))), "layerdefinitions", "tests", "testfiles")
+GPKG_DIR = join(
+    dirname(dirname(dirname(__file__))), "geopackages", "tests", "gpkgfiles"
+)
+LAYERDEFINITION_DIR = join(
+    dirname(dirname(dirname(__file__))), "layerdefinitions", "tests", "testfiles"
+)
 MODELS_DIR = join(dirname(dirname(dirname(__file__))), "models", "tests", "modelfiles")
 STYLES_DIR = join(dirname(dirname(dirname(__file__))), "styles", "tests", "stylefiles")
-WAVEFRONT_DIR = join(dirname(dirname(dirname(__file__))), "wavefronts", "tests", "wavefrontfiles")
+WAVEFRONT_DIR = join(
+    dirname(dirname(dirname(__file__))), "wavefronts", "tests", "wavefrontfiles"
+)
 MAP_DIR = join(dirname(dirname(dirname(__file__))), "map_gallery", "tests", "mapfiles")
-SCREENSHOT_DIR = join(dirname(dirname(dirname(__file__))), "screenshots", "tests", "screenshot_files")
-PROCESSING_SCRIPT_DIR = join(dirname(dirname(dirname(__file__))), "processing_scripts", "tests", "processing_files")
+SCREENSHOT_DIR = join(
+    dirname(dirname(dirname(__file__))), "screenshots", "tests", "screenshot_files"
+)
+PROCESSING_SCRIPT_DIR = join(
+    dirname(dirname(dirname(__file__))),
+    "processing_scripts",
+    "tests",
+    "processing_files",
+)
 
 
 class SetUpTest:
@@ -58,31 +69,42 @@ class SetUpTest:
         self.processing_script_file = os.path.join(PROCESSING_SCRIPT_DIR, "example.py")
         self.processing_script_file_content = open(self.processing_script_file, "rb")
 
+        # Get or create PyQt version test data
+        self.pyqt5, _ = PyQtVersion.objects.get_or_create(
+            name="PyQt5",
+            defaults={"order": 1, "description": "PyQt5 - Python bindings for Qt5"},
+        )
+        self.pyqt6, _ = PyQtVersion.objects.get_or_create(
+            name="PyQt6",
+            defaults={"order": 2, "description": "PyQt6 - Python bindings for Qt6"},
+        )
+
+
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestResourceCreateView(SetUpTest, TestCase):
 
     def setUp(self):
         super().setUp()
         self.client = APIClient()
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.client.login(username='testuser', password='testpass')
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.login(username="testuser", password="testpass")
         self.refresh = RefreshToken.for_user(self.user)
-        self.outstanding_token = OutstandingToken.objects.get(jti=self.refresh['jti'])
+        self.outstanding_token = OutstandingToken.objects.get(jti=self.refresh["jti"])
         self.user_token = UserOutstandingToken.objects.create(
             user=self.user,
             token=self.outstanding_token,
             is_blacklisted=False,
-            is_newly_created=True
+            is_newly_created=True,
         )
-        self.url = reverse('user_token_detail', args=[self.user_token.pk])
+        self.url = reverse("user_token_detail", args=[self.user_token.pk])
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
-        access_token = response.context.get('access_token')
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+        access_token = response.context.get("access_token")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
 
     def test_create_geopackage(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -96,13 +118,13 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_gpkg,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Geopackage.objects.count(), 1)
         self.assertEqual(Geopackage.objects.first().name, "Test Geopackage")
 
     def test_create_layerdefinition(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -116,13 +138,13 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_qlr,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(LayerDefinition.objects.count(), 1)
         self.assertEqual(LayerDefinition.objects.first().name, "Test Layer Definition")
 
     def test_create_model(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -136,13 +158,13 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_model,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Model.objects.count(), 1)
         self.assertEqual(Model.objects.first().name, "Test Model")
 
     def test_create_style(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -156,13 +178,13 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_style,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Style.objects.count(), 1)
         self.assertEqual(Style.objects.first().name, "Test Style")
 
     def test_create_wavefront(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -176,13 +198,13 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_wavefront,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Wavefront.objects.count(), 1)
         self.assertEqual(Wavefront.objects.first().name, "Test 3D Model")
 
     def test_create_map(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_map = SimpleUploadedFile(
             self.map_file_content.name, self.map_file_content.read()
         )
@@ -192,13 +214,13 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "description": "A test map",
             "file": uploaded_map,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Map.objects.count(), 1)
         self.assertEqual(Map.objects.first().name, "Test Map")
 
     def test_create_screenshot(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_screenshot = SimpleUploadedFile(
             self.screenshot_file_content.name, self.screenshot_file_content.read()
         )
@@ -208,18 +230,19 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "description": "A test screenshot",
             "file": uploaded_screenshot,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Screenshot.objects.count(), 1)
         self.assertEqual(Screenshot.objects.first().name, "Test Screenshot")
 
     def test_create_processing_script(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
         uploaded_processing_script = SimpleUploadedFile(
-            self.processing_script_file_content.name, self.processing_script_file_content.read()
+            self.processing_script_file_content.name,
+            self.processing_script_file_content.read(),
         )
         data = {
             "resource_type": "processingscript",
@@ -228,24 +251,85 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_processing_script,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(ProcessingScript.objects.count(), 1)
-        self.assertEqual(ProcessingScript.objects.first().name, "Test Processing Script")
+        self.assertEqual(
+            ProcessingScript.objects.first().name, "Test Processing Script"
+        )
+        # Verify the API response includes pyqt_versions as empty list by default
+        self.assertIn("pyqt_versions", response.data)
+        self.assertEqual(response.data["pyqt_versions"], [])
+
+    def test_create_processing_script_with_pyqt_version(self):
+        """Test that processing script can be created with specific pyqt_versions"""
+        url = reverse("resource-create")
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_processing_script = SimpleUploadedFile(
+            self.processing_script_file_content.name,
+            self.processing_script_file_content.read(),
+        )
+        data = {
+            "resource_type": "processingscript",
+            "name": "Test Processing Script PyQt6",
+            "description": "A test processing script for PyQt6",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": uploaded_processing_script,
+            "pyqt_versions": [self.pyqt6.id],
+        }
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ProcessingScript.objects.count(), 1)
+        script = ProcessingScript.objects.first()
+        self.assertEqual(script.pyqt_versions.count(), 1)
+        self.assertEqual(script.pyqt_versions.first().name, "PyQt6")
+        # Verify the API response includes pyqt_versions
+        self.assertIn("pyqt_versions", response.data)
+        self.assertEqual(response.data["pyqt_versions"], ["PyQt6"])
+
+    def test_create_processing_script_with_multiple_pyqt_versions(self):
+        """Test that processing script can be created with multiple pyqt_versions"""
+        url = reverse("resource-create")
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        uploaded_processing_script = SimpleUploadedFile(
+            self.processing_script_file_content.name,
+            self.processing_script_file_content.read(),
+        )
+        data = {
+            "resource_type": "processingscript",
+            "name": "Test Processing Script Multiple PyQt",
+            "description": "A test processing script for both PyQt5 and PyQt6",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": uploaded_processing_script,
+            "pyqt_versions": [self.pyqt5.id, self.pyqt6.id],
+        }
+        response = self.client.post(url, data, format="multipart")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ProcessingScript.objects.count(), 1)
+        script = ProcessingScript.objects.first()
+        self.assertEqual(script.pyqt_versions.count(), 2)
+        # Verify the API response includes both versions
+        self.assertIn("pyqt_versions", response.data)
+        self.assertIn("PyQt5", response.data["pyqt_versions"])
+        self.assertIn("PyQt6", response.data["pyqt_versions"])
 
     def test_create_geopackage_invalid_data(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         data = {
             "resource_type": "geopackage",
             "name": "",
             "description": "",
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(Geopackage.objects.count(), 0)
 
     def test_create_style_invalid_data(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -259,12 +343,12 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_wavefront,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(Style.objects.count(), 0)
 
     def test_create_unsupported_resource_type(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -278,13 +362,15 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_gpkg,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, {"resource_type": "Resource type not supported"})
+        self.assertEqual(
+            response.data, {"resource_type": "Resource type not supported"}
+        )
 
     def test_create_with_invalid_token(self):
-        url = reverse('resource-create')
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse("resource-create")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
         )
@@ -298,11 +384,11 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_gpkg,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 401)
 
     def test_create_with_blacklisted_token(self):
-        url = reverse('resource-create')
+        url = reverse("resource-create")
         self.refresh.blacklist()
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
@@ -317,7 +403,7 @@ class TestResourceCreateView(SetUpTest, TestCase):
             "thumbnail_full": uploaded_thumbnail,
             "file": uploaded_gpkg,
         }
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url, data, format="multipart")
         self.assertEqual(response.status_code, 403)
 
 
@@ -327,22 +413,22 @@ class TestResourceDetailView(SetUpTest, TestCase):
     def setUp(self):
         super().setUp()
         self.client = APIClient()
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.client.login(username='testuser', password='testpass')
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.client.login(username="testuser", password="testpass")
         self.refresh = RefreshToken.for_user(self.user)
-        self.outstanding_token = OutstandingToken.objects.get(jti=self.refresh['jti'])
+        self.outstanding_token = OutstandingToken.objects.get(jti=self.refresh["jti"])
         self.user_token = UserOutstandingToken.objects.create(
             user=self.user,
             token=self.outstanding_token,
             is_blacklisted=False,
-            is_newly_created=True
+            is_newly_created=True,
         )
-        self.url = reverse('user_token_detail', args=[self.user_token.pk])
+        self.url = reverse("user_token_detail", args=[self.user_token.pk])
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
-        access_token = response.context.get('access_token')
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+        access_token = response.context.get("access_token")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
 
         uploaded_thumbnail = SimpleUploadedFile(
             self.thumbnail_content.name, self.thumbnail_content.read()
@@ -369,7 +455,8 @@ class TestResourceDetailView(SetUpTest, TestCase):
             self.screenshot_file_content.name, self.screenshot_file_content.read()
         )
         uploaded_processing_script = SimpleUploadedFile(
-            self.processing_script_file_content.name, self.processing_script_file_content.read()
+            self.processing_script_file_content.name,
+            self.processing_script_file_content.read(),
         )
 
         self.geopackage = Geopackage.objects.create(
@@ -450,57 +537,91 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.processing_script.approved = True
         self.processing_script.save()
 
-
     def test_get_geopackage(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Geopackage")
 
     def test_get_layerdefinition(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Layer Definition")
 
     def test_get_model(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Model")
 
     def test_get_style(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Style")
 
     def test_get_wavefront(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test 3D Model")
 
     def test_get_map(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"})
+        url = reverse(
+            "resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"}
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Map")
 
     def test_get_screenshot(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Screenshot")
 
     def test_get_processing_script(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.processing_script.uuid,
+                "resource_type": "processingscript",
+            },
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Processing Script")
+        # Verify the API response includes pyqt_versions field (empty list by default)
+        self.assertIn("pyqt_versions", response.data)
+        self.assertEqual(response.data["pyqt_versions"], [])
 
     def test_update_geopackage(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
         data = {
             "name": "Updated Geopackage",
             "description": "Updated description",
@@ -513,7 +634,13 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(self.geopackage.name, "Updated Geopackage")
 
     def test_update_layerdefinition(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
         data = {
             "name": "Updated Layer Definition",
             "description": "Updated description",
@@ -526,7 +653,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(self.layerdefinition.name, "Updated Layer Definition")
 
     def test_update_model(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
         data = {
             "name": "Updated Model",
             "description": "Updated description",
@@ -539,7 +669,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(self.model.name, "Updated Model")
 
     def test_update_style(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
         data = {
             "name": "Updated Style",
             "description": "Updated description",
@@ -552,7 +685,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(self.style.name, "Updated Style")
 
     def test_update_wavefront(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
         data = {
             "name": "Updated 3D Model",
             "description": "Updated description",
@@ -565,7 +701,9 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(self.wavefront.name, "Updated 3D Model")
 
     def test_update_map(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"})
+        url = reverse(
+            "resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"}
+        )
         data = {
             "name": "Updated Map",
             "description": "Updated description",
@@ -576,9 +714,11 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.map.refresh_from_db()
         self.assertEqual(self.map.name, "Updated Map")
 
-
     def test_update_screenshot(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"},
+        )
         data = {
             "name": "Updated Screenshot",
             "description": "Updated description",
@@ -590,7 +730,13 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(self.screenshot.name, "Updated Screenshot")
 
     def test_update_processing_script(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.processing_script.uuid,
+                "resource_type": "processingscript",
+            },
+        )
         data = {
             "name": "Updated Processing Script",
             "description": "Updated description",
@@ -601,58 +747,121 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 200)
         self.processing_script.refresh_from_db()
         self.assertEqual(self.processing_script.name, "Updated Processing Script")
+        # Verify the API response includes pyqt_versions field
+        self.assertIn("pyqt_versions", response.data)
+
+    def test_update_processing_script_pyqt_version(self):
+        """Test updating processing script with different pyqt_versions"""
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.processing_script.uuid,
+                "resource_type": "processingscript",
+            },
+        )
+        data = {
+            "name": "Updated Processing Script",
+            "description": "Updated to PyQt6",
+            "thumbnail_full": self.wavefront.thumbnail_image,
+            "file": self.processing_script.file,
+            "pyqt_versions": [self.pyqt6.id],
+        }
+        response = self.client.put(url, data, format="multipart")
+        self.assertEqual(response.status_code, 200)
+        self.processing_script.refresh_from_db()
+        self.assertEqual(self.processing_script.pyqt_versions.count(), 1)
+        self.assertEqual(self.processing_script.pyqt_versions.first().name, "PyQt6")
+        # Verify the API response includes updated pyqt_versions
+        self.assertIn("pyqt_versions", response.data)
+        self.assertEqual(response.data["pyqt_versions"], ["PyQt6"])
 
     def test_delete_geopackage(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Geopackage.objects.filter(uuid=self.geopackage.uuid).exists())
 
     def test_delete_layerdefinition(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
-        self.assertFalse(LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists())
+        self.assertFalse(
+            LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists()
+        )
 
     def test_delete_model(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Model.objects.filter(uuid=self.model.uuid).exists())
 
     def test_delete_style(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Style.objects.filter(uuid=self.style.uuid).exists())
 
     def test_delete_wavefront(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Wavefront.objects.filter(uuid=self.wavefront.uuid).exists())
 
     def test_delete_map(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"})
+        url = reverse(
+            "resource-detail", kwargs={"uuid": self.map.uuid, "resource_type": "map"}
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Map.objects.filter(uuid=self.map.uuid).exists())
 
     def test_delete_screenshot(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.screenshot.uuid, "resource_type": "screenshot"},
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Screenshot.objects.filter(uuid=self.screenshot.uuid).exists())
 
     def test_delete_processing_script(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.processing_script.uuid, "resource_type": "processingscript"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.processing_script.uuid,
+                "resource_type": "processingscript",
+            },
+        )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
-        self.assertFalse(ProcessingScript.objects.filter(uuid=self.processing_script.uuid).exists())
+        self.assertFalse(
+            ProcessingScript.objects.filter(uuid=self.processing_script.uuid).exists()
+        )
 
     def test_update_geopackage_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         data = {
             "name": "Updated Geopackage",
             "description": "Updated description",
@@ -663,7 +872,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_update_geopackage_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
         self.refresh.blacklist()
         data = {
             "name": "Updated Geopackage",
@@ -675,8 +887,14 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_update_layerdefinition_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         data = {
             "name": "Updated Layer Definition",
             "description": "Updated description",
@@ -687,7 +905,13 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_update_layerdefinition_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
         self.refresh.blacklist()
         data = {
             "name": "Updated Layer Definition",
@@ -699,8 +923,11 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_update_model_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         data = {
             "name": "Updated Model",
             "description": "Updated description",
@@ -711,7 +938,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_update_model_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
         self.refresh.blacklist()
         data = {
             "name": "Updated Model",
@@ -723,8 +953,11 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_update_style_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         data = {
             "name": "Updated Style",
             "description": "Updated description",
@@ -735,7 +968,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_update_style_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
         self.refresh.blacklist()
         data = {
             "name": "Updated Style",
@@ -747,8 +983,11 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_update_wavefront_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         data = {
             "name": "Updated 3D Model",
             "description": "Updated description",
@@ -759,7 +998,10 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_update_wavefront_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
         self.refresh.blacklist()
         data = {
             "name": "Updated 3D Model",
@@ -771,70 +1013,110 @@ class TestResourceDetailView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_delete_geopackage_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
         self.assertTrue(Geopackage.objects.filter(uuid=self.geopackage.uuid).exists())
 
     def test_delete_geopackage_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.geopackage.uuid, "resource_type": "geopackage"},
+        )
         self.refresh.blacklist()
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Geopackage.objects.filter(uuid=self.geopackage.uuid).exists())
 
     def test_delete_layerdefinition_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
-        self.assertTrue(LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists())
+        self.assertTrue(
+            LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists()
+        )
 
     def test_delete_layerdefinition_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.layerdefinition.uuid, "resource_type": "layerdefinition"})
+        url = reverse(
+            "resource-detail",
+            kwargs={
+                "uuid": self.layerdefinition.uuid,
+                "resource_type": "layerdefinition",
+            },
+        )
         self.refresh.blacklist()
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 403)
-        self.assertTrue(LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists())
+        self.assertTrue(
+            LayerDefinition.objects.filter(uuid=self.layerdefinition.uuid).exists()
+        )
 
     def test_delete_model_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
         self.assertTrue(Model.objects.filter(uuid=self.model.uuid).exists())
 
     def test_delete_model_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.model.uuid, "resource_type": "model"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.model.uuid, "resource_type": "model"},
+        )
         self.refresh.blacklist()
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Model.objects.filter(uuid=self.model.uuid).exists())
 
     def test_delete_style_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
         self.assertTrue(Style.objects.filter(uuid=self.style.uuid).exists())
 
     def test_delete_style_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.style.uuid, "resource_type": "style"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.style.uuid, "resource_type": "style"},
+        )
         self.refresh.blacklist()
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Style.objects.filter(uuid=self.style.uuid).exists())
 
     def test_delete_wavefront_with_invalid_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer invalidtoken")
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
         self.assertTrue(Wavefront.objects.filter(uuid=self.wavefront.uuid).exists())
 
     def test_delete_wavefront_with_blacklisted_token(self):
-        url = reverse("resource-detail", kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"})
+        url = reverse(
+            "resource-detail",
+            kwargs={"uuid": self.wavefront.uuid, "resource_type": "3dmodel"},
+        )
         self.refresh.blacklist()
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 403)

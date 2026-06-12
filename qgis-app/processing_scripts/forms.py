@@ -1,12 +1,29 @@
 from base.forms.processing_forms import ResourceBaseCleanFileForm
 from django import forms
-from processing_scripts.models import ProcessingScript
-from taggit.forms import TagField
-from processing_scripts.validator import processing_script_validator
 from django.utils.translation import gettext_lazy as _
+from processing_scripts.models import ProcessingScript, PyQtVersion
+from processing_scripts.validator import processing_script_validator
+from taggit.forms import TagField
+
+
+class PyQtVersionMultiSelectWidget(forms.CheckboxSelectMultiple):
+    """Custom multiselect widget for PyQt versions with enhanced styling"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attrs.update({"class": "pyqt-versions-checkboxes"})
+
 
 class ResourceFormMixin(forms.ModelForm):
     tags = TagField(required=False)
+    pyqt_versions = forms.ModelMultipleChoiceField(
+        queryset=PyQtVersion.objects.all().order_by("order", "name"),
+        required=False,
+        widget=PyQtVersionMultiSelectWidget(),
+        label=_("PyQt Versions"),
+        help_text=_("Select the PyQt versions this script is compatible with"),
+    )
+
     class Meta:
         model = ProcessingScript
         fields = [
@@ -15,7 +32,8 @@ class ResourceFormMixin(forms.ModelForm):
             "name",
             "description",
             "tags",
-            "dependencies"
+            "dependencies",
+            "pyqt_versions",
         ]
 
 

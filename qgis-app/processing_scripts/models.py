@@ -10,6 +10,40 @@ from django.utils.translation import gettext_lazy as _
 SCRIPTS_STORAGE_PATH = getattr(settings, "HUB_STORAGE_PATH", "processing_scripts/%Y")
 
 
+class PyQtVersion(models.Model):
+    """PyQt Version model for tracking compatibility"""
+
+    name = models.CharField(
+        _("Name"),
+        help_text=_("PyQt version name (e.g., PyQt5, PyQt6)"),
+        max_length=50,
+        unique=True,
+    )
+
+    description = models.TextField(
+        _("Description"),
+        help_text=_("A short description of this PyQt version."),
+        max_length=500,
+        blank=True,
+        null=True,
+    )
+
+    # Ordering
+    order = models.IntegerField(
+        _("Order"),
+        help_text=_("Order value for display sorting."),
+        default=0,
+    )
+
+    class Meta:
+        ordering = ("order", "name")
+        verbose_name = _("PyQt Version")
+        verbose_name_plural = _("PyQt Versions")
+
+    def __str__(self):
+        return self.name
+
+
 class ProcessingScript(Resource):
     """
     Model for storing processing scripts
@@ -41,6 +75,15 @@ class ProcessingScript(Resource):
         help_text=_("Comma-separated list for the plugin the script needs"),
         blank=True,
         null=True,
+    )
+
+    # PyQt version compatibility - multiple versions supported
+    pyqt_versions = models.ManyToManyField(
+        PyQtVersion,
+        related_name="processing_scripts",
+        verbose_name=_("PyQt Versions"),
+        help_text=_("The PyQt versions this script is compatible with"),
+        blank=True,
     )
 
     def extension(self):

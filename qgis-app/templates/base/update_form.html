@@ -22,6 +22,47 @@ ul.as-list {
     height: 16px !important;
     margin-top: 1em;
 }
+
+/* PyQt versions checkboxes styling */
+.pyqt-versions-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pyqt-versions-checkboxes li {
+    list-style: none;
+    display: inline-block;
+    margin: 0;
+}
+
+.pyqt-versions-checkboxes label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.pyqt-versions-checkboxes label:hover {
+    border-color: #3273dc;
+    background-color: #f5f5f5;
+}
+
+.pyqt-versions-checkboxes input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.pyqt-versions-checkboxes input[type="checkbox"]:checked + label,
+.pyqt-versions-checkboxes label:has(input:checked) {
+    background-color: #3273dc;
+    color: white;
+    border-color: #3273dc;
+}
 </style>
 
 {% endblock %}
