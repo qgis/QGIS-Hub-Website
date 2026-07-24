@@ -2,3 +2,90 @@
 // All common/shared styles should be declared in the theme submodule.
 
 @import "../../node_modules/highlight.js/scss/atom-one-dark.scss";
+
+// -------------------------------------------------------
+// Auth pages — frosted-glass login card (overrides the base
+// .login-container from the shared theme submodule so the
+// Hub matches the Plugins site look)
+// -------------------------------------------------------
+.login-container {
+  border-radius: 20px;
+  border: #ffffff1c solid;
+  backdrop-filter: blur(8px);
+}
+
+@media screen and (min-width: 1024px) {
+  .login-container {
+    width: 650px !important;
+  }
+}
+
+// -------------------------------------------------------
+// Tooltip component (used on the social-login provider buttons)
+// -------------------------------------------------------
+.tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  opacity: 1 !important;
+
+  .tooltiptext {
+    visibility: hidden;
+    width: max-content;
+    max-width: 220px;
+    background-color: #363636;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    position: absolute;
+    z-index: 1000;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: normal;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #363636 transparent transparent transparent;
+    }
+  }
+
+  &:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// -------------------------------------------------------
+// Divider between social login and OSGeo ID login
+// -------------------------------------------------------
+.login-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.25rem 0;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #dbdbdb;
+  }
+
+  span {
+    padding: 0 0.75rem;
+    color: #7a7a7a;
+    font-size: 0.875rem;
+  }
+}

@@ -93,6 +93,18 @@ INSTALLED_APPS = [
     "webpack_loader",
     # Contributors Stats
     "contributors",
+    # Social authentication
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.gitlab",
+    "allauth.socialaccount.providers.openstreetmap",
+    "allauth.socialaccount.providers.microsoft",
+    "allauth.socialaccount.providers.apple",
+    "allauth.socialaccount.providers.linkedin_oauth2",
+    "allauth.socialaccount.providers.telegram",
 ]
 
 DATABASES = {
@@ -112,6 +124,40 @@ DATABASES = {
 PAGINATION_DEFAULT_PAGINATION = 20
 PAGINATION_DEFAULT_PAGINATION_HUB = 30
 LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+# django-allauth configuration
+ACCOUNT_SIGNUP_FIELDS = ["email", "username*", "password1*", "password2*"]
+ACCOUNT_LOGIN_METHODS = {"username"}
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_ENABLED = False
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    },
+    "github": {
+        "SCOPE": ["user:email"],
+    },
+    "gitlab": {
+        "SCOPE": ["read_user"],
+    },
+    "openstreetmap": {},
+    "microsoft": {
+        "tenant": "common",
+        "SCOPE": ["User.Read"],
+    },
+    "apple": {},
+    "linkedin_oauth2": {
+        "SCOPE": ["openid", "profile", "email"],
+    },
+    "telegram": {},
+}
+
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_FORMS = {"signup": "social_forms.SocialSignupForm"}
 SERVE_STATIC_MEDIA = DEBUG
 DEFAULT_HUB_SITE = os.environ.get("DEFAULT_HUB_SITE", "https://hub.qgis.org/")
 
@@ -152,6 +198,9 @@ MATOMO_URL = "//matomo.qgis.org/"
 
 # Default primary key type
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# allauth requires its AccountMiddleware
+MIDDLEWARE.append("allauth.account.middleware.AccountMiddleware")
 
 
 # Sentry
