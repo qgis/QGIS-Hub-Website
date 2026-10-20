@@ -144,7 +144,7 @@ class Resource(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        if os.path.isfile(self.file.path):
+        if self.file and os.path.isfile(self.file.path):
             os.remove(self.file.path)
         super(Resource, self).delete(*args, **kwargs)
 
