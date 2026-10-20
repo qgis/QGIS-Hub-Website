@@ -45,6 +45,25 @@ class ResourceBaseSearchForm(forms.Form):
 
 
 class ResourceBaseCleanFileForm(object):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Only maps and screenshots publish guidelines, so only they ask the
+        # author to agree to them. Only on upload too: an author who is editing
+        # a resource has already agreed.
+        has_guidelines = getattr(self, "is_map", False) or getattr(
+            self, "is_screenshot", False
+        )
+        is_upload = getattr(self, "instance", None) is None or self.instance.pk is None
+        if has_guidelines and is_upload:
+            self.fields["guidelines_acknowledged"] = forms.BooleanField(
+                required=True,
+                label=_(
+                    "I understand that my upload may be removed if it does not "
+                    "follow the guidelines above."
+                ),
+            )
+
     def clean_file(self):
         """
         Cleaning file field data.

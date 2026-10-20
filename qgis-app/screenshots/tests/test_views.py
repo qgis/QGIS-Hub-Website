@@ -61,7 +61,11 @@ class TestFormValidation(SetUpTest, TestCase):
         )
         form = UploadForm(data={})
         self.assertFalse(form.is_valid())
-        data = {"name": "Homepage Screenshot", "description": "Test upload with valid data"}
+        data = {
+            "name": "Homepage Screenshot",
+            "description": "Test upload with valid data",
+            "guidelines_acknowledged": True,
+        }
         file_data = { "file": uploaded_screenshot}
         form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
@@ -73,6 +77,7 @@ class TestFormValidation(SetUpTest, TestCase):
         data = {
             "name": "Invalid",
             "description": "Test upload invalid screenshot file extension",
+            "guidelines_acknowledged": True,
         }
         file_data = { "file": uploaded_screenshot}
         form = UploadForm(data, file_data)
@@ -132,6 +137,7 @@ class TestUploadScreenshot(SetUpTest, TestCase):
         data = {
             "name": "Homepage Screenshot",
             "description": "Test upload an acceptable screenshot size",
+            "guidelines_acknowledged": True,
             "file": uploaded_screenshot,
             "tags": "screenshot,project,test"
         }
@@ -175,6 +181,7 @@ class TestUpdateScreenshot(SetUpTest, TestCase):
         data = {
             "name": "Updated Screenshot",
             "description": "Test update screenshot",
+            "guidelines_acknowledged": True,
             "file": uploaded_screenshot,
             "tags": "screenshot,project,test"
         }

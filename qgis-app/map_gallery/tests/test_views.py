@@ -61,7 +61,11 @@ class TestFormValidation(SetUpTest, TestCase):
         )
         form = UploadForm(data={})
         self.assertFalse(form.is_valid())
-        data = {"name": "Homepage Map", "description": "Test upload with valid data"}
+        data = {
+            "name": "Homepage Map",
+            "description": "Test upload with valid data",
+            "guidelines_acknowledged": True,
+        }
         file_data = { "file": uploaded_map}
         form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
@@ -73,6 +77,7 @@ class TestFormValidation(SetUpTest, TestCase):
         data = {
             "name": "Invalid",
             "description": "Test upload invalid map file extension",
+            "guidelines_acknowledged": True,
         }
         file_data = { "file": uploaded_map}
         form = UploadForm(data, file_data)
@@ -132,6 +137,7 @@ class TestUploadMap(SetUpTest, TestCase):
         data = {
             "name": "Homepage Map",
             "description": "Test upload an acceptable map size",
+            "guidelines_acknowledged": True,
             "file": uploaded_map,
             "tags": "map,project,test"
         }
@@ -175,6 +181,7 @@ class TestUpdateMap(SetUpTest, TestCase):
         data = {
             "name": "Updated Map",
             "description": "Test update map",
+            "guidelines_acknowledged": True,
             "file": uploaded_map,
             "tags": "map,project,test"
         }
