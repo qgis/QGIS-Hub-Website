@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.models import User
 
 
@@ -24,10 +24,11 @@ class ResourceManagerRequiredMixin(UserPassesTestMixin):
         return self.request.user.is_staff or is_resources_manager(self.request.user)  # Checks if user is a staff member
 
     def handle_no_permission(self):
-        """Redirects unauthorized users to a login page or a custom error page."""
+        """Show a 404 to signed in users, and send everyone else to sign in."""
         if self.request.user.is_authenticated:
             return render(self.request, '404.html', status=404)
-        return redirect('login')
+        # AccessMixin knows the login URL and keeps the page they asked for
+        return super().handle_no_permission()
 
 class MapPublisherRequiredMixin(UserPassesTestMixin):
     """Mixin to restrict access to staff users only."""
@@ -36,7 +37,8 @@ class MapPublisherRequiredMixin(UserPassesTestMixin):
         return self.request.user.is_staff or is_map_publisher(self.request.user)  # Checks if user is a staff member
 
     def handle_no_permission(self):
-        """Redirects unauthorized users to a login page or a custom error page."""
+        """Show a 404 to signed in users, and send everyone else to sign in."""
         if self.request.user.is_authenticated:
             return render(self.request, '404.html', status=404)
-        return redirect('login')
+        # AccessMixin knows the login URL and keeps the page they asked for
+        return super().handle_no_permission()
