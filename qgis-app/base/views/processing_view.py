@@ -474,7 +474,9 @@ class ResourceBaseDeleteView(LoginRequiredMixin, ResourceBaseContextMixin, Delet
         return reverse_lazy(url_name)
 
 
-class ResourceBaseReviewView(ResourceBaseMixin, View):
+class ResourceBaseReviewView(
+    LoginRequiredMixin, ResourceManagerRequiredMixin, ResourceBaseMixin, View
+):
     form_class = ResourceBaseReviewForm
     http_method_names = ["post"]
 
