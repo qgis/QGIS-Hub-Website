@@ -153,18 +153,20 @@ def resource_update_notify(
     if recipients:
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
+        link = f"https://{domain}{resource.get_absolute_url()}"
+        message = f"""
+{resource_type} {resource.name} {approval_state} by {staff}.
+{comment}
+Link: {link}
+"""
+        if not resource.approved:
+            grace_days = settings.REJECTED_RESOURCE_GRACE_DAYS
+            message += f"""
+Please update your {resource_type.lower()} within {grace_days} days. We remove resources that are not updated in that time, and you are welcome to upload again afterwards.
+"""
         send_mail_wrapper(
-            _("%s %s %s notification.") % (resource_type, resource, approval_state),
-            _("\r\n%s %s %s by %s.\r\n%s\r\nLink: https://%s%s\r\n")
-            % (
-                resource_type,
-                resource.name,
-                approval_state,
-                staff,
-                comment,
-                domain,
-                resource.get_absolute_url(),
-            ),
+            f"{resource_type} {resource} {approval_state} notification.",
+            message,
             mail_from,
             recipients,
             fail_silently=True,
