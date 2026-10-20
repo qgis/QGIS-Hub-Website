@@ -5,6 +5,7 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
@@ -49,6 +50,10 @@ class ModelUpdateView(ResourceMixin, ResourceBaseUpdateView):
     """Update the Model"""
 
     form_class = UpdateForm
+
+
+class ModelReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a model from the review queue"""
 
 
 class ModelUnapproveView(ResourceMixin, ResourceBaseUnapproveView):

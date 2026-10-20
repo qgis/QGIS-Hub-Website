@@ -11,6 +11,7 @@
                 {{ object.name }} on QGIS.org
             </h2>
             <form action="" method="post" class="box-content">{% csrf_token %}
+                <input type="hidden" name="next" value="{{ next_url }}">
                 <div class="notification is-primary3 is-light">
                     <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
                     {% if not object.is_publishable %}
@@ -32,7 +33,7 @@
                             {% endif %}
                         </span>
                     </button>
-                    <a class="button" href="{% url url_list %}">
+                    <a class="button" href="{% if next_url %}{{ next_url }}{% else %}{% url url_list %}{% endif %}">
                         <span class="icon"><i class="fas fa-times"></i></span>
                         <span>{% trans "Cancel" %}</span>
                     </a>

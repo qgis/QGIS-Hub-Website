@@ -367,8 +367,8 @@ class TestReviewModel(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("model_unapproved"))
         url = reverse("model_detail", kwargs={"pk": self.model_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
@@ -388,8 +388,8 @@ class TestReviewModel(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("model_unapproved"))
         url = reverse("model_detail", kwargs={"pk": self.model_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

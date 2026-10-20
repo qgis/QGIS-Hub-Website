@@ -1,0 +1,65 @@
+{% extends 'base/base.html' %}{% load i18n humanize %}
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">{% trans "Review" %} {{ resource_name }}: {{ object_detail.name }}</h2>
+
+            <form method="post" action="{% url url_review pk=object_detail.id %}" class="box-content">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+
+                <div class="notification is-info is-light">
+                    <span class="icon"><i class="fas fa-info-circle"></i></span>
+                    {% blocktrans with creator=object_detail.get_creator_name %}Uploaded by {{ creator }}. Your comment goes to the author by email.{% endblocktrans %}
+                </div>
+
+                {% if object_detail.review_set.all %}
+                <div class="field">
+                    <label class="label">{% trans "Earlier comments" %}</label>
+                    <div class="control">
+                        {% for review in object_detail.review_set.all %}
+                        <div class="notification is-primary3 is-light mb-2">
+                            <p class="content">{{ review.comment }}</p>
+                            <p class="has-text-darker is-size-7">
+                                <i><small>{% blocktrans with reviewer=review.reviewer|title when=review.review_date|naturaltime %}Reviewed by {{ reviewer }} {{ when }}{% endblocktrans %}</small></i>
+                            </p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="field">
+                    <label class="label">{% trans "Your decision" %}</label>
+                    <div class="control">
+                        {% for radio in form.approval %}
+                            <label class="radio mr-4">
+                                {{ radio.tag }}
+                                {{ radio.choice_label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label" for="{{ form.comment.id_for_label }}">{% trans "Comment" %}</label>
+                    <div class="control">
+                        {{ form.comment }}
+                    </div>
+                    <p class="help">{% trans "Say what is good, or what the author needs to change." %}</p>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="button is-success">
+                        <span class="icon"><i class="fas fa-clipboard-check"></i></span>
+                        <span>{% trans "Submit review" %}</span>
+                    </button>
+                    <a class="button" href="{{ next_url }}">
+                        <span class="icon"><i class="fas fa-times"></i></span>
+                        <span>{% trans "Cancel" %}</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

@@ -7,19 +7,21 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
     ResourceBaseUnapproveView,
     check_resources_access,
     resource_nav_content,
+    resolve_next_url,
     resource_notify,
 )
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wavefronts.forms import UpdateForm, UploadForm
@@ -96,10 +98,18 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
         # Without this next line the tags won't be saved.
         form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
-        msg = _("The %s has been successfully updated." % self.resource_name)
+        msg = f"The {self.resource_name} has been successfully updated."
         messages.success(self.request, msg, "success", fail_silently=True)
-        url_name = "%s_detail" % self.resource_name_url_base
-        return HttpResponseRedirect(reverse_lazy(url_name, kwargs={"pk": obj.id}))
+        fallback = reverse(
+            f"{self.resource_name_url_base}_detail", kwargs={"pk": obj.id}
+        )
+        return HttpResponseRedirect(
+            resolve_next_url(self.request, fallback, use_referer=False)
+        )
+
+
+class WavefrontReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a Wavefront from the review queue"""
 
 
 class WavefrontUnapproveView(ResourceMixin, ResourceBaseUnapproveView):

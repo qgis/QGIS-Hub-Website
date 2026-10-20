@@ -214,8 +214,8 @@ class TestReviewScreenshot(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("screenshot_unapproved"))
         url = reverse("screenshot_detail", kwargs={"pk": self.screenshot_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in Approve page.")
@@ -235,8 +235,8 @@ class TestReviewScreenshot(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("screenshot_unapproved"))
         url = reverse("screenshot_detail", kwargs={"pk": self.screenshot_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

@@ -5,6 +5,7 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
@@ -49,6 +50,10 @@ class GeopackageUpdateView(ResourceMixin, ResourceBaseUpdateView):
     """Update the GeoPackage"""
 
     form_class = UpdateForm
+
+class GeopackageReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a GeoPackage from the review queue"""
+
 
 class GeopackageUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
     """Unapprove a GeoPackage"""

@@ -140,8 +140,9 @@
 
     {% if user.is_staff or is_style_manager %}
     <form method="post" action="{% url url_review pk=object_detail.id %}">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ next_url }}">
         <div class="field">
-            <label class="label">Approval:</label>
+            <label class="label">{% trans "Your decision" %}</label>
             <div class="control">
                 <label class="radio">
                     {{ form.approval.0 }}
@@ -152,7 +153,7 @@
             </div>
         </div>
         <div class="field">
-            <label class="label">Comment:</label>
+            <label class="label" for="{{ form.comment.id_for_label }}">{% trans "Comment" %}</label>
             <div class="control">
                 {{ form.comment }}
             </div>
@@ -162,7 +163,7 @@
                 <span class="icon is-small">
                     <i class="fas fa-check"></i>
                 </span>
-                <span>Submit Review</span>
+                <span>{% trans "Submit review" %}</span>
             </button>
         </div>
     </form>

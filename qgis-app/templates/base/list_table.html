@@ -18,7 +18,7 @@
     </thead>
     <tbody>
         {% for object in object_list %}
-            <tr style="cursor: pointer;" onclick="if (this.hasAttribute('data-resource-id')) { event.preventDefault(); event.stopPropagation(); const id = this.getAttribute('data-resource-id'); if (window.openPreview) window.openPreview(id); }"
+            <tr 
                 {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
                 {% if object.file and object.file.file %}
                 data-resource-id="{{ object.id }}"
@@ -34,7 +34,12 @@
                 data-resource-type="{{ resource_name }}"
                 {% endif %}
                 {% endif %}
-            >                <td class="object-thumbnail">
+            >                
+                <td 
+                    class="object-thumbnail" 
+                    style="cursor: pointer;" 
+                    onclick="if (this.closest('[data-resource-id]')) { event.preventDefault(); event.stopPropagation(); const id = this.closest('[data-resource-id]').getAttribute('data-resource-id'); if (window.openPreview) window.openPreview(id); }"
+                >
                 {% if object.thumbnail_image and object.thumbnail_image.file %}
                     {% thumbnail object.thumbnail_image "96x96" format="PNG" as im %}
                         <img alt="{% trans "object icon" %}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" />
@@ -73,9 +78,12 @@
                 <td>{{ object.get_creator_name|title }}</td>
                 <td>{{ object.upload_date|date:"d M. Y" }}</td>
                 <td>
+                    {% if not object.approved and is_resources_manager %}
+                    <a class="button is-small is-link is-outlined" href="{% url url_review_confirm pk=object.id %}?next={{ request.get_full_path|urlencode }}" title="{% trans "Approve or reject this resource" %}" onclick="event.stopPropagation();"><i class="fas fa-clipboard-check"></i></a>
+                    {% endif %}
                     {% if user.is_staff or user == object.creator %}
-                    <a class="button is-small is-success is-outlined" href="{% url url_update pk=object.id %}" title="{% trans "Edit" %}" onclick="event.stopPropagation();"><i class="fas fa-pencil-alt"></i></a>
-                    <a class="button is-small is-danger is-outlined" href="{% url url_delete pk=object.id %}" title="{% trans "Delete" %}" onclick="event.stopPropagation();"><i class="fas fa-trash-alt"></i></a>
+                    <a class="button is-small is-success is-outlined" href="{% url url_update pk=object.id %}?next={{ request.get_full_path|urlencode }}" title="{% trans "Edit" %}" onclick="event.stopPropagation();"><i class="fas fa-pencil-alt"></i></a>
+                    <a class="button is-small is-danger is-outlined" href="{% url url_delete pk=object.id %}?next={{ request.get_full_path|urlencode }}" title="{% trans "Delete" %}" onclick="event.stopPropagation();"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
                     <a class="button is-small is-success is-outlined" href="{% url url_download pk=object.id %}" title="{% trans "Download" %}" onclick="event.stopPropagation();"><i class="fas fa-download"></i></a>
                 </td>

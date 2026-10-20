@@ -31,11 +31,13 @@ data-resource-type="{{ resource_name }}"
             is-flex-direction-column
             is-justify-content-space-between
         "
-        style="cursor: pointer;"
-        onclick="if (this.closest('[data-resource-id]')) { event.preventDefault(); event.stopPropagation(); const id = this.closest('[data-resource-id]').getAttribute('data-resource-id'); if (window.openPreview) window.openPreview(id); }"
         >
 
-        <div class="card-image">
+        <div 
+            class="card-image"
+            style="cursor: pointer;"
+            onclick="if (this.closest('[data-resource-id]')) { event.preventDefault(); event.stopPropagation(); const id = this.closest('[data-resource-id]').getAttribute('data-resource-id'); if (window.openPreview) window.openPreview(id); }"
+            >
             <figure class="image m-0 is-4by3">
                 {% if object.thumbnail_image and object.thumbnail_image.file %}
                     {% thumbnail object.thumbnail_image "420x420" crop="center" format="PNG" as im %}
@@ -110,18 +112,42 @@ data-resource-type="{{ resource_name }}"
         </div>
 
         <footer class="card-footer">
-            <a href="{% url url_download pk=object.id %}" class="card-footer-item" onclick="event.stopPropagation();">
+            <a href="{% url url_detail pk=object.id %}" class="card-footer-item has-text-primary3" onclick="event.stopPropagation();">
                 <span class="icon">
-                    <i class="fas fa-download"></i>
+                    <i class="fas fa-info-circle"></i>
                 </span>
-                <span>Download</span>
+                <span>{% trans "Details" %}</span>
             </a>
-            <p class="card-footer-item m-0">
-                <span class="icon">
-                    <i class="fas fa-download"></i>
-                </span>
-                <span>{{ object.download_count|intcomma }}</span>
-            </p>
+            {% if object.approved %}
+                <a href="{% url url_download pk=object.id %}" class="card-footer-item" onclick="event.stopPropagation();">
+                    <span class="icon">
+                        <i class="fas fa-download"></i>
+                    </span>
+                    <span>{{ object.download_count|intcomma }}</span>
+                </a>
+            {% else %}
+                {% if is_resources_manager %}
+                <a
+                    class="card-footer-item has-text-link"
+                    href="{% url url_review_confirm pk=object.id %}?next={{ request.get_full_path|urlencode }}"
+                    title="{% trans "Approve or reject this resource" %}" onclick="event.stopPropagation();">
+                    <span class="icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </span>
+                    <span>{% trans "Review" %}</span>
+                </a>
+                {% endif %}
+                {% if user.is_staff or user == object.creator %}
+                <a
+                    class="card-footer-item has-text-danger"
+                    href="{% url url_delete pk=object.id %}?next={{ request.get_full_path|urlencode }}"
+                    title="{% trans "Delete this resource" %}" onclick="event.stopPropagation();">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                </a>
+                {% endif %}
+            {% endif %}
         </footer>
     </div>
 </div>

@@ -7,6 +7,7 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
@@ -17,6 +18,7 @@ from base.views.processing_view import (
     get_object_or_404,
     messages,
     resource_nav_content,
+    resolve_next_url,
     resource_notify,
     reverse_lazy,
     slugify,
@@ -25,6 +27,7 @@ from layerdefinitions.file_handler import get_provider, get_url_datasource
 from layerdefinitions.forms import UpdateForm, UploadForm
 from layerdefinitions.license import zipped_with_license
 from layerdefinitions.models import LayerDefinition, Review
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
 from django.conf import settings
@@ -95,10 +98,14 @@ class LayerDefinitionUpdateView(ResourceMixin, ResourceBaseUpdateView):
         # Without this next line the tags won't be saved.
         form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
-        msg = _("The %s has been successfully updated." % self.resource_name)
+        msg = f"The {self.resource_name} has been successfully updated."
         messages.success(self.request, msg, "success", fail_silently=True)
-        url_name = "%s_detail" % self.resource_name_url_base
-        return HttpResponseRedirect(reverse_lazy(url_name, kwargs={"pk": obj.id}))
+        fallback = reverse(
+            f"{self.resource_name_url_base}_detail", kwargs={"pk": obj.id}
+        )
+        return HttpResponseRedirect(
+            resolve_next_url(self.request, fallback, use_referer=False)
+        )
 
 
 class LayerDefinitionListView(ResourceMixin, ResourceBaseListView):
@@ -121,6 +128,10 @@ class LayerDefinitionDeleteView(ResourceMixin, ResourceBaseDeleteView):
 
 class LayerDefinitionReviewView(ResourceMixin, ResourceBaseReviewView):
     """Create a review."""
+
+
+class LayerDefinitionReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a Layer Definition from the review queue"""
 
 
 class LayerDefinitionUnapproveView(ResourceMixin, ResourceBaseUnapproveView):

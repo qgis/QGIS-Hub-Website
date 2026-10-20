@@ -4,6 +4,7 @@
         <div class="container">
             <h2 class="title is-4">{% trans "Unapprove"%} {{ resource_name }}: {{ object.name }}</h2>
             <form method="post" action="{% url url_review pk=object_detail.id %}" class="box-content">
+                <input type="hidden" name="next" value="{{ next_url }}">
                 {% csrf_token %}
                 <div class="notification is-warning is-light">
                     <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
@@ -21,7 +22,7 @@
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Comment:</label>
+                    <label class="label" for="{{ form.comment.id_for_label }}">{% trans "Comment" %}</label>
                     <div class="control">
                         {{ form.comment }}
                     </div>
@@ -31,7 +32,7 @@
                         <span class="icon"><i class="fas fa-trash-alt"></i></span>
                         <span>{% trans "Unapprove" %}</span>
                     </button>
-                    <a class="button" href="{% url url_list %}">
+                    <a class="button" href="{% if next_url %}{{ next_url }}{% else %}{% url url_list %}{% endif %}">
                         <span class="icon"><i class="fas fa-times"></i></span>
                         <span>{% trans "Cancel" %}</span>
                     </a>

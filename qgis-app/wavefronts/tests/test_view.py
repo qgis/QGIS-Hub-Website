@@ -105,8 +105,8 @@ class TestReviewWavefront(SetUpTest, TestCase):
             "\nThis should be in Approve page.",
             mail.outbox[-1].body,
         )
+        self.assertRedirects(response, reverse("wavefront_unapproved"))
         url = reverse("wavefront_detail", kwargs={"pk": self.object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
@@ -130,8 +130,8 @@ class TestReviewWavefront(SetUpTest, TestCase):
             "\nThis should be in requiring update page.",
             mail.outbox[-1].body,
         )
+        self.assertRedirects(response, reverse("wavefront_unapproved"))
         url = reverse("wavefront_detail", kwargs={"pk": self.object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

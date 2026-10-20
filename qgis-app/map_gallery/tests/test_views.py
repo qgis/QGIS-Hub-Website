@@ -214,8 +214,8 @@ class TestReviewMap(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("map_unapproved"))
         url = reverse("map_detail", kwargs={"pk": self.map_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in Approve page.")
@@ -235,8 +235,8 @@ class TestReviewMap(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("map_unapproved"))
         url = reverse("map_detail", kwargs={"pk": self.map_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

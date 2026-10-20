@@ -5,12 +5,14 @@ from base.views.processing_view import (
   ResourceBaseDownload,
   ResourceBaseListView,
   ResourceBaseRequireActionListView,
+  ResourceBaseReviewConfirmView,
   ResourceBaseReviewView,
   ResourceBaseUnapprovedListView,
   ResourceBaseUpdateView,
   ResourceBaseUnapproveView,
   ResourceBaseContextMixin,
   resource_nav_content,
+  resolve_next_url,
   resource_notify,
 )
 from urllib.parse import unquote
@@ -84,7 +86,14 @@ class ScreenshotUpdateView(ResourceMixin, ResourceBaseUpdateView):
     resource_notify(obj, created=False, resource_type=self.resource_name)
     msg = _("The Screenshot has been successfully updated.")
     messages.success(self.request, msg, "success", fail_silently=True)
-    return HttpResponseRedirect(reverse("screenshot_detail", kwargs={"pk": obj.id}))
+    fallback = reverse("screenshot_detail", kwargs={"pk": obj.id})
+    return HttpResponseRedirect(
+      resolve_next_url(self.request, fallback, use_referer=False)
+    )
+
+
+class ScreenshotReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a screenshot from the review queue"""
 
 
 class ScreenshotUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
@@ -147,6 +156,9 @@ class ScreenshotTogglePublishView(MapPublisherRequiredMixin, ResourceMixin, Reso
     obj = self.get_object()
     context = self.get_context_data()
     context["object"] = obj
+    context["next_url"] = resolve_next_url(
+      request, reverse("screenshot_detail", kwargs={"pk": obj.id})
+    )
     return render(request, "base/confirm_publish.html", context)
 
   def post(self, request, *args, **kwargs):
@@ -155,7 +167,12 @@ class ScreenshotTogglePublishView(MapPublisherRequiredMixin, ResourceMixin, Reso
     obj.save()
     msg = _("The Screenshot's publishable status has been successfully updated.")
     messages.success(self.request, msg, "success", fail_silently=True)
-    return HttpResponseRedirect(reverse("screenshot_detail", kwargs={"pk": obj.id}))
+    # the referring page is this confirmation page, so only an explicit next
+    # tells us where the reader actually came from
+    fallback = reverse("screenshot_detail", kwargs={"pk": obj.id})
+    return HttpResponseRedirect(
+      resolve_next_url(request, fallback, use_referer=False)
+    )
 
 
 def screenshot_nav_content(request):
