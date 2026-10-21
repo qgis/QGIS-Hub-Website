@@ -61,7 +61,11 @@ class TestFormValidation(SetUpTest, TestCase):
         )
         form = UploadForm(data={})
         self.assertFalse(form.is_valid())
-        data = {"name": "Homepage Map", "description": "Test upload with valid data"}
+        data = {
+            "name": "Homepage Map",
+            "description": "Test upload with valid data",
+            "guidelines_acknowledged": True,
+        }
         file_data = { "file": uploaded_map}
         form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
@@ -73,6 +77,7 @@ class TestFormValidation(SetUpTest, TestCase):
         data = {
             "name": "Invalid",
             "description": "Test upload invalid map file extension",
+            "guidelines_acknowledged": True,
         }
         file_data = { "file": uploaded_map}
         form = UploadForm(data, file_data)
@@ -132,6 +137,7 @@ class TestUploadMap(SetUpTest, TestCase):
         data = {
             "name": "Homepage Map",
             "description": "Test upload an acceptable map size",
+            "guidelines_acknowledged": True,
             "file": uploaded_map,
             "tags": "map,project,test"
         }
@@ -175,6 +181,7 @@ class TestUpdateMap(SetUpTest, TestCase):
         data = {
             "name": "Updated Map",
             "description": "Test update map",
+            "guidelines_acknowledged": True,
             "file": uploaded_map,
             "tags": "map,project,test"
         }
@@ -214,8 +221,8 @@ class TestReviewMap(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("map_unapproved"))
         url = reverse("map_detail", kwargs={"pk": self.map_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in Approve page.")
@@ -235,8 +242,8 @@ class TestReviewMap(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("map_unapproved"))
         url = reverse("map_detail", kwargs={"pk": self.map_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

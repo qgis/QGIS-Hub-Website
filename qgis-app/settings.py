@@ -184,6 +184,11 @@ ACCOUNT_ACTIVATION_DAYS = (
     7  # One-week activation window; you may, of course, use a different value
 )
 
+# How long an author has to fix a rejected resource before we remove it.
+# Used by the delete_rejected_resources command and by the rejection email, so
+# the two can never disagree.
+REJECTED_RESOURCE_GRACE_DAYS = int(os.environ.get("REJECTED_RESOURCE_GRACE_DAYS", "7"))
+
 LOGIN_REDIRECT_URL = "/"
 
 # Added by Tim for snippets (and possibly other site search support)

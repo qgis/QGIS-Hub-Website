@@ -360,8 +360,8 @@ class TestModeration(TestCase):
                 "comment": "This should be in requiring update page.",
             },
         )
+        self.assertRedirects(response, reverse("style_unapproved"))
         url = reverse("style_detail", kwargs={"pk": self.uploaded_style.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")
@@ -380,8 +380,8 @@ class TestModeration(TestCase):
         response = self.client.post(
             url, {"approval": "approve", "comment": "This should be in Approve page."}
         )
+        self.assertRedirects(response, reverse("style_unapproved"))
         url = reverse("style_detail", kwargs={"pk": self.uploaded_style.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(

@@ -4,6 +4,7 @@
         <div class="container">
             <h2 class="title is-4">{% trans "Delete"%} {{ resource_name }}: {{ object.name }}</h2>
             <form action="" method="post">{% csrf_token %}
+                <input type="hidden" name="next" value="{{ next_url }}">
                 <div class="notification is-danger is-light">
                     <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
                     {% trans "Are you sure you want to permanently remove this "%}{{ resource_name }}?
@@ -13,7 +14,7 @@
                         <span class="icon"><i class="fas fa-trash-alt"></i></span>
                         <span>{% trans "Delete" %}</span>
                     </button>
-                    <a class="button" href="{% url url_list %}">
+                    <a class="button" href="{% if next_url %}{{ next_url }}{% else %}{% url url_list %}{% endif %}">
                         <span class="icon"><i class="fas fa-times"></i></span>
                         <span>{% trans "Cancel" %}</span>
                     </a>

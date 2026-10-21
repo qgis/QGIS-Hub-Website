@@ -59,7 +59,10 @@ class TestFormValidation(SetUpTest, TestCase):
         )
         form = UploadForm(data={})
         self.assertFalse(form.is_valid())
-        data = {"name": "spiky polygons", "description": "Test upload with valid data"}
+        data = {
+            "name": "spiky polygons",
+            "description": "Test upload with valid data",
+        }
         file_data = {"thumbnail_image": uploaded_thumbnail, "file": uploaded_gpkg}
         form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
@@ -222,8 +225,8 @@ class TestReviewGeopackage(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("geopackage_unapproved"))
         url = reverse("geopackage_detail", kwargs={"pk": self.gpkg_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<strong>staff</strong> approved these changes now </span>")
@@ -243,8 +246,8 @@ class TestReviewGeopackage(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("geopackage_unapproved"))
         url = reverse("geopackage_detail", kwargs={"pk": self.gpkg_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

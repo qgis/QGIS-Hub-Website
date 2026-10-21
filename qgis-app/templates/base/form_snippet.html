@@ -5,7 +5,7 @@
     {% if field.field.widget|klass == 'CheckboxInput' %}
     <div class="control">
       <label for="{{ field.html_name }}" class="checkbox label{{ field.css_classes }}">
-        <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" {% if field.value %}checked="checked"{% endif %} />
+        <input type="checkbox" id="{{ field.html_name }}" name="{{ field.html_name }}" {% if field.value %}checked="checked"{% endif %} {% if field.field.required %}required{% endif %} />
         {{ field.label }}
       </label>
       {% if field.errors %}

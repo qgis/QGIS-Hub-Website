@@ -7,11 +7,13 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
     ResourceBaseUnapproveView,
     resource_nav_content,
+    resolve_next_url,
     resource_notify,
 )
 from django.conf import settings
@@ -132,7 +134,14 @@ class StyleUpdateView(ResourceMixin, ResourceBaseUpdateView):
         resource_notify(obj, created=False, resource_type=self.resource_name)
         msg = _("The Style has been successfully updated.")
         messages.success(self.request, msg, "success", fail_silently=True)
-        return HttpResponseRedirect(reverse_lazy("style_detail", kwargs={"pk": obj.id}))
+        fallback = reverse("style_detail", kwargs={"pk": obj.id})
+        return HttpResponseRedirect(
+            resolve_next_url(self.request, fallback, use_referer=False)
+        )
+
+
+class StyleReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a style from the review queue"""
 
 
 class StyleUnapproveView(ResourceMixin, ResourceBaseUnapproveView):

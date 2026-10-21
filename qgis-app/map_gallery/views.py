@@ -6,12 +6,14 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
     ResourceBaseUnapproveView,
     ResourceBaseContextMixin,
     resource_nav_content,
+    resolve_next_url,
     resource_notify,
 )
 from urllib.parse import unquote
@@ -95,7 +97,14 @@ class MapUpdateView(ResourceMixin, ResourceBaseUpdateView):
     resource_notify(obj, created=False, resource_type=self.resource_name)
     msg = _("The Map has been successfully updated.")
     messages.success(self.request, msg, "success", fail_silently=True)
-    return HttpResponseRedirect(reverse("map_detail", kwargs={"pk": obj.id}))
+    fallback = reverse("map_detail", kwargs={"pk": obj.id})
+    return HttpResponseRedirect(
+      resolve_next_url(self.request, fallback, use_referer=False)
+    )
+
+class MapReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a map from the review queue"""
+
 
 class MapUnapproveView(ResourceMixin, ResourceBaseUnapproveView):
   """Unapprove a Map"""
@@ -156,6 +165,9 @@ class MapTooglePublishView(MapPublisherRequiredMixin, ResourceMixin, ResourceBas
     obj = self.get_object()
     context = self.get_context_data()
     context["object"] = obj
+    context["next_url"] = resolve_next_url(
+      request, reverse("map_detail", kwargs={"pk": obj.id})
+    )
     return render(request, "base/confirm_publish.html", context)
 
   def post(self, request, *args, **kwargs):
@@ -164,7 +176,12 @@ class MapTooglePublishView(MapPublisherRequiredMixin, ResourceMixin, ResourceBas
     obj.save()
     msg = _("The Map's publishable status has been successfully updated.")
     messages.success(self.request, msg, "success", fail_silently=True)
-    return HttpResponseRedirect(reverse("map_detail", kwargs={"pk": obj.id}))
+    # the referring page is this confirmation page, so only an explicit next
+    # tells us where the reader actually came from
+    fallback = reverse("map_detail", kwargs={"pk": obj.id})
+    return HttpResponseRedirect(
+      resolve_next_url(request, fallback, use_referer=False)
+    )
 
 
 def map_nav_content(request):

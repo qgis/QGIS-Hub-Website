@@ -22,6 +22,7 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
@@ -43,6 +44,30 @@ def check_resources_access(user: User, resource: models.base) -> bool:
     """Check if user is the creator of the resource or is_staff."""
 
     return user.is_staff or resource.creator == user or is_resources_manager(user)
+
+
+def resolve_next_url(request, fallback: str, use_referer: bool = True) -> str:
+    """Return a safe same host URL to send the user back to.
+
+    An action started from a page should end on that page. We look at an
+    explicit next parameter first, then at the referring page. Anything that
+    points at another host is dropped so these views cannot be used as an open
+    redirect.
+    """
+
+    candidates = [request.POST.get("next"), request.GET.get("next")]
+    if use_referer:
+        candidates.append(request.META.get("HTTP_REFERER"))
+
+    for candidate in candidates:
+        if candidate and url_has_allowed_host_and_scheme(
+            candidate,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            return candidate
+
+    return fallback
 
 
 def send_mail_wrapper(subject, message, mail_from, recipients, fail_silently=True):
@@ -128,18 +153,20 @@ def resource_update_notify(
     if recipients:
         domain = Site.objects.get_current().domain
         mail_from = settings.DEFAULT_FROM_EMAIL
+        link = f"https://{domain}{resource.get_absolute_url()}"
+        message = f"""
+{resource_type} {resource.name} {approval_state} by {staff}.
+{comment}
+Link: {link}
+"""
+        if not resource.approved:
+            grace_days = settings.REJECTED_RESOURCE_GRACE_DAYS
+            message += f"""
+Please update your {resource_type.lower()} within {grace_days} days. We remove resources that are not updated in that time, and you are welcome to upload again afterwards.
+"""
         send_mail_wrapper(
-            _("%s %s %s notification.") % (resource_type, resource, approval_state),
-            _("\r\n%s %s %s by %s.\r\n%s\r\nLink: https://%s%s\r\n")
-            % (
-                resource_type,
-                resource.name,
-                approval_state,
-                staff,
-                comment,
-                domain,
-                resource.get_absolute_url(),
-            ),
+            f"{resource_type} {resource} {approval_state} notification.",
+            message,
             mail_from,
             recipients,
             fail_silently=True,
@@ -230,8 +257,13 @@ class ResourceBaseContextMixin(ContextMixin):
         context["url_update"] = "%s_update" % self.resource_name_url_base
         context["url_delete"] = "%s_delete" % self.resource_name_url_base
         context["url_review"] = "%s_review" % self.resource_name_url_base
+        context["url_review_confirm"] = f"{self.resource_name_url_base}_review_confirm"
         context["url_detail"] = "%s_detail" % self.resource_name_url_base
         context["url_unapprove"] = "%s_unapprove" % self.resource_name_url_base
+
+        # lets the list templates show the review action to reviewers only
+        context["is_resources_manager"] = is_resources_manager(self.request.user)
+
         context["app_label"] = self.model._meta.app_label
         context["model_name"] = self.model._meta.model_name
         return context
@@ -323,6 +355,12 @@ class ResourceBaseDetailView(ResourceBaseContextMixin, DetailView):
         if user.is_staff or is_resources_manager(user):
             context["form"] = ResourceBaseReviewForm(resource_name=self.resource_name)
             context["is_style_manager"] = is_resources_manager(user)
+            # a review started here sends the reviewer back to the queue they
+            # came from, or to the waiting review queue when we cannot tell
+            context["next_url"] = resolve_next_url(
+                self.request,
+                reverse(f"{self.resource_name_url_base}_unapproved"),
+            )
         if self.is_3d_model:
             context["url_viewer"] = "%s_viewer" % self.resource_name_url_base
         if is_map_publisher(user):
@@ -354,10 +392,14 @@ class ResourceBaseUpdateView(LoginRequiredMixin, ResourceBaseContextMixin, Updat
         # Without this next line the tags won't be saved.
         form.save_m2m()
         resource_notify(obj, created=False, resource_type=self.resource_name)
-        msg = _("The %s has been successfully updated." % self.resource_name)
+        msg = f"The {self.resource_name} has been successfully updated."
         messages.success(self.request, msg, "success", fail_silently=True)
-        url_name = "%s_detail" % self.resource_name_url_base
-        return HttpResponseRedirect(reverse_lazy(url_name, kwargs={"pk": obj.id}))
+        fallback = reverse(
+            f"{self.resource_name_url_base}_detail", kwargs={"pk": obj.id}
+        )
+        return HttpResponseRedirect(
+            resolve_next_url(self.request, fallback, use_referer=False)
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -453,6 +495,40 @@ class ResourceBaseUnapproveView(LoginRequiredMixin, ResourceManagerRequiredMixin
         return "base/confirm_unapprove.html"
 
 
+class ResourceBaseReviewConfirmView(
+    LoginRequiredMixin, ResourceManagerRequiredMixin, ResourceBaseDetailView
+):
+    """
+    Confirmation page for approving or rejecting a resource.
+
+    A reviewer reaches this page from the Review action in the list, so we keep
+    the page they came from and send them back there once they are done.
+    """
+
+    def get_template_names(self):
+        return "base/confirm_review.html"
+
+    def get(self, request, *args, **kwargs):
+        object = self.get_object()
+        if object.approved:
+            # nothing to review, so show the resource instead
+            return HttpResponseRedirect(
+                reverse(
+                    f"{self.resource_name_url_base}_detail",
+                    kwargs={"pk": object.id},
+                )
+            )
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["next_url"] = resolve_next_url(
+            self.request,
+            reverse(f"{self.resource_name_url_base}_unapproved"),
+        )
+        return context
+
+
 class ResourceBaseDeleteView(LoginRequiredMixin, ResourceBaseContextMixin, DeleteView):
     """
     Delete a resource instance.
@@ -469,12 +545,28 @@ class ResourceBaseDeleteView(LoginRequiredMixin, ResourceBaseContextMixin, Delet
             return HttpResponseRedirect(reverse(url_name))
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["next_url"] = resolve_next_url(
+            self.request,
+            reverse(f"{self.resource_name_url_base}_list"),
+            use_referer=False,
+        )
+        return context
+
     def get_success_url(self):
-        url_name = "%s_list" % self.resource_name_url_base
-        return reverse_lazy(url_name)
+        fallback = reverse(f"{self.resource_name_url_base}_list")
+        # the referring page is often the resource we just deleted, so only an
+        # explicit next is trusted here
+        next_url = resolve_next_url(self.request, fallback, use_referer=False)
+        if next_url.split("?")[0] == self.object.get_absolute_url():
+            return fallback
+        return next_url
 
 
-class ResourceBaseReviewView(ResourceBaseMixin, View):
+class ResourceBaseReviewView(
+    LoginRequiredMixin, ResourceManagerRequiredMixin, ResourceBaseMixin, View
+):
     form_class = ResourceBaseReviewForm
     http_method_names = ["post"]
 
@@ -489,20 +581,22 @@ class ResourceBaseReviewView(ResourceBaseMixin, View):
             if data["approval"] == "approve":
                 object.approved = True
                 object.require_action = False
-                msg = _("The %s has been approved." % self.resource_name)
+                msg = f"The {self.resource_name} has been approved."
                 messages.success(request, msg, "success", fail_silently=True)
             else:
                 object.approved = False
                 object.require_action = True
-                msg = _("The %s has been rejected." % self.resource_name)
+                msg = f"The {self.resource_name} has been rejected."
                 messages.success(request, msg, "error", fail_silently=True)
             object.save()
             # send email notification
             resource_update_notify(
                 object, object.creator, request.user, self.resource_name
             )
-        url_name = "%s_detail" % self.resource_name_url_base
-        return HttpResponseRedirect(reverse(url_name, kwargs={"pk": self.kwargs["pk"]}))
+        # go back to the page the review was started from, which is usually the
+        # waiting review queue
+        fallback = reverse(f"{self.resource_name_url_base}_unapproved")
+        return HttpResponseRedirect(resolve_next_url(request, fallback))
 
 
 class ResourceBaseDownload(ResourceBaseContextMixin, View):

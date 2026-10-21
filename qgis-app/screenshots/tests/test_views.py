@@ -61,7 +61,11 @@ class TestFormValidation(SetUpTest, TestCase):
         )
         form = UploadForm(data={})
         self.assertFalse(form.is_valid())
-        data = {"name": "Homepage Screenshot", "description": "Test upload with valid data"}
+        data = {
+            "name": "Homepage Screenshot",
+            "description": "Test upload with valid data",
+            "guidelines_acknowledged": True,
+        }
         file_data = { "file": uploaded_screenshot}
         form = UploadForm(data, file_data)
         self.assertTrue(form.is_valid())
@@ -73,6 +77,7 @@ class TestFormValidation(SetUpTest, TestCase):
         data = {
             "name": "Invalid",
             "description": "Test upload invalid screenshot file extension",
+            "guidelines_acknowledged": True,
         }
         file_data = { "file": uploaded_screenshot}
         form = UploadForm(data, file_data)
@@ -132,6 +137,7 @@ class TestUploadScreenshot(SetUpTest, TestCase):
         data = {
             "name": "Homepage Screenshot",
             "description": "Test upload an acceptable screenshot size",
+            "guidelines_acknowledged": True,
             "file": uploaded_screenshot,
             "tags": "screenshot,project,test"
         }
@@ -175,6 +181,7 @@ class TestUpdateScreenshot(SetUpTest, TestCase):
         data = {
             "name": "Updated Screenshot",
             "description": "Test update screenshot",
+            "guidelines_acknowledged": True,
             "file": uploaded_screenshot,
             "tags": "screenshot,project,test"
         }
@@ -214,8 +221,8 @@ class TestReviewScreenshot(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("screenshot_unapproved"))
         url = reverse("screenshot_detail", kwargs={"pk": self.screenshot_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in Approve page.")
@@ -235,8 +242,8 @@ class TestReviewScreenshot(SetUpTest, TestCase):
         )
         # should send email notify
         self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, reverse("screenshot_unapproved"))
         url = reverse("screenshot_detail", kwargs={"pk": self.screenshot_object.id})
-        self.assertRedirects(response, url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This should be in requiring update page.")

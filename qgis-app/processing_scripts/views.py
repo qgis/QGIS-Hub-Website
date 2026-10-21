@@ -5,6 +5,7 @@ from base.views.processing_view import (
     ResourceBaseDownload,
     ResourceBaseListView,
     ResourceBaseRequireActionListView,
+    ResourceBaseReviewConfirmView,
     ResourceBaseReviewView,
     ResourceBaseUnapprovedListView,
     ResourceBaseUpdateView,
@@ -43,6 +44,10 @@ class ProcessingScriptCreateView(ResourceMixin, ResourceBaseCreateView):
 
 class ProcessingScriptDetailView(ResourceMixin, ResourceBaseDetailView):
     """ProcessingScript Detail View"""
+
+
+class ProcessingScriptReviewConfirmView(ResourceMixin, ResourceBaseReviewConfirmView):
+    """Approve or reject a Processing Script from the review queue"""
 
 
 class ProcessingScriptUnapproveView(ResourceMixin, ResourceBaseUnapproveView):

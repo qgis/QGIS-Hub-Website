@@ -6,6 +6,7 @@ from screenshots.views import (
   ScreenshotDownloadView,
   ScreenshotListView,
   ScreenshotRequireActionListView,
+  ScreenshotReviewConfirmView,
   ScreenshotReviewView,
   ScreenshotUnapprovedListView,
   ScreenshotUpdateView,
@@ -24,6 +25,11 @@ urlpatterns = [
   path("<int:pk>/unapprove/", ScreenshotUnapproveView.as_view(), name="screenshot_unapprove"),
   path("<int:pk>/delete/", ScreenshotDeleteView.as_view(), name="screenshot_delete"),
   path("<int:pk>/review/", ScreenshotReviewView.as_view(), name="screenshot_review"),
+    path(
+        "<int:pk>/review/confirm/",
+        ScreenshotReviewConfirmView.as_view(),
+        name="screenshot_review_confirm",
+    ),
   path(
     "<int:pk>/download/",
     ScreenshotDownloadView.as_view(),

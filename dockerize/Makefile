@@ -200,6 +200,20 @@ get-sustaining-members:
 	@echo "------------------------------------------------------------------"
 	@docker compose -p $(PROJECT_ID) run uwsgi python manage.py get_sustaining_members
 
+list-rejected-resources:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Listing rejected resources past their grace period"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) run --rm uwsgi python manage.py delete_rejected_resources
+
+delete-rejected-resources:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Deleting rejected resources past their grace period"
+	@echo "------------------------------------------------------------------"
+	@docker compose -p $(PROJECT_ID) run --rm uwsgi python manage.py delete_rejected_resources --commit
+
 # ----------------------------------------------------------------------------
 #    D E V E L O P M E N T    C O M M A N D S
 # ----------------------------------------------------------------------------

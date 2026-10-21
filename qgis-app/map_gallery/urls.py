@@ -6,6 +6,7 @@ from map_gallery.views import (
     MapDownloadView,
     MapListView,
     MapRequireActionListView,
+    MapReviewConfirmView,
     MapReviewView,
     MapUnapprovedListView,
     MapUpdateView,
@@ -24,6 +25,11 @@ urlpatterns = [
     path("<int:pk>/unapprove/", MapUnapproveView.as_view(), name="map_unapprove"),
     path("<int:pk>/delete/", MapDeleteView.as_view(), name="map_delete"),
     path("<int:pk>/review/", MapReviewView.as_view(), name="map_review"),
+    path(
+        "<int:pk>/review/confirm/",
+        MapReviewConfirmView.as_view(),
+        name="map_review_confirm",
+    ),
     path(
         "<int:pk>/download/",
         MapDownloadView.as_view(),
