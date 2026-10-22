@@ -25,17 +25,19 @@ class UploadForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     file_path = ""
 
     def clean_file(self):
-        zip_file = super(UploadForm, self).clean_file()
-        if zip_file:
-            self.file_path = WavefrontValidator(zip_file).validate_wavefront()
-        return zip_file
+        model_file = super(UploadForm, self).clean_file()
+        if model_file:
+            self.file_path = WavefrontValidator(model_file).validate()
+        return model_file
 
 
 class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
     """Model Update Form."""
 
+    file_path = ""
+
     def clean_file(self):
-        zip_file = super(UpdateForm, self).clean_file()
-        if zip_file:
-            self.file_path = WavefrontValidator(zip_file).validate_wavefront()
-        return zip_file
+        model_file = super(UpdateForm, self).clean_file()
+        if model_file:
+            self.file_path = WavefrontValidator(model_file).validate()
+        return model_file

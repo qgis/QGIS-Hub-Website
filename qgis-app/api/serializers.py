@@ -30,6 +30,10 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
     thumbnail_full = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
 
+    # Which size limit applies to this resource type. See
+    # base.validator.filesize_validator for the flags it takes.
+    filesize_validator_kwargs = {}
+
     class Meta:
         fields = [
             "resource_type",
@@ -47,7 +51,7 @@ class ResourceBaseSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         file = attrs.get("file")
-        filesize_validator(file)
+        filesize_validator(file, **self.filesize_validator_kwargs)
         thumbnail = attrs.get("thumbnail_image")
         if thumbnail:
             filesize_validator(thumbnail, is_thumbnail=True)
@@ -218,6 +222,8 @@ class LayerDefinitionSerializer(ResourceBaseSerializer):
 
 
 class WavefrontSerializer(ResourceBaseSerializer):
+    filesize_validator_kwargs = {"is_3d": True}
+
     class Meta(ResourceBaseSerializer.Meta):
         model = Wavefront
 
@@ -227,9 +233,10 @@ class WavefrontSerializer(ResourceBaseSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         file = attrs.get("file")
-        if file and file.name.endswith(".zip"):
-            valid_3dmodel = WavefrontValidator(file).validate_wavefront()
-            self.new_filepath = join(WAVEFRONTS_STORAGE_PATH, valid_3dmodel)
+        if file:
+            valid_3dmodel = WavefrontValidator(file).validate()
+            if valid_3dmodel:
+                self.new_filepath = join(WAVEFRONTS_STORAGE_PATH, valid_3dmodel)
         return attrs
 
 

@@ -51,6 +51,8 @@ class SetUpTest:
         self.stylexml_file_content = open(self.stylexml_file, "rb")
         self.zip3dfile = os.path.join(WAVEFRONT_DIR, "apple-tree.zip")
         self.zip3dfile_content = open(self.zip3dfile, "rb")
+        self.glb_file = os.path.join(WAVEFRONT_DIR, "tree.glb")
+        self.glb_content = open(self.glb_file, "rb")
         self.map_file = os.path.join(MAP_DIR, "main-create.webp")
         self.map_file_content = open(self.map_file, "rb")
         self.screenshot_file = os.path.join(SCREENSHOT_DIR, "main-create.webp")
@@ -180,6 +182,45 @@ class TestResourceCreateView(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Wavefront.objects.count(), 1)
         self.assertEqual(Wavefront.objects.first().name, "Test 3D Model")
+
+    def test_create_wavefront_from_a_glb_file(self):
+        url = reverse('resource-create')
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        data = {
+            "resource_type": "3dmodel",
+            "name": "Test GLB Model",
+            "description": "A test 3D Model in one GLB file",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": SimpleUploadedFile("tree.glb", self.glb_content.read()),
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 201)
+        wavefront = Wavefront.objects.get(name="Test GLB Model")
+        self.assertTrue(wavefront.file.name.endswith(".glb"))
+        self.assertEqual(wavefront.model_format, "glb")
+
+    def test_create_wavefront_over_the_3d_size_limit(self):
+        url = reverse('resource-create')
+        uploaded_thumbnail = SimpleUploadedFile(
+            self.thumbnail_content.name, self.thumbnail_content.read()
+        )
+        # A 3D model may be larger than the limit for the other resources,
+        # so only the 3D limit should turn this upload away.
+        oversized = SimpleUploadedFile(
+            "tree.glb", self.glb_content.read() + b"\0" * (11 * 1_000_000)
+        )
+        data = {
+            "resource_type": "3dmodel",
+            "name": "Huge 3D Model",
+            "description": "Larger than we accept",
+            "thumbnail_full": uploaded_thumbnail,
+            "file": oversized,
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Wavefront.objects.filter(name="Huge 3D Model").exists())
 
     def test_create_map(self):
         url = reverse('resource-create')

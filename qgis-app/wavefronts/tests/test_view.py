@@ -242,3 +242,107 @@ class TestDownloadWavefront(SetUpTest, TestCase):
                 "odm texturing/odm_textured_model_geo.zip", zip_file.namelist()
             )
             zip_file.close()
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestGlbWavefront(SetUpTest, TestCase):
+    """A GLB model, uploaded on its own and inside a zip file."""
+
+    fixtures = ["fixtures/simplemenu.json"]
+
+    def setUp(self):
+        super(TestGlbWavefront, self).setUp()
+        self.assertTrue(self.client.login(username="creator", password="password"))
+
+    def fixture(self, name):
+        """Read one of the GLB files in wavefrontfiles.
+
+        These are real models: a tree with geometry, two materials and an
+        embedded bark texture.
+        """
+        with open(os.path.join(WAVEFRONT_DIR, name), "rb") as model:
+            return model.read()
+
+    def upload(self, name, content):
+        url = reverse("wavefront_create")
+        data = {
+            "name": "Apple tree",
+            "description": "A tree in one GLB file",
+            "thumbnail_image": SimpleUploadedFile(
+                self.thumbnail_content.name, self.thumbnail_content.read()
+            ),
+            "file": SimpleUploadedFile(name, content),
+            "tags": "3dmodel,glb",
+        }
+        response = self.client.post(url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        return Wavefront.objects.last()
+
+    def test_upload_a_glb_on_its_own(self):
+        wavefront = self.upload("tree.glb", self.fixture("tree.glb"))
+        self.assertIsNotNone(wavefront)
+        self.assertTrue(wavefront.file.name.endswith(".glb"))
+        self.assertEqual(wavefront.model_format, "glb")
+        self.assertTrue(os.path.exists(wavefront.file.path))
+
+    def test_upload_a_glb_inside_a_zip(self):
+        wavefront = self.upload("tree-zipped.zip", self.fixture("tree-zipped.zip"))
+        self.assertIsNotNone(wavefront)
+        self.assertTrue(wavefront.file.name.endswith(".zip"))
+        self.assertEqual(wavefront.model_format, "glb")
+
+    def test_upload_a_broken_glb_is_refused(self):
+        url = reverse("wavefront_create")
+        data = {
+            "name": "Broken tree",
+            "description": "Not really a model",
+            "thumbnail_image": SimpleUploadedFile(
+                self.thumbnail_content.name, self.thumbnail_content.read()
+            ),
+            "file": SimpleUploadedFile(
+                "broken-tree.glb", self.fixture("broken-tree.glb")
+            ),
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Wavefront.objects.count(), 0)
+        self.assertContains(response, "This is not a GLB file")
+
+    def test_detail_page_points_the_viewer_at_the_glb(self):
+        wavefront = self.upload("tree.glb", self.fixture("tree.glb"))
+        wavefront.approved = True
+        wavefront.save()
+        url = reverse("wavefront_detail", kwargs={"pk": wavefront.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'data-format="glb"')
+        self.assertContains(response, wavefront.file.url)
+        self.assertContains(response, "View in 3D")
+
+    def test_review_page_shows_the_viewer(self):
+        wavefront = self.upload("tree.glb", self.fixture("tree.glb"))
+        self.assertFalse(wavefront.approved)
+        url = reverse("wavefront_detail", kwargs={"pk": wavefront.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "base/review.html")
+        self.assertContains(response, 'data-format="glb"')
+
+    def test_download_a_glb_sends_the_model_and_the_licence(self):
+        wavefront = self.upload("tree.glb", self.fixture("tree.glb"))
+        wavefront.approved = True
+        wavefront.save()
+        url = reverse("wavefront_download", kwargs={"pk": wavefront.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        with io.BytesIO(response.content) as content:
+            zip_file = zipfile.ZipFile(content, "r")
+            self.assertIsNone(zip_file.testzip())
+            names = zip_file.namelist()
+            # Two people may both upload tree.glb, so the stored name is not
+            # always the name it arrived under.
+            stored = os.path.basename(wavefront.file.name)
+            self.assertIn(f"Apple tree/{stored}", names)
+            self.assertTrue(stored.endswith(".glb"))
+            self.assertIn("Apple tree/license.txt", names)
+            zip_file.close()

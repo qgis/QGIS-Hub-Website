@@ -27,13 +27,27 @@ The base URL for the QGIS Hub API is https://hub.qgis.org/api/v1/resources/.
 
 ### Available resource types (resource_type)
 - `geopackage`
-- `3dmodel`
+- `3dmodel` (see [3D model files](#3d-model-files))
 - `style`
 - `layerdefinition`
 - `model`
 - `map`
 - `processingscript`
 - `screenshot`
+
+### 3D model files
+
+A `3dmodel` resource takes one of these:
+
+- a GLB file, which holds the mesh, the materials and the textures together
+- a zip file holding one GLB file
+- a zip file holding an obj file and the mtl file of the same name
+
+A GLB file has to be self contained. We turn away a model that points at a
+separate file for its textures or its mesh data, and a model that needs Draco
+or Basis compression, because the viewer cannot draw those.
+
+3D model files may be up to 10MB. The thumbnail may be up to 2MB.
 
 ### List Resources
 - **URL:** `/resources/`
