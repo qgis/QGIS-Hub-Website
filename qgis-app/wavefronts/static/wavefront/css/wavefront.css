@@ -7,43 +7,149 @@
   transition: .5s ease;
   backface-visibility: hidden;
 }
-.middle {
-  transition: .5s ease;
-  opacity: 0;
-  position: absolute;
-  top: 30%;
-  left: 43%;
-}
 
+/* The button that opens the viewer, sitting over the still image. It stays
+   visible so it can be reached with the keyboard, and lifts on hover. */
+.viewer3d-open {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1rem;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .75);
+  color: #1a1a1a;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: .75;
+  transition: opacity .3s ease;
+}
+.viewer3d-open img {
+  width: 96px;
+  height: 96px;
+}
+.viewer3d-open-label {
+  font-weight: 600;
+}
+.style-polaroid:hover .viewer3d-open,
+.viewer3d-open:hover,
+.viewer3d-open:focus-visible {
+  opacity: 1;
+}
+.viewer3d-open:focus-visible {
+  outline: 3px solid #589632;
+  outline-offset: 2px;
+}
 .style-polaroid:hover .image-resource {
   opacity: 0.3;
-  cursor: pointer;
 }
-.style-polaroid:hover .middle {
-  opacity: 1;
-  cursor: pointer;
+.style-polaroid:hover .viewer3d-open img {
   animation: flip 6s linear infinite;
 }
 
-/* 3d style */
-.container-3dview {
+/* 3d viewer */
+.viewer3d {
   width: 100%;
+}
+.container-3dview {
+  position: relative;
+  width: 100%;
+  height: 500px;
   cursor: move;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 #c {
+  display: block;
   width: 100%;
+  height: 100%;
   border-radius: 10px;
   border: 1px solid #ccc;
 }
+.viewer3d-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+/* Viewer controls: icon buttons floating over the model */
+.viewer3d-controls {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  display: flex;
+  gap: .25rem;
+  padding: .25rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .82);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+}
+.viewer3d-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #363636;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.viewer3d-control[hidden] {
+  display: none;
+}
+.viewer3d-control:hover {
+  background-color: rgba(0, 0, 0, .08);
+}
+.viewer3d-control[aria-pressed="true"] {
+  background-color: #589632;
+  color: #fff;
+}
+.viewer3d-control:focus-visible {
+  outline: 3px solid #589632;
+  outline-offset: 1px;
+}
+/* The full screen button carries both icons and shows the one that fits. */
+.viewer3d-control[aria-pressed="false"] .viewer3d-icon-on,
+.viewer3d-control[aria-pressed="true"] .viewer3d-icon-off {
+  display: none;
+}
+
+/* Full screen fills the display. The controls travel with the canvas. */
+.viewer3d:fullscreen,
+.viewer3d:fullscreen .container-3dview,
+.viewer3d.is-fullscreen,
+.viewer3d.is-fullscreen .container-3dview {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+.viewer3d:fullscreen #c,
+.viewer3d.is-fullscreen #c {
+  border: 0;
+  border-radius: 0;
+}
 
 /* Loading icon */
-.loading{
+.loading {
   position: absolute;
-  margin-left: auto;
-  margin-top: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
   border: 16px solid #f3f3f3; /* Light grey */
   border-top: 16px solid #3498db; /* Blue */
@@ -54,11 +160,18 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 @keyframes flip {
   0% { transform: rotate(360deg); }
   100% { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading,
+  .style-polaroid:hover .viewer3d-open img {
+    animation: none;
+  }
 }

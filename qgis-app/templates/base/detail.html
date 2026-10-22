@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}{% load i18n static thumbnail humanize resources_custom_tags resources_utils%}
+{% load render_bundle from webpack_loader %}
 
 {% block extrajs %}
   {{ block.super }}
@@ -185,6 +186,10 @@
   {% for js_src in js %}
     <script type="{% if not js_src.type %}text/javascript{% else %}{{ js_src.type }}{% endif %}" src="{% static js_src.src %}"></script>
   {%  endfor %}
+
+  {% if is_3d_model %}
+    {% render_bundle 'viewer3d' %}
+  {% endif %}
 
 
 {% endblock %}

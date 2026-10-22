@@ -25,7 +25,11 @@ if (mode === 'development') {
 }
 
 module.exports = {
-  entry: './static/js/index',
+  entry: {
+    main: './static/js/index',
+    // The 3D viewer carries three.js, so it loads on 3D model pages only.
+    viewer3d: './static/js/viewer3d/index',
+  },
   output: {
     path: path.resolve('./static/bundles'),
     filename: "[name].[contenthash].js"
