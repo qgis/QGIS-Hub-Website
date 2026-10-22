@@ -77,6 +77,62 @@ class TestReviewActionInList(SetupReviewTest, TestCase):
         )
 
 
+class TestResourceInReviewIsPrivate(SetupReviewTest, TestCase):
+    """A resource awaiting review is only for its author and the reviewers."""
+
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("style_detail", kwargs={"pk": self.style.id})
+
+    def test_anonymous_is_sent_to_sign_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
+        self.assertIn(self.url, response.url)
+
+    def test_another_signed_in_user_is_told_nothing(self):
+        self.client.login(username="bystander", password="password")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_the_author_can_see_it(self):
+        self.client.login(username="creator", password="password")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "base/review.html")
+
+    def test_a_reviewer_can_see_it(self):
+        self.client.login(username="staff", password="password")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_the_comment_history_does_not_leak(self):
+        Review.objects.create(
+            resource=self.style,
+            reviewer=self.manager,
+            comment="Rejected because the thumbnail is a screenshot",
+        )
+        self.client.login(username="bystander", password="password")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn(
+            b"the thumbnail is a screenshot", response.content
+        )
+
+    def test_an_approved_resource_stays_public(self):
+        self.style.approved = True
+        self.style.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "base/detail.html")
+
+    def test_a_rejected_resource_is_private_too(self):
+        self.style.require_action = True
+        self.style.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
+
 class TestReviewConfirmPage(SetupReviewTest, TestCase):
     def test_reviewer_gets_the_page(self):
         self.client.login(username="staff", password="password")

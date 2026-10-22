@@ -269,6 +269,7 @@ class TestTogglePublishScreenshot(SetUpTest, TestCase):
             description="A Screenshot for testing purpose",
             file=self.file,
             is_publishable=False,
+            approved=True,
         )
 
     def test_toggle_publish_screenshot(self):

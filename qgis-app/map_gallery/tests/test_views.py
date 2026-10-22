@@ -269,6 +269,7 @@ class TestTogglePublishMap(SetUpTest, TestCase):
             description="A Map for testing purpose",
             file=self.file,
             is_publishable=False,
+            approved=True,
         )
 
     def test_toggle_publish_map(self):

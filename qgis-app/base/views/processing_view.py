@@ -5,6 +5,7 @@ from base.license import zipped_with_license
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import redirect_to_login
 from base.permissions import (
     ResourceManagerRequiredMixin,
     is_resources_manager,
@@ -325,6 +326,19 @@ class ResourceBaseDetailView(ResourceBaseContextMixin, DetailView):
 
     is_3d_model = False
     license_template = "base/includes/license.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        resource = self.get_object()
+        if not resource.approved and not check_resources_access(
+            request.user, resource
+        ):
+            # A resource in review is only for its author and the reviewers.
+            # Signed out readers may be either, so give them a chance to sign
+            # in. Everyone else is told nothing about it.
+            if not request.user.is_authenticated:
+                return redirect_to_login(request.get_full_path())
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
 
     def get_template_names(self):
         object = self.get_object()
