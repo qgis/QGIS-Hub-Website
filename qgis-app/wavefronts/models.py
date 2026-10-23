@@ -33,16 +33,32 @@ class Wavefront(Resource):
     file = models.FileField(
         _("3D Model file"),
         help_text=_(
-            "A 3D model zip file. The zip file must contains obj and mtl files. The filesize must be less than 1MB."
+            "Upload a GLB file, or a zip file holding either one GLB file or an "
+            "obj file with its mtl file. Max size is 10MB."
         ),
         upload_to=WAVEFRONTS_STORAGE_PATH,
-        validators=[FileExtensionValidator(allowed_extensions=["zip"])],
+        validators=[FileExtensionValidator(allowed_extensions=["zip", "glb"])],
         null=False,
     )
 
     def extension(self):
         name, extension = os.path.splitext(self.file.name)
         return extension
+
+    @property
+    def model_format(self):
+        """Return the format the viewer loads: "glb" or "obj".
+
+        A GLB uploaded on its own is stored as it arrives. A GLB uploaded
+        inside a zip file sits next to that zip file, under the same name.
+        Everything else is an obj file with its mtl file.
+        """
+        stem, extension = os.path.splitext(self.file.name)
+        if extension.lower() == ".glb":
+            return "glb"
+        if os.path.exists(os.path.join(settings.MEDIA_ROOT, f"{stem}.glb")):
+            return "glb"
+        return "obj"
 
     def get_absolute_url(self):
         return reverse("wavefront_detail", args=(self.id,))

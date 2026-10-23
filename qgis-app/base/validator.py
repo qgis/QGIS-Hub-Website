@@ -10,7 +10,7 @@ BYTES_TO_MB = 1_000_000
 # Default file size limits (in bytes)
 RESOURCE_MAX_SIZE = getattr(settings, "RESOURCE_MAX_SIZE", 1 * BYTES_TO_MB)  # 1MB
 GPKG_MAX_SIZE = getattr(settings, "GPKG_MAX_SIZE", 5 * BYTES_TO_MB)  # 5MB
-MODEL_3D_MAX_SIZE = getattr(settings, "MODEL_3D_MAX_SIZE", 5 * BYTES_TO_MB)  # 5MB
+MODEL_3D_MAX_SIZE = getattr(settings, "MODEL_3D_MAX_SIZE", 10 * BYTES_TO_MB)  # 10MB
 MAP_MAX_SIZE = getattr(settings, "MAP_MAX_UPLOAD_SIZE", 10 * BYTES_TO_MB)  # 10MB
 QLR_MAX_SIZE = getattr(settings, "QLR_MAX_SIZE", 5 * BYTES_TO_MB)  # 5MB
 STYLE_MAX_SIZE = getattr(settings, "STYLE_MAX_SIZE", 5 * BYTES_TO_MB)  # 5MB

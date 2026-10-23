@@ -375,8 +375,6 @@ class ResourceBaseDetailView(ResourceBaseContextMixin, DetailView):
                 self.request,
                 reverse(f"{self.resource_name_url_base}_unapproved"),
             )
-        if self.is_3d_model:
-            context["url_viewer"] = "%s_viewer" % self.resource_name_url_base
         if is_map_publisher(user):
             context["is_map_publisher"] = True
         return context

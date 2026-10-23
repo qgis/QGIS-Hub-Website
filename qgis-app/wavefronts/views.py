@@ -1,5 +1,6 @@
 import os
 
+from base.license import zipped_with_license
 from base.views.processing_view import (
     ResourceBaseCreateView,
     ResourceBaseDeleteView,
@@ -25,8 +26,8 @@ from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wavefronts.forms import UpdateForm, UploadForm
-from wavefronts.models import Review, Wavefront
-from wavefronts.utilities import zipped_all_with_license
+from wavefronts.models import WAVEFRONTS_STORAGE_PATH, Review, Wavefront
+from wavefronts.utilities import get_viewer_context, zipped_all_with_license
 from django.utils.translation import gettext_lazy as _
 from urllib.parse import unquote
 from django.conf import settings
@@ -58,7 +59,11 @@ class WavefrontCreateView(ResourceMixin, ResourceBaseCreateView):
     def form_valid(self, form):
         self.obj = form.save(commit=False)
         self.obj.creator = self.request.user
-        self.obj.file.name = form.file_path
+        if form.file_path:
+            # A zip upload is unpacked into its own folder, so the file field
+            # points at that folder. A GLB arrives ready to use and is stored
+            # where the file field puts it.
+            self.obj.file.name = form.file_path
         self.obj.save()
         # Without this next line the tags won't be saved.
         form.save_m2m()
@@ -72,15 +77,12 @@ class WavefrontDetailView(ResourceMixin, ResourceBaseDetailView):
     """Wavefront Detail View"""
 
     is_3d_model = True
-    js = ({"src": "wavefront/js/3d_view.js", "type": "module"},)
     css = ("wavefront/css/wavefront.css",)
 
     def get_context_data(self, **kwargs):
         context = super(WavefrontDetailView, self).get_context_data()
         obj = self.get_object()
-        filename, ext = os.path.splitext(obj.file.url)
-        context["obj_url"] = f"{filename}.obj"
-        context["mtl_url"] = f"{filename}.mtl"
+        context.update(get_viewer_context(obj))
         return context
 
 
@@ -91,7 +93,8 @@ class WavefrontUpdateView(ResourceMixin, ResourceBaseUpdateView):
 
     def form_valid(self, form):
         obj = form.save(commit=False)
-        obj.file.name = form.file_path
+        if form.file_path:
+            obj.file.name = form.file_path
         obj.require_action = False
         obj.approved = False
         obj.save()
@@ -155,8 +158,13 @@ class WavefrontDownloadView(ResourceMixin, ResourceBaseDownload):
             object.save(update_fields=['download_count'])
 
         # zip the 3d files folder and license.txt
-        path, filename = os.path.split(object.file.file.name)
-        zipfile = zipped_all_with_license(path, object.name)
+        path, filename = os.path.split(object.file.path)
+        if path.endswith(WAVEFRONTS_STORAGE_PATH):
+            # A GLB uploaded on its own sits in the media folder with every
+            # other model, so send that one file rather than the folder.
+            zipfile = zipped_with_license(object.file.path, object.name)
+        else:
+            zipfile = zipped_all_with_license(path, object.name)
 
         response = HttpResponse(
             zipfile.getvalue(), content_type="application/x-zip-compressed"

@@ -1,7 +1,52 @@
-{% load i18n static thumbnail resources_custom_tags %}
-<div class="middle">
-  {% thumbnail object_detail.thumbnail_image "150x150" format="PNG" as im %}
-  <img alt="{% trans "image" %}" src="{% static 'wavefront/img/cube-3d.png' %}" width="{{ im.x }}" height="{{ im.y }}" />
-  {% endthumbnail %}
+{% load i18n static %}
+<button type="button" class="viewer3d-open" data-viewer-open
+        aria-label="{% trans "View this model in 3D" %}">
+  <img alt="" src="{% static 'wavefront/img/cube-3d.png' %}" width="150" height="150" />
+  <span class="viewer3d-open-label">{% trans "View in 3D" %}</span>
+</button>
+<div id="urlView" class="viewer3d" hidden
+     data-format="{{ model_format }}"
+     data-url="{{ model_url }}"
+     data-mtl-url="{{ mtl_url|default:'' }}">
+  <div class="container-3dview">
+    <canvas id="c"></canvas>
+    <div class="viewer3d-controls">
+      <button type="button" class="viewer3d-control" data-viewer-action="reset"
+              title="{% trans "Reset view" %}"
+              aria-label="{% trans "Reset view" %}">
+        <i class="fas fa-crosshairs" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="viewer3d-control" data-viewer-action="wireframe"
+              aria-pressed="false"
+              title="{% trans "Wireframe" %}"
+              aria-label="{% trans "Wireframe" %}">
+        <i class="fas fa-border-all" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="viewer3d-control" data-viewer-action="grid"
+              aria-pressed="false"
+              title="{% trans "Ground grid" %}"
+              aria-label="{% trans "Ground grid" %}">
+        <i class="fas fa-th" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="viewer3d-control" data-viewer-action="autorotate"
+              aria-pressed="false"
+              title="{% trans "Auto rotate" %}"
+              aria-label="{% trans "Auto rotate" %}">
+        <i class="fas fa-sync" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="viewer3d-control" data-viewer-action="fullscreen"
+              aria-pressed="false"
+              title="{% trans "Full screen" %}"
+              aria-label="{% trans "Full screen" %}">
+        <i class="fas fa-expand viewer3d-icon-off" aria-hidden="true"></i>
+        <i class="fas fa-compress viewer3d-icon-on" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="loading" data-viewer-loading hidden>
+      <span class="is-sr-only">{% trans "Loading the model" %}</span>
+    </div>
+    <p class="viewer3d-error" data-viewer-error hidden>
+      {% trans "We could not draw this model. Try downloading it instead." %}
+    </p>
+  </div>
 </div>
-<div id="urlView" data-url="{{ obj_url }}" data-mtl-url="{{ mtl_url }}"></div>
