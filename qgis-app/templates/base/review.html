@@ -16,54 +16,28 @@
 {% endif %}
 <div class="box-content">
 
-  <div class="columns">
-    <div class="column is-6">
-        <h3 class="title is-4">{{ object_detail.name }}
-            <span class="tag is-size-6 is-info">
-                in review
-            </span>
-        </h3>
-      </div>
-
-    <div class="column is-6 has-text-right">
-      <div class="buttons are-small is-justify-content-flex-end">
-          {% if user == object_detail.creator or user.is_staff %}
-            <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}" title="{% trans "Edit" %}">
-              <span class="icon">
-                <i class="fas fa-pencil-alt"></i>
-              </span>
-            </a>
-            <a class="button is-danger is-outlined" href="{% url url_delete object_detail.id %}" title="{% trans "Delete" %}">
-              <span class="icon">
-                <i class="fas fa-trash-alt"></i>
-              </span>
-            </a>
-          {% endif %}
-          {% if user == object_detail.creator or user.is_staff or is_style_manager %}
-              {% if object_detail.file and object_detail.file.file %}
-              <button class="button is-success"
-                 onclick="location.href='{% url url_download object_detail.id %}'"
-                 title="{% trans "Download" %}">
-                <span class="icon">
-                <i class="fas fa-download"></i>
-                </span>
-                <span>{% trans "Download" %}</span>
-              </button>
-              {% else %}
-              <button class="button"
-                 title="{% trans "File missing: The resource file couldn't be located." %}"
-                 disabled>
-                <span class="icon">
-                <i class="fas fa-exclamation-triangle"></i>
-                </span>
-                <span>{% trans "File missing" %}</span>
-              </button>
-              {% endif %}
-          {% endif %}
-        </div>
-    </div>
-    </div>
-    <hr />
+  <h3 class="title is-4">{{ object_detail.name }}
+    <span class="tag is-size-6 is-info">
+      in review
+    </span>
+  </h3>
+  <hr />
+  {% if user == object_detail.creator or user.is_staff %}
+  <div class="buttons">
+    <a class="button is-success is-outlined" href="{% url url_update object_detail.id %}">
+      <span class="icon">
+        <i class="fas fa-pencil-alt"></i>
+      </span>
+      <span>{% trans "Update" %}</span>
+    </a>
+    <a class="button is-danger is-outlined" href="{% url url_delete object_detail.id %}">
+      <span class="icon">
+        <i class="fas fa-trash-alt"></i>
+      </span>
+      <span>{% trans "Delete" %}</span>
+    </a>
+  </div>
+  {% endif %}
     <div class="view-resource mb-3">
       <div class="style-polaroid">
       {% if object_detail.thumbnail_image and object_detail.thumbnail_image.file %}
@@ -97,25 +71,42 @@
       </div>
     </div>
 
-    {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
-      <div class="has-text-centered">
+    <div class="buttons is-centered">
+      {% if resource_name == 'Map' or resource_name == 'Screenshot' %}
         <button class="button is-light" onclick="openViewer('{{ object.file.url }}');">
           <span class="icon">
             <i class="fas fa-image"></i>
           </span>
           <span>{% trans "Open Full-Size" %} {{ resource_name }}</span>
         </button>
-      </div>
       {% elif resource_name == 'Processing Script' %}
-      <div class="has-text-centered">
-        <button class="button is-light script-preview-modal-button" data-target="scriptPreviewModal" >
+        <button class="button is-light script-preview-modal-button" data-target="scriptPreviewModal">
           <span class="icon">
             <i class="fas fa-code"></i>
           </span>
           <span>{% trans "Preview Script" %}</span>
         </button>
-      </div>
-    {% endif %}
+      {% endif %}
+      {% if user == object_detail.creator or user.is_staff or is_style_manager %}
+        {% if object_detail.file and object_detail.file.file %}
+          <a class="button is-success" href="{% url url_download object_detail.id %}">
+            <span class="icon">
+              <i class="fas fa-download"></i>
+            </span>
+            <span>{% trans "Download" %}</span>
+          </a>
+        {% else %}
+          <button class="button"
+            title="{% trans "File missing: The resource file couldn't be located." %}"
+            disabled>
+            <span class="icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </span>
+            <span>{% trans "File missing" %}</span>
+          </button>
+        {% endif %}
+      {% endif %}
+    </div>
 
     {% include "base/includes/detail_object.html" %}
     {% if license_template %}
@@ -159,7 +150,7 @@
                 {{ form.comment }}
             </div>
         </div>
-        <div class="form-actions has-text-right">
+        <div class="form-actions">
             <button type="submit" class="button is-success">
                 <span class="icon is-small">
                     <i class="fas fa-check"></i>

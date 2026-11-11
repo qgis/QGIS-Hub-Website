@@ -36,5 +36,7 @@ class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
 
     def clean_file(self):
         file = super(UpdateForm, self).clean_file()
+        if self.keeps_current_file():
+            return file
         validator(file)
         return file

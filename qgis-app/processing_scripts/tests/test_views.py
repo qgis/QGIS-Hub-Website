@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from base.views.processing_view import resource_notify, resource_update_notify
 from django.contrib.auth.models import Group, User
 from django.core import mail
@@ -363,3 +364,20 @@ class TestReviewProcessingScript(SetUpTest, TestCase):
     self.assertEqual(response.status_code, 200)
     self.assertContains(response, "1 record found.")
     self.assertContains(response, "flooded buildings extractor")
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateScriptWithoutNewFile(UpdateWithoutNewFileTestMixin, SetUpTest, TestCase):
+  update_url_name = "processing_script_update"
+  detail_url_name = "processing_script_detail"
+
+  def create_resource(self) -> ProcessingScript:
+    return ProcessingScript.objects.create(
+      creator=self.creator,
+      name="flooded buildings extractor",
+      description="A ProcessingScript for testing purpose",
+      thumbnail_image=SimpleUploadedFile(
+        "thumbnail.png", self.thumbnail_content.read()
+      ),
+      file=SimpleUploadedFile("example.py", self.file_content.read()),
+    )

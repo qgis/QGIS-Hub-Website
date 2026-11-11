@@ -43,6 +43,8 @@ class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
         Cleaning file field data.
         """
         script_file = super(UpdateForm, self).clean_file()
+        if self.keeps_current_file():
+            return script_file
         is_valid = processing_script_validator(script_file.file)
         if not is_valid:
             raise forms.ValidationError(

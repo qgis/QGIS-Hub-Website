@@ -3,6 +3,7 @@ import os
 import tempfile
 import zipfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from django.contrib.auth.models import Group, User
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -346,3 +347,35 @@ class TestGlbWavefront(SetUpTest, TestCase):
             self.assertTrue(stored.endswith(".glb"))
             self.assertIn("Apple tree/license.txt", names)
             zip_file.close()
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateWavefrontWithoutNewFile(
+    UpdateWithoutNewFileTestMixin, SetUpTest, TestCase
+):
+    """An OBJ model in a zip file, stored the way the upload page stores it."""
+
+    update_url_name = "wavefront_update"
+    detail_url_name = "wavefront_detail"
+    model_file = "odm_texturing_25d.zip"
+
+    def create_resource(self) -> Wavefront:
+        with open(os.path.join(WAVEFRONT_DIR, self.model_file), "rb") as model:
+            content = model.read()
+        self.client.force_login(self.creator)
+        data = {
+            "name": "odm texturing",
+            "description": "Test upload a wavefront",
+            "thumbnail_image": SimpleUploadedFile(
+                "thumbnail.png", self.thumbnail_content.read()
+            ),
+            "file": SimpleUploadedFile(self.model_file, content),
+        }
+        self.client.post(reverse("wavefront_create"), data)
+        return Wavefront.objects.get()
+
+
+class TestUpdateZippedGlbWithoutNewFile(TestUpdateWavefrontWithoutNewFile):
+    """A GLB model in a zip file."""
+
+    model_file = "tree-zipped.zip"

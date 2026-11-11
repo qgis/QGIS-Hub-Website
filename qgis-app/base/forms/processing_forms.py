@@ -54,8 +54,7 @@ class ResourceBaseCleanFileForm(object):
         has_guidelines = getattr(self, "is_map", False) or getattr(
             self, "is_screenshot", False
         )
-        is_upload = getattr(self, "instance", None) is None or self.instance.pk is None
-        if has_guidelines and is_upload:
+        if has_guidelines and self.is_upload():
             self.fields["guidelines_acknowledged"] = forms.BooleanField(
                 required=True,
                 label=_(
@@ -64,12 +63,24 @@ class ResourceBaseCleanFileForm(object):
                 ),
             )
 
+    def is_upload(self) -> bool:
+        """Return True when the form creates a resource rather than edits one."""
+
+        return getattr(self, "instance", None) is None or self.instance.pk is None
+
+    def keeps_current_file(self) -> bool:
+        """Return True when an edit leaves the stored file in place."""
+
+        return not self.is_upload() and "file" not in self.changed_data
+
     def clean_file(self):
         """
         Cleaning file field data.
         """
 
         file = self.cleaned_data["file"]
+        if self.keeps_current_file():
+            return file
         file_extension = os.path.splitext(file.name)[1]
         is_gpkg = file_extension == ".gpkg"
         is_map = getattr(self, "is_map", False)

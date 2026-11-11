@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from base.views.processing_view import resource_notify, resource_update_notify
 from django.contrib.auth.models import Group, User
 from django.core import mail
@@ -304,3 +305,19 @@ class TestTogglePublishScreenshot(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 404)
         self.screenshot_object.refresh_from_db()
         self.assertFalse(self.screenshot_object.is_publishable)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateScreenshotWithoutNewFile(
+    UpdateWithoutNewFileTestMixin, SetUpTest, TestCase
+):
+    update_url_name = "screenshot_update"
+    detail_url_name = "screenshot_detail"
+
+    def create_resource(self) -> Screenshot:
+        return Screenshot.objects.create(
+            creator=self.creator,
+            name="Homepage Screenshot",
+            description="A Screenshot for testing purpose",
+            file=SimpleUploadedFile("main-create.webp", self.file_content.read()),
+        )

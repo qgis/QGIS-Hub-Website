@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from base.views.processing_view import resource_notify, resource_update_notify
 from django.contrib.auth.models import Group, User
 from django.core import mail
@@ -304,3 +305,17 @@ class TestTogglePublishMap(SetUpTest, TestCase):
         self.assertEqual(response.status_code, 404)
         self.map_object.refresh_from_db()
         self.assertFalse(self.map_object.is_publishable)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateMapWithoutNewFile(UpdateWithoutNewFileTestMixin, SetUpTest, TestCase):
+    update_url_name = "map_update"
+    detail_url_name = "map_detail"
+
+    def create_resource(self) -> Map:
+        return Map.objects.create(
+            creator=self.creator,
+            name="Homepage Map",
+            description="A Map for testing purpose",
+            file=SimpleUploadedFile("main-create.webp", self.file_content.read()),
+        )

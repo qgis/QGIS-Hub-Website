@@ -3,6 +3,7 @@ import os
 import tempfile
 import zipfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from django.contrib.auth.models import Group, User
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -258,3 +259,22 @@ class TestDownloadLayerDefinition(SetUpTest, TestCase):
             for f in expected_filename_list:
                 self.assertIn(f, zip_file.namelist())
             zip_file.close()
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateLayerDefinitionWithoutNewFile(
+    UpdateWithoutNewFileTestMixin, SetUpTest, TestCase
+):
+    update_url_name = "layerdefinition_update"
+    detail_url_name = "layerdefinition_detail"
+
+    def create_resource(self) -> LayerDefinition:
+        return LayerDefinition.objects.create(
+            creator=self.creator,
+            name="Test QLR File",
+            description="A QLR file for testing purpose",
+            thumbnail_image=SimpleUploadedFile(
+                "thumbnail.png", self.thumbnail_content.read()
+            ),
+            file=SimpleUploadedFile("my-vapour-pressure.qlr", self.file_content.read()),
+        )

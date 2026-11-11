@@ -1,10 +1,12 @@
 import os
 import tempfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from base.views.processing_view import resource_notify, resource_update_notify
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core import mail
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import escape_uri_path
@@ -584,4 +586,22 @@ class TestSearch(TestCase):
             '<p>Keyword: "<strong>new</strong>" <br> '
             "Search result: no record found.</p>",
             html=True,
+        )
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateStyleWithoutNewFile(UpdateWithoutNewFileTestMixin, TestCase):
+    fixtures = ["fixtures/simplemenu.json"]
+    update_url_name = "style_update"
+    detail_url_name = "style_detail"
+
+    def create_resource(self) -> Style:
+        creator = User.objects.create(username="creator", email="creator@email.com")
+        with open(os.path.join(STYLE_DIR, "colorramp_blue.xml"), "rb") as style_file:
+            content = style_file.read()
+        return Style.objects.create(
+            creator=creator,
+            name="Blues",
+            description="A Style for testing purpose",
+            file=SimpleUploadedFile("colorramp_blue.xml", content),
         )

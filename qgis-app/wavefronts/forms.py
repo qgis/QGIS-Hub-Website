@@ -38,6 +38,6 @@ class UpdateForm(ResourceBaseCleanFileForm, ResourceFormMixin):
 
     def clean_file(self):
         model_file = super(UpdateForm, self).clean_file()
-        if model_file:
+        if model_file and not self.keeps_current_file():
             self.file_path = WavefrontValidator(model_file).validate()
         return model_file

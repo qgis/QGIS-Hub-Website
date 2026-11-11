@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+from base.tests.mixins import UpdateWithoutNewFileTestMixin
 from base.views.processing_view import resource_notify, resource_update_notify
 from django.contrib.auth.models import Group, User
 from django.core import mail
@@ -329,3 +330,22 @@ class TestUpdateGeopackage(SetUpTest, TestCase):
         # Should not change the gpkg
         gpkg = Geopackage.objects.first()
         self.assertEqual(gpkg.name, "spiky polygons")
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class TestUpdateGeopackageWithoutNewFile(
+    UpdateWithoutNewFileTestMixin, SetUpTest, TestCase
+):
+    update_url_name = "geopackage_update"
+    detail_url_name = "geopackage_detail"
+
+    def create_resource(self) -> Geopackage:
+        return Geopackage.objects.create(
+            creator=self.creator,
+            name="spiky polygons",
+            description="A GeoPackage for testing purpose",
+            thumbnail_image=SimpleUploadedFile(
+                "thumbnail.png", self.thumbnail_content.read()
+            ),
+            file=SimpleUploadedFile("spiky-polygons.gpkg", self.file_content.read()),
+        )
