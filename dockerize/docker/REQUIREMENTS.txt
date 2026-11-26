@@ -1,63 +1,54 @@
-django~=4.2
-django-auth-ldap~=4.6
+django~=5.2
+django-auth-ldap~=5.3
 python-ldap~=3.4
 # Social authentication (OAuth via django-allauth)
-django-allauth~=65.15
-oauthlib~=3.2
-cryptography~=46.0.6
-django-taggit~=5.0
-django-tinymce==4.1.0
+django-allauth~=65.16
+oauthlib~=3.3
+cryptography~=50.0
+django-taggit~=6.1
+django-tinymce~=5.0
 psycopg2-binary~=2.9
 # Updates for Django 2
-git+https://github.com/metamatik/django-templatetag-sugar.git
+git+https://github.com/metamatik/django-templatetag-sugar.git@33bc10cc560521f7932c66e677b32276e4ad6915
 # Updates for Django 4
-git+https://github.com/Xpirix/django-ratings.git@modernize
+git+https://github.com/Xpirix/django-ratings.git@d705fffe4e2c01b584327c3b7c36b6d087895158
 django-taggit-autosuggest~=0.4
 django-annoying~=0.10
 
 # Updates for Django 2
 # git+https://github.com/elpaso/rpc4django.git@modernize
 rpc4django~=0.6
-Pillow~=10.1
+Pillow~=13.0
 django-taggit-templatetags
 # Updates for Django 4
-git+https://github.com/Xpirix/django-simplemenu.git@modernize
+git+https://github.com/Xpirix/django-simplemenu.git@687ba03e73fc24b2338a3ce8390104a4b047ea0f
 django-bootstrap-pagination-forked~=1.7
 django-sortable-listview~=0.43
-sorl-thumbnail~=12.10
-django-extensions~=3.2
-django-debug-toolbar~=4.2
+sorl-thumbnail~=13.0
+django-extensions~=4.1
+django-debug-toolbar~=6.3
 whoosh~=2.7
-django-haystack~=3.2
+django-haystack~=3.4
 
-celery~=5.3
+requests~=2.33
 
-# pin due to issues with a breaking change
-# https://github.com/celery/celery/issues/7783
-importlib_metadata<5
+markdown~=3.10
 
-requests~=2.31
-
-markdown~=3.5
-
-djangorestframework~=3.14
-pyjwt~=2.8
-djangorestframework-simplejwt~=5.3
+djangorestframework~=3.16
+pyjwt~=2.14
+djangorestframework-simplejwt~=5.5
 sorl-thumbnail-serializer-field==0.2.1
-django-rest-auth==0.9.5
 drf-yasg~=1.21
 django-rest-multiple-models==2.1.3
 
 django-preferences==1.0.0
 PyWavefront==1.3.3
-geoip2==4.5.0
 django-matomo==0.1.6
 uwsgi~=2.0
-freezegun~=1.4
 
-sentry-sdk~=2.2
-setuptools~=75.1
-beautifulsoup4~=4.12
-django-webpack-loader~=3.1
+sentry-sdk~=2.60
+setuptools~=84.0
+beautifulsoup4~=4.14
+django-webpack-loader~=3.2
 
-bandit~=1.8
+bandit~=1.9

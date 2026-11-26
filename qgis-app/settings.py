@@ -28,10 +28,6 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale
-USE_L10N = True
-
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = SITE_ROOT + "/static/"
@@ -330,7 +326,6 @@ if DEBUG:
         "debug_toolbar.panels.redirects.RedirectsPanel",
     ]
 
-GEOIP_PATH = "/var/opt/maxmind/"
 # Token access and refresh validity
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=15),

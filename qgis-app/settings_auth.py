@@ -30,5 +30,4 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "email": "mail",
 }
 # Cache group memberships for an hour to minimize LDAP traffic
-AUTH_LDAP_CACHE_GROUPS = True
-AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
+AUTH_LDAP_CACHE_TIMEOUT = 3600

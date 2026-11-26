@@ -71,3 +71,16 @@ jobs:
             python manage.py migrate &&
             python manage.py test
           '
+
+      # Report only, like QGIS-Plugins-Website. Make it a gate once the baseline is clean.
+      - name: Audit Python dependencies (pip-audit)
+        if: always()
+        run: |
+          {
+            echo '## pip-audit'
+            echo
+            echo '```'
+            docker compose exec -T devweb bash -c \
+              'pip install -q pip-audit && pip-audit --progress-spinner off' 2>&1 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

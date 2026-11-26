@@ -17,14 +17,7 @@ RUN apt-get update && apt-get install -y \
     libffi-dev gdal-bin\
     libjpeg-dev libpq-dev \
     liblcms2-dev libblas-dev \
-    libmaxminddb0 libmaxminddb-dev mmdb-bin
-
-# GeoIp mmdb
-RUN apt-get update && apt-get install -y curl && curl -LJO https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb && \
-    mkdir /var/opt/maxmind && \
-    mv GeoLite2-City.mmdb /var/opt/maxmind/GeoLite2-City.mmdb
-
-ENV GEOIP_PATH=/var/opt/maxmind/
+    curl
 
 RUN rm -rf /uwsgi.conf
 ADD dockerize/docker/uwsgi.conf /uwsgi.conf
@@ -63,9 +56,6 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
-
-# Install freezegun for feedback test
-RUN pip install freezegun
 
 # --------------------------------------------------------
 # Open ports as needed
